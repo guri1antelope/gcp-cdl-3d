@@ -482,6 +482,11 @@ class Scene3DManager {
     }
   }
 
+  async updateCharacterModel(partnerId, stage) {
+    return await this.loadPlayerCharacter(partnerId, stage);
+  }
+
+
   setLane(laneIndex) {
     // 0: 左レーン (-1.6), 1: 右レーン (1.6)
     this.targetLaneX = laneIndex === 0 ? -1.6 : 1.6;

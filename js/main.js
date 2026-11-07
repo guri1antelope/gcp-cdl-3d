@@ -69,10 +69,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
           <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">再開 ▶</button>
         `;
-        card.onclick = () => {
+        card.onclick = async () => {
           audio.playTap();
           storage.currentSlot = i;
-          initHomeForActiveSlot();
+          await initHomeForActiveSlot();
         };
       } else {
         card.innerHTML = `
@@ -82,24 +82,33 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
           <button class="btn" style="padding: 6px 12px; font-size: 12px;">作成 ＋</button>
         `;
-        card.onclick = () => {
+        card.onclick = async () => {
           audio.playTap();
-          const name = prompt("あなたの名前を入力してください（8文字以内）:", "受験生") || "受験生";
+          let name = "受験生";
+          try {
+            const input = prompt("あなたの名前を入力してください（8文字以内）:", "受験生");
+            if (input && input.trim()) {
+              name = input.trim().slice(0, 8);
+            }
+          } catch (e) {}
           const partnerId = 1; // 柴犬スタート
           storage.createSlot(i, name, partnerId);
-          initHomeForActiveSlot();
+          await initHomeForActiveSlot();
         };
       }
       listEl.appendChild(card);
     }
   }
 
-  function initHomeForActiveSlot() {
+  async function initHomeForActiveSlot() {
     const data = storage.getActiveData();
     if (!data) return;
 
-    // 3D相棒モデル更新
-    scene3d.updateCharacterModel(data.partner.id, data.partner.stage);
+    try {
+      await scene3d.loadPlayerCharacter(data.partner.id, data.partner.stage);
+    } catch (e) {
+      console.error("Failed to load character model:", e);
+    }
     showScreen("home");
   }
 
@@ -150,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       alert(`🎉 レベルアップ！ Lv.${res.currentLevel} になりました！`);
     }
     if (res.evolved) {
-      scene3d.updateCharacterModel(storage.getActiveData().partner.id, res.currentStage);
+      scene3d.loadPlayerCharacter(storage.getActiveData().partner.id, res.currentStage);
       alert(`✨ 相棒が進化しました！`);
     }
     updateHomeHUD();
