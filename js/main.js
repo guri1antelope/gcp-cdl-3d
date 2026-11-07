@@ -23,24 +23,31 @@ document.addEventListener("DOMContentLoaded", async () => {
     title: document.getElementById("screen-title"),
     home: document.getElementById("screen-home"),
     stageSelect: document.getElementById("screen-stage-select"),
+    book: document.getElementById("screen-book"),
     quiz: document.getElementById("screen-quiz"),
     result: document.getElementById("screen-result"),
     mockResult: document.getElementById("screen-mock-result")
   };
 
   function showScreen(screenKey) {
-    Object.values(screens).forEach((s) => s.classList.remove("active"));
+    Object.values(screens).forEach((s) => {
+      if (s) s.classList.remove("active");
+    });
     if (screens[screenKey]) {
       screens[screenKey].classList.add("active");
     }
 
-    if (screenKey === "home") {
-      scene3d.setMode("home");
-      updateHomeHUD();
-    } else if (screenKey === "quiz") {
-      scene3d.setMode("dash");
-    } else {
-      scene3d.setMode("title");
+    try {
+      if (screenKey === "home") {
+        scene3d.switchMode("home");
+        updateHomeHUD();
+      } else if (screenKey === "quiz") {
+        scene3d.switchMode("dash");
+      } else {
+        scene3d.switchMode("title");
+      }
+    } catch (e) {
+      console.warn("Scene3D mode switch fallback:", e);
     }
   }
 
@@ -218,6 +225,115 @@ document.addEventListener("DOMContentLoaded", async () => {
     showScreen("home");
   };
 
+  // 📚 CDL暗記ブック（全200問 問題集＆解答解説）
+  document.getElementById("btn-mode-book").onclick = () => {
+    audio.playTap();
+    renderBookList();
+    showScreen("book");
+  };
+
+  document.getElementById("btn-book-back").onclick = () => {
+    audio.playTap();
+    showScreen("home");
+  };
+
+  document.getElementById("book-section-filter").onchange = () => renderBookList();
+  document.getElementById("book-search-input").oninput = () => renderBookList();
+
+  function renderBookList() {
+    const container = document.getElementById("book-list-container");
+    container.innerHTML = "";
+
+    const secFilter = document.getElementById("book-section-filter").value;
+    const searchKeyword = (document.getElementById("book-search-input").value || "").trim().toLowerCase();
+    const activeData = storage.getActiveData();
+
+    let filtered = quiz.questions.filter((q) => {
+      if (secFilter === "weak") {
+        if (!activeData.weakQuestions.includes(q.id)) return false;
+      } else if (secFilter === "bookmark") {
+        if (!activeData.bookmarkedQuestions.includes(q.id)) return false;
+      } else if (secFilter !== "all") {
+        if (String(q.section_id) !== secFilter) return false;
+      }
+
+      if (searchKeyword) {
+        const fullText = (q.question + " " + q.scenario_tag + " " + q.business_tip + " " + q.explanation + " " + q.choices.map((c) => c.text).join(" ")).toLowerCase();
+        if (!fullText.includes(searchKeyword)) return false;
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="text-align: center; color: var(--text-sub); padding: 40px 10px;">該当する問題がありません</div>`;
+      return;
+    }
+
+    filtered.forEach((q) => {
+      const card = document.createElement("div");
+      card.style.background = "var(--panel-bg)";
+      card.style.border = "1px solid var(--panel-border)";
+      card.style.borderRadius = "12px";
+      card.style.padding = "14px";
+      card.style.display = "flex";
+      card.style.flexDirection = "column";
+      card.style.gap = "8px";
+
+      const isBookmarked = activeData.bookmarkedQuestions.includes(q.id);
+      const isWeak = activeData.weakQuestions.includes(q.id);
+
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <span style="font-weight: bold; font-size: 13px; color: var(--gcp-blue);">問${q.id} (${q.code})</span>
+            <span class="scenario-tag" style="font-size: 10px; padding: 1px 6px;">${q.scenario_tag}</span>
+            ${isWeak ? '<span style="font-size: 10px; background: rgba(234,67,53,0.25); color: #fca5a5; padding: 1px 6px; border-radius: 4px;">⚠️ 弱点</span>' : ''}
+          </div>
+          <button class="btn-book-bm btn btn-secondary" style="padding: 2px 8px; font-size: 11px;">
+            ${isBookmarked ? "★ 復習中" : "☆ 復習"}
+          </button>
+        </div>
+        <div style="font-size: 13px; line-height: 1.5; color: #f8fafc; font-weight: 500;">
+          ${q.question}
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
+          ${q.choices.map((c) => `<div style="font-size: 12px; color: #cbd5e1; padding: 4px 6px; background: rgba(0,0,0,0.2); border-radius: 6px;"><strong style="color: var(--gcp-blue);">${c.label}.</strong> ${c.text}</div>`).join("")}
+        </div>
+        <button class="btn-toggle-answer btn btn-secondary" style="margin-top: 6px; font-size: 12px; padding: 6px; border-color: var(--gcp-yellow); color: #fef08a;">
+          💡 答えとビジネスあんちょこを開く ▼
+        </button>
+        <div class="book-answer-content" style="display: none; flex-direction: column; gap: 8px; margin-top: 6px;">
+          <div class="business-tip-box" style="white-space: pre-wrap;">
+            <div class="tip-title">💡 ビジネス即答あんちょこ</div>
+            <div style="font-size: 12px; color: #fef08a; line-height: 1.4;">${q.business_tip}</div>
+          </div>
+          <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
+            <strong style="color: #86efac;">正解: ${q.answer}</strong><br>
+            ${q.explanation}
+          </div>
+        </div>
+      `;
+
+      card.querySelector(".btn-book-bm").onclick = (e) => {
+        e.stopPropagation();
+        audio.playTap();
+        const bm = storage.toggleBookmark(q.id);
+        e.target.textContent = bm ? "★ 復習中" : "☆ 復習";
+      };
+
+      const toggleBtn = card.querySelector(".btn-toggle-answer");
+      const answerContent = card.querySelector(".book-answer-content");
+      toggleBtn.onclick = () => {
+        audio.playTap();
+        const isOpen = answerContent.style.display === "flex";
+        answerContent.style.display = isOpen ? "none" : "flex";
+        toggleBtn.textContent = isOpen ? "💡 答えとビジネスあんちょこを開く ▼" : "▲ 閉じる";
+      };
+
+      container.appendChild(card);
+    });
+  }
+
   // ② 課題フラッシュ（10問高速特訓）
   document.getElementById("btn-mode-flash").onclick = () => {
     audio.playTap();
@@ -342,6 +458,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("quiz-explanation-text").textContent = result.explanation;
     document.getElementById("quiz-explanation-card").style.display = "flex";
   }
+
+  // クイズ中断ボタン
+  document.getElementById("btn-quiz-exit").onclick = () => {
+    audio.playTap();
+    if (confirm("学習を中断してホームに戻りますか？")) {
+      if (mockInterval) clearInterval(mockInterval);
+      showScreen("home");
+    }
+  };
+
+  // 答え・解説カンニング（学習用）
+  document.getElementById("btn-quiz-peek").onclick = () => {
+    audio.playTap();
+    const q = quiz.getCurrentQuestion();
+    if (!q) return;
+
+    const allBtns = document.querySelectorAll(".choice-btn");
+    allBtns.forEach((b) => {
+      b.disabled = true;
+      if (b.textContent.trim().startsWith(q.answer)) {
+        b.classList.add("correct");
+      }
+    });
+
+    document.getElementById("quiz-business-tip").textContent = q.business_tip;
+    document.getElementById("quiz-explanation-text").textContent = q.explanation;
+    document.getElementById("quiz-explanation-card").style.display = "flex";
+  };
 
   document.getElementById("btn-quiz-next").onclick = () => {
     audio.playTap();

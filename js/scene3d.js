@@ -492,6 +492,10 @@ class Scene3DManager {
     this.targetLaneX = laneIndex === 0 ? -1.6 : 1.6;
   }
 
+  setMode(newMode) {
+    return this.switchMode(newMode);
+  }
+
   switchMode(newMode) {
     this.mode = newMode;
     this.isBattleAnim = false;

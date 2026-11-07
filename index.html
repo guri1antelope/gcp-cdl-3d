@@ -91,6 +91,11 @@
               <span class="mode-title">ステージ学習</span>
               <span class="mode-desc">全6章・20ステージ (1回10問)</span>
             </button>
+            <button id="btn-mode-book" class="mode-btn" style="border-color: var(--gcp-yellow);">
+              <span class="mode-icon">📚</span>
+              <span class="mode-title" style="color: #fef08a;">暗記ブック</span>
+              <span class="mode-desc">200問全問・解説赤シート</span>
+            </button>
             <button id="btn-mode-flash" class="mode-btn">
               <span class="mode-icon">⚡</span>
               <span class="mode-title">課題フラッシュ</span>
@@ -101,10 +106,10 @@
               <span class="mode-title">弱点リベンジ</span>
               <span class="mode-desc" id="home-weak-count">間違えた問題 (0問)</span>
             </button>
-            <button id="btn-mode-mock" class="mode-btn">
+            <button id="btn-mode-mock" class="mode-btn" style="grid-column: span 2;">
               <span class="mode-icon">📝</span>
-              <span class="mode-title">本番模擬試験</span>
-              <span class="mode-desc">50問・90分タイマー実力測定</span>
+              <span class="mode-title">本番模擬試験（50問・90分タイマー）</span>
+              <span class="mode-desc">本番比率出題＆セクション別合格診断</span>
             </button>
           </div>
         </div>
@@ -119,12 +124,48 @@
         <div id="stage-list-grid" class="stage-list-grid"></div>
       </div>
 
+      <!-- 3.5 CDL Complete Book Screen (全200問 問題集＆解答解説) -->
+      <div id="screen-book" class="screen interactive">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h2 style="font-size: 16px; font-weight: bold; color: var(--gcp-yellow);">📚 CDL暗記ブック (全200問)</h2>
+          <button id="btn-book-back" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">◀ ホーム</button>
+        </div>
+
+        <!-- フィルターと検索バー -->
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px;">
+          <div style="display: flex; gap: 6px;">
+            <select id="book-section-filter" style="flex: 1; background: var(--panel-bg); color: #fff; border: 1px solid var(--panel-border); border-radius: 8px; padding: 6px 8px; font-size: 12px;">
+              <option value="all">全セクション (200問)</option>
+              <option value="1">第1章: デジタル変革</option>
+              <option value="2">第2章: データ変革</option>
+              <option value="3">第3章: AIによるイノベーション</option>
+              <option value="4">第4章: インフラ・アプリ近代化</option>
+              <option value="5">第5章: 信頼とセキュリティ</option>
+              <option value="6">第6章: 運用スケーリング</option>
+              <option value="weak">⚠️ 間違えた弱点問題のみ</option>
+              <option value="bookmark">★ 復習チェック問題のみ</option>
+            </select>
+          </div>
+          <input type="text" id="book-search-input" placeholder="🔍 サービス名・キーワードで検索 (例: BigQuery, AlloyDB)" style="background: rgba(0,0,0,0.4); color: #fff; border: 1px solid var(--panel-border); border-radius: 8px; padding: 8px 10px; font-size: 12px;">
+        </div>
+
+        <div id="book-list-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px;">
+          <!-- 200問のアコーディオンカード -->
+        </div>
+      </div>
+
       <!-- 4. Quiz Screen -->
       <div id="screen-quiz" class="screen interactive">
         <div class="quiz-header">
-          <span id="quiz-progress-text" class="quiz-progress-text">問 1 / 10</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <button id="btn-quiz-exit" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">◀ 中断</button>
+            <span id="quiz-progress-text" class="quiz-progress-text">問 1 / 10</span>
+          </div>
           <span id="quiz-timer-badge" class="timer-badge" style="display: none;">90:00</span>
-          <button id="btn-quiz-bookmark" class="btn btn-secondary" style="padding: 4px 8px; font-size: 12px;">☆ 復習</button>
+          <div style="display: flex; gap: 4px;">
+            <button id="btn-quiz-peek" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px; color: var(--gcp-yellow);">💡 答えを見る</button>
+            <button id="btn-quiz-bookmark" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">☆ 復習</button>
+          </div>
         </div>
 
         <div class="question-card">
@@ -142,7 +183,7 @@
         <div id="quiz-explanation-card" class="explanation-card">
           <div class="business-tip-box">
             <div class="tip-title">💡 ビジネス即答あんちょこ</div>
-            <div id="quiz-business-tip" class="tip-content"></div>
+            <div id="quiz-business-tip" class="tip-content" style="white-space: pre-wrap;"></div>
           </div>
           <div id="quiz-explanation-text" class="explanation-text"></div>
           <button id="btn-quiz-next" class="btn btn-green" style="margin-top: 6px;">
