@@ -469,16 +469,76 @@ html, body {
 }
 
 .choice-btn.correct {
-  background: rgba(52, 168, 83, 0.3) !important;
+  background: rgba(52, 168, 83, 0.35) !important;
   border-color: var(--gcp-green) !important;
   color: #86efac !important;
+  box-shadow: 0 0 10px rgba(52, 168, 83, 0.4);
 }
 
 .choice-btn.incorrect {
-  background: rgba(234, 67, 53, 0.3) !important;
+  background: rgba(234, 67, 53, 0.35) !important;
   border-color: var(--gcp-red) !important;
   color: #fca5a5 !important;
+  box-shadow: 0 0 10px rgba(234, 67, 53, 0.4);
 }
+
+.choice-btn.dimmed {
+  opacity: 0.35;
+  filter: grayscale(0.5);
+}
+
+.choice-tag {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.choice-tag.tag-user-wrong {
+  background: rgba(234, 67, 53, 0.9);
+  color: #fff;
+}
+
+.choice-tag.tag-user-correct {
+  background: rgba(52, 168, 83, 0.9);
+  color: #fff;
+}
+
+.choice-tag.tag-answer {
+  background: rgba(251, 188, 4, 0.9);
+  color: #000;
+  font-weight: 900;
+}
+
+/* Judgement Banner in Explanation */
+.judgement-banner {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.judgement-banner.banner-correct {
+  background: linear-gradient(135deg, rgba(52, 168, 83, 0.3), rgba(66, 133, 244, 0.2));
+  border: 1px solid var(--gcp-green);
+  color: #86efac;
+}
+
+.judgement-banner.banner-incorrect {
+  background: linear-gradient(135deg, rgba(234, 67, 53, 0.35), rgba(251, 188, 4, 0.2));
+  border: 1px solid var(--gcp-red);
+  color: #fca5a5;
+}
+
 
 /* Explanation & Business Tip Box */
 .explanation-card {

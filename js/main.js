@@ -431,26 +431,51 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   function handleChoiceSelect(label, selectedBtn) {
-    // ボタンの無効化
     const allBtns = document.querySelectorAll(".choice-btn");
     allBtns.forEach((b) => (b.disabled = true));
 
     const result = quiz.answerCurrent(label);
     storage.recordAnswer(result.qId, result.isCorrect);
 
+    const q = quiz.getCurrentQuestion();
+    const correctLabel = result.correctAnswer.trim().toUpperCase();
+    const selectedLabel = label.trim().toUpperCase();
+
+    const correctChoiceObj = q.choices.find(c => c.label.toUpperCase() === correctLabel);
+    const correctText = correctChoiceObj ? correctChoiceObj.text : "";
+
+    // 全ボタンのスタイルとバッジ更新
+    allBtns.forEach((b) => {
+      const labelEl = b.querySelector(".choice-label");
+      const bLabel = labelEl ? labelEl.textContent.replace(".", "").trim().toUpperCase() : "";
+
+      if (bLabel === selectedLabel) {
+        if (result.isCorrect) {
+          b.classList.add("correct");
+          b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-user-correct">⭕ あなたの回答（正解！）</span>`);
+        } else {
+          b.classList.add("incorrect");
+          b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-user-wrong">❌ あなたの回答</span>`);
+        }
+      } else if (bLabel === correctLabel) {
+        b.classList.add("correct");
+        b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-answer">👑 正解！</span>`);
+      } else {
+        b.classList.add("dimmed");
+      }
+    });
+
+    // 判定バナーの描画
+    const banner = document.getElementById("quiz-judgement-banner");
     if (result.isCorrect) {
       audio.playCorrect();
       scene3d.jumpPlayer();
-      selectedBtn.classList.add("correct");
+      banner.className = "judgement-banner banner-correct";
+      banner.innerHTML = `<div>⭕ <strong>大正解！ 正解は【${correctLabel}】です</strong><br><span style="font-size: 12px; font-weight: normal; color: #cbd5e1;">${correctLabel}. ${correctText}</span></div>`;
     } else {
       audio.playIncorrect();
-      selectedBtn.classList.add("incorrect");
-      // 正解ボタンを緑にする
-      allBtns.forEach((b) => {
-        if (b.textContent.trim().startsWith(result.correctAnswer)) {
-          b.classList.add("correct");
-        }
-      });
+      banner.className = "judgement-banner banner-incorrect";
+      banner.innerHTML = `<div>❌ <strong>不正解：あなたの回答【${selectedLabel}】 ➔ 正解は【${correctLabel}】</strong><br><span style="font-size: 12px; font-weight: normal; color: #fef08a;">${correctLabel}. ${correctText}</span></div>`;
     }
 
     // あんちょこ＆解説表示
@@ -474,13 +499,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const q = quiz.getCurrentQuestion();
     if (!q) return;
 
+    const correctLabel = q.answer.trim().toUpperCase();
+    const correctChoiceObj = q.choices.find(c => c.label.toUpperCase() === correctLabel);
+    const correctText = correctChoiceObj ? correctChoiceObj.text : "";
+
     const allBtns = document.querySelectorAll(".choice-btn");
     allBtns.forEach((b) => {
       b.disabled = true;
-      if (b.textContent.trim().startsWith(q.answer)) {
+      const labelEl = b.querySelector(".choice-label");
+      const bLabel = labelEl ? labelEl.textContent.replace(".", "").trim().toUpperCase() : "";
+
+      if (bLabel === correctLabel) {
         b.classList.add("correct");
+        if (!b.querySelector(".choice-tag")) {
+          b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-answer">👑 正解！</span>`);
+        }
+      } else {
+        b.classList.add("dimmed");
       }
     });
+
+    const banner = document.getElementById("quiz-judgement-banner");
+    banner.className = "judgement-banner banner-correct";
+    banner.innerHTML = `<div>💡 <strong>正解は【${correctLabel}】です</strong><br><span style="font-size: 12px; font-weight: normal; color: #fef08a;">${correctLabel}. ${correctText}</span></div>`;
 
     document.getElementById("quiz-business-tip").textContent = q.business_tip;
     document.getElementById("quiz-explanation-text").textContent = q.explanation;
@@ -521,6 +562,34 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("result-score-text").textContent = `${res.score} / ${res.total} (${res.rate}%)`;
     document.getElementById("result-exp-text").textContent = `+${expGain} EXP 獲得！`;
+
+    // 見直しリストの生成
+    const reviewBox = document.getElementById("result-review-container");
+    if (reviewBox) {
+      reviewBox.innerHTML = "";
+      quiz.userAnswers.forEach((ans, idx) => {
+        const q = quiz.questions.find((x) => x.id === ans.qId);
+        if (!q) return;
+
+        const item = document.createElement("div");
+        item.style.background = ans.isCorrect ? "rgba(52, 168, 83, 0.15)" : "rgba(234, 67, 53, 0.15)";
+        item.style.border = "1px solid " + (ans.isCorrect ? "rgba(52, 168, 83, 0.4)" : "rgba(234, 67, 53, 0.4)");
+        item.style.borderRadius = "8px";
+        item.style.padding = "8px 10px";
+        item.style.fontSize = "12px";
+
+        item.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+            <strong>問${idx + 1} (${q.code})</strong>
+            <span>${ans.isCorrect ? '<span style="color:#86efac;font-weight:bold;">⭕ 正解</span>' : `<span style="color:#fca5a5;font-weight:bold;">❌ 回答【${ans.selected}】➔ 正解【${ans.correct}】</span>`}</span>
+          </div>
+          <div style="font-size: 11px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            ${q.question}
+          </div>
+        `;
+        reviewBox.appendChild(item);
+      });
+    }
 
     if (expRes.leveledUp) {
       alert(`🎉 レベルアップ！ Lv.${expRes.currentLevel} になりました！`);

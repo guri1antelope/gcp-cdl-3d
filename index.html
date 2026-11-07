@@ -181,6 +181,7 @@
 
         <!-- 解説＆あんちょこカード（解答後に表示） -->
         <div id="quiz-explanation-card" class="explanation-card">
+          <div id="quiz-judgement-banner" class="judgement-banner"></div>
           <div class="business-tip-box">
             <div class="tip-title">💡 ビジネス即答あんちょこ</div>
             <div id="quiz-business-tip" class="tip-content" style="white-space: pre-wrap;"></div>
@@ -193,16 +194,25 @@
       </div>
 
       <!-- 5. Result Screen -->
-      <div id="screen-result" class="screen interactive" style="justify-content: center; align-items: center; text-align: center; gap: 16px;">
+      <div id="screen-result" class="screen interactive" style="justify-content: flex-start; align-items: center; text-align: center; gap: 12px; padding-top: 20px;">
         <div id="result-status-title" style="font-size: 24px; font-weight: 900; color: var(--gcp-yellow);">
           🎉 STAGE CLEAR!
         </div>
-        <div style="background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 20px; width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 10px;">
-          <div style="font-size: 13px; color: var(--text-sub);">正答スコア</div>
-          <div id="result-score-text" style="font-size: 32px; font-weight: 900; color: var(--gcp-blue);">8 / 10</div>
-          <div id="result-exp-text" style="font-size: 14px; font-weight: bold; color: var(--gcp-green);">+80 EXP 獲得！</div>
+        <div style="background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px; padding: 14px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="font-size: 12px; color: var(--text-sub);">正答スコア</div>
+          <div id="result-score-text" style="font-size: 28px; font-weight: 900; color: var(--gcp-blue);">8 / 10</div>
+          <div id="result-exp-text" style="font-size: 13px; font-weight: bold; color: var(--gcp-green);">+80 EXP 獲得！</div>
         </div>
-        <button id="btn-result-home" class="btn" style="width: 100%; max-width: 340px;">
+
+        <!-- 10問の解答見直しリスト -->
+        <div style="width: 100%; max-width: 360px; text-align: left; font-size: 12px; font-weight: bold; color: var(--text-sub); margin-top: 4px;">
+          📝 今回の解答・見直し:
+        </div>
+        <div id="result-review-container" style="width: 100%; max-width: 360px; max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; text-align: left;">
+          <!-- 見直しカード一覧 -->
+        </div>
+
+        <button id="btn-result-home" class="btn" style="width: 100%; max-width: 360px; margin-top: 6px;">
           ホームに戻る
         </button>
       </div>
