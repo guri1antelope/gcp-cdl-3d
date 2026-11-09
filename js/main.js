@@ -66,15 +66,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         const pName = PARTNER_SPECIES[data.partner.id] || "相棒";
         card.innerHTML = `
           <div>
-            <div style="font-weight: bold; font-size: 14px;">スロット ${i}: ${data.playerName}</div>
-            <div style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">
+            <div style="font-weight: bold; font-size: 16px;">スロット ${i}: ${data.playerName}</div>
+            <div style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
               Lv.${data.partner.level} ${pName} | ${title}
             </div>
-            <div style="font-size: 10px; color: #86efac; margin-top: 2px;">
+            <div style="font-size: 12px; color: #86efac; margin-top: 2px;">
               解答数: ${data.stats.totalSolved}問 (弱点: ${data.weakQuestions.length}問)
             </div>
           </div>
-          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">再開 ▶</button>
+          <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 14px;">再開 ▶</button>
         `;
         card.onclick = async () => {
           audio.playTap();
@@ -84,10 +84,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       } else {
         card.innerHTML = `
           <div>
-            <div style="font-weight: bold; font-size: 14px; color: var(--text-sub);">スロット ${i}: [空きスロット]</div>
-            <div style="font-size: 11px; color: var(--text-sub);">新しくはじめる</div>
+            <div style="font-weight: bold; font-size: 16px; color: var(--text-sub);">スロット ${i}: [空きスロット]</div>
+            <div style="font-size: 13px; color: var(--text-sub);">新しくはじめる</div>
           </div>
-          <button class="btn" style="padding: 6px 12px; font-size: 12px;">作成 ＋</button>
+          <button class="btn" style="padding: 8px 14px; font-size: 14px;">作成 ＋</button>
         `;
         card.onclick = async () => {
           audio.playTap();
@@ -215,12 +215,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.className = `stage-card ${isCleared ? "cleared" : ""}`;
       card.innerHTML = `
         <div>
-          <div style="font-size: 13px; font-weight: bold;">${stg.name}</div>
-          <div style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">
+          <div style="font-size: 15.5px; font-weight: bold;">${stg.name}</div>
+          <div style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
             ${stg.questions.length}問 収録 ${isCleared ? "✅ CLEAR" : ""}
           </div>
         </div>
-        <button class="btn ${isCleared ? "btn-secondary" : ""}" style="padding: 6px 12px; font-size: 12px;">
+        <button class="btn ${isCleared ? "btn-secondary" : ""}" style="padding: 8px 14px; font-size: 14px;">
           ${isCleared ? "再挑戦" : "開始 ▶"}
         </button>
       `;
@@ -249,12 +249,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.style.borderColor = isCleared ? "var(--gcp-green)" : "rgba(249, 115, 22, 0.6)";
       card.innerHTML = `
         <div>
-          <div style="font-size: 13px; font-weight: bold; color: #fdba74;">${stg.name}</div>
-          <div style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">
+          <div style="font-size: 15.5px; font-weight: bold; color: #fdba74;">${stg.name}</div>
+          <div style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
             ${stg.questions.length}問 収録 ${isCleared ? "✅ CLEAR" : ""}
           </div>
         </div>
-        <button class="btn ${isCleared ? "btn-secondary" : ""}" style="padding: 6px 12px; font-size: 12px; background: ${isCleared ? "" : "linear-gradient(135deg, #ea580c, #c2410c)"};">
+        <button class="btn ${isCleared ? "btn-secondary" : ""}" style="padding: 8px 14px; font-size: 14px; background: ${isCleared ? "" : "linear-gradient(135deg, #ea580c, #c2410c)"};">
           ${isCleared ? "再挑戦" : "開始 ▶"}
         </button>
       `;
@@ -373,31 +373,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
-          <div style="display: flex; gap: 6px; align-items: center;">
-            <span style="font-weight: bold; font-size: 13px; color: var(--gcp-blue);">問${q.id} (${q.code})</span>
-            <span class="scenario-tag" style="font-size: 10px; padding: 1px 6px;">${q.scenario_tag}</span>
-            ${isWeak ? '<span style="font-size: 10px; background: rgba(234,67,53,0.25); color: #fca5a5; padding: 1px 6px; border-radius: 4px;">⚠️ 弱点</span>' : ''}
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="font-weight: bold; font-size: 15px; color: var(--gcp-blue);">問${q.id || q.q_num} (${q.code || ("Q" + (q.id || q.q_num))})</span>
+            <span class="scenario-tag" style="font-size: 12px; padding: 2px 8px;">${q.scenario_tag || "実践対策"}</span>
+            ${isWeak ? '<span style="font-size: 12px; background: rgba(234,67,53,0.25); color: #fca5a5; padding: 2px 8px; border-radius: 4px;">⚠️ 弱点</span>' : ''}
           </div>
-          <button class="btn-book-bm btn btn-secondary" style="padding: 2px 8px; font-size: 11px;">
+          <button class="btn-book-bm btn btn-secondary" style="padding: 4px 10px; font-size: 13px;">
             ${isBookmarked ? "★ 復習中" : "☆ 復習"}
           </button>
         </div>
-        <div style="font-size: 13px; line-height: 1.5; color: #f8fafc; font-weight: 500;">
+        <div style="font-size: 16.5px; line-height: 1.6; color: #f8fafc; font-weight: 500;">
           ${q.question}
         </div>
-        <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;">
-          ${q.choices.map((c) => `<div style="font-size: 12px; color: #cbd5e1; padding: 4px 6px; background: rgba(0,0,0,0.2); border-radius: 6px;"><strong style="color: var(--gcp-blue);">${c.label}.</strong> ${c.text}</div>`).join("")}
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+          ${q.choices.map((c) => `<div style="font-size: 14.5px; line-height: 1.45; color: #e2e8f0; padding: 6px 10px; background: rgba(0,0,0,0.25); border-radius: 8px;"><strong style="color: var(--gcp-blue); font-size: 15px;">${c.label}.</strong> ${c.text}</div>`).join("")}
         </div>
-        <button class="btn-toggle-answer btn btn-secondary" style="margin-top: 6px; font-size: 12px; padding: 6px; border-color: var(--gcp-yellow); color: #fef08a;">
+        <button class="btn-toggle-answer btn btn-secondary" style="margin-top: 6px; font-size: 14px; padding: 8px; border-color: var(--gcp-yellow); color: #fef08a;">
           💡 答えとビジネスあんちょこを開く ▼
         </button>
-        <div class="book-answer-content" style="display: none; flex-direction: column; gap: 8px; margin-top: 6px;">
-          <div class="business-tip-box" style="white-space: pre-wrap;">
-            <div class="tip-title">💡 ビジネス即答あんちょこ</div>
-            <div style="font-size: 12px; color: #fef08a; line-height: 1.4;">${q.business_tip}</div>
+        <div class="book-answer-content" style="display: none; flex-direction: column; gap: 10px; margin-top: 8px;">
+          <div class="business-tip-box" style="white-space: pre-wrap; padding: 12px 14px;">
+            <div class="tip-title" style="font-size: 13.5px;">💡 ビジネス即答あんちょこ</div>
+            <div style="font-size: 15px; color: #fef08a; line-height: 1.5;">${q.business_tip || ""}</div>
           </div>
-          <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 8px;">
-            <strong style="color: #86efac;">正解: ${q.answer}</strong><br>
+          <div style="font-size: 14.5px; color: #e2e8f0; line-height: 1.6; background: rgba(0,0,0,0.35); padding: 12px 14px; border-radius: 8px;">
+            <strong style="color: #86efac; font-size: 15px;">正解: ${Array.isArray(q.answer) ? q.answer.join(", ") : q.answer}</strong><br>
             ${q.explanation}
           </div>
         </div>
@@ -745,15 +745,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         item.style.background = ans.isCorrect ? "rgba(52, 168, 83, 0.15)" : "rgba(234, 67, 53, 0.15)";
         item.style.border = "1px solid " + (ans.isCorrect ? "rgba(52, 168, 83, 0.4)" : "rgba(234, 67, 53, 0.4)");
         item.style.borderRadius = "8px";
-        item.style.padding = "8px 10px";
-        item.style.fontSize = "12px";
+        item.style.padding = "10px 12px";
+        item.style.fontSize = "14px";
 
         item.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong>問${idx + 1} (${q.code || ("Q" + (q.id || q.q_num))})</strong>
             <span>${ans.isCorrect ? '<span style="color:#86efac;font-weight:bold;">⭕ 正解</span>' : `<span style="color:#fca5a5;font-weight:bold;">❌ 回答【${selStr}】➔ 正解【${corStr}】</span>`}</span>
           </div>
-          <div style="font-size: 11px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <div style="font-size: 13px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             ${q.question}
           </div>
         `;
