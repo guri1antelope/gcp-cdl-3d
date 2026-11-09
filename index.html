@@ -88,13 +88,18 @@
           <div class="mode-grid">
             <button id="btn-mode-stages" class="mode-btn">
               <span class="mode-icon">🚀</span>
-              <span class="mode-title">ステージ学習</span>
+              <span class="mode-title">基礎ステージ</span>
               <span class="mode-desc">全6章・20ステージ (1回10問)</span>
+            </button>
+            <button id="btn-mode-practice" class="mode-btn" style="border-color: #f97316; background: rgba(249, 115, 22, 0.12);">
+              <span class="mode-icon">🔥</span>
+              <span class="mode-title" style="color: #fdba74;">実践対策 50問</span>
+              <span class="mode-desc">最新問題集・全5ステージ</span>
             </button>
             <button id="btn-mode-book" class="mode-btn" style="border-color: var(--gcp-yellow);">
               <span class="mode-icon">📚</span>
               <span class="mode-title" style="color: #fef08a;">暗記ブック</span>
-              <span class="mode-desc">200問全問・解説赤シート</span>
+              <span class="mode-desc">全問・赤シート解説</span>
             </button>
             <button id="btn-mode-flash" class="mode-btn">
               <span class="mode-icon">⚡</span>
@@ -106,10 +111,10 @@
               <span class="mode-title">弱点リベンジ</span>
               <span class="mode-desc" id="home-weak-count">間違えた問題 (0問)</span>
             </button>
-            <button id="btn-mode-mock" class="mode-btn" style="grid-column: span 2;">
+            <button id="btn-mode-mock" class="mode-btn">
               <span class="mode-icon">📝</span>
-              <span class="mode-title">本番模擬試験（50問・90分タイマー）</span>
-              <span class="mode-desc">本番比率出題＆セクション別合格診断</span>
+              <span class="mode-title">本番模擬試験</span>
+              <span class="mode-desc">50問・90分タイマー</span>
             </button>
           </div>
         </div>
@@ -118,17 +123,23 @@
       <!-- 3. Stage Select Screen -->
       <div id="screen-stage-select" class="screen interactive">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h2 style="font-size: 18px; font-weight: bold;">ステージを選択</h2>
+          <h2 id="stage-select-title" style="font-size: 18px; font-weight: bold;">ステージを選択</h2>
           <button id="btn-stage-back" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">◀ 戻る</button>
         </div>
         <div id="stage-list-grid" class="stage-list-grid"></div>
       </div>
 
-      <!-- 3.5 CDL Complete Book Screen (全200問 問題集＆解答解説) -->
+      <!-- 3.5 CDL Complete Book Screen (全200問 / 実践50問 問題集＆解答解説) -->
       <div id="screen-book" class="screen interactive">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h2 style="font-size: 16px; font-weight: bold; color: var(--gcp-yellow);">📚 CDL暗記ブック (全200問)</h2>
+          <h2 id="book-title" style="font-size: 16px; font-weight: bold; color: var(--gcp-yellow);">📚 CDL暗記ブック</h2>
           <button id="btn-book-back" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;">◀ ホーム</button>
+        </div>
+
+        <!-- 問題集切り替えタブ -->
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+          <button id="btn-book-tab-base" class="btn btn-secondary" style="flex: 1; padding: 6px; font-size: 12px; font-weight: bold; background: rgba(66, 133, 244, 0.35); border-color: var(--gcp-blue); color: #fff;">基礎200問</button>
+          <button id="btn-book-tab-practice" class="btn btn-secondary" style="flex: 1; padding: 6px; font-size: 12px; font-weight: bold;">🔥 実践50問</button>
         </div>
 
         <!-- フィルターと検索バー -->
@@ -150,7 +161,7 @@
         </div>
 
         <div id="book-list-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px;">
-          <!-- 200問のアコーディオンカード -->
+          <!-- 問題のアコーディオンカード -->
         </div>
       </div>
 
@@ -178,6 +189,11 @@
         <div id="quiz-choices-container" class="choices-container">
           <!-- A, B, C, D ボタン -->
         </div>
+
+        <!-- 複数選択用 確定ボタン -->
+        <button id="btn-quiz-multi-submit" class="btn btn-green" style="display: none; margin-top: 10px; width: 100%; font-size: 14px; font-weight: bold; padding: 12px;">
+          選択した回答で確定する ▶
+        </button>
 
         <!-- 解説＆あんちょこカード（解答後に表示） -->
         <div id="quiz-explanation-card" class="explanation-card">

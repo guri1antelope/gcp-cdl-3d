@@ -184,14 +184,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   // ================= 3. Learning Modes =================
-  // ① ステージ学習
+  // ① 基礎ステージ学習
   document.getElementById("btn-mode-stages").onclick = () => {
     audio.playTap();
     renderStageList();
     showScreen("stageSelect");
   };
 
+  // 🔥 実践対策 厳選50問
+  const btnModePractice = document.getElementById("btn-mode-practice");
+  if (btnModePractice) {
+    btnModePractice.onclick = () => {
+      audio.playTap();
+      renderPracticeStageList();
+      showScreen("stageSelect");
+    };
+  }
+
   function renderStageList() {
+    const titleEl = document.getElementById("stage-select-title");
+    if (titleEl) titleEl.textContent = "🚀 基礎ステージ（全20ステージ）";
+
     const grid = document.getElementById("stage-list-grid");
     grid.innerHTML = "";
     const activeData = storage.getActiveData();
@@ -220,12 +233,79 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  function renderPracticeStageList() {
+    const titleEl = document.getElementById("stage-select-title");
+    if (titleEl) titleEl.textContent = "🔥 実践対策 厳選50問（全5ステージ）";
+
+    const grid = document.getElementById("stage-list-grid");
+    grid.innerHTML = "";
+    const activeData = storage.getActiveData();
+
+    quiz.practiceStages.forEach((stg) => {
+      const stageKey = `practice_${stg.id}`;
+      const isCleared = activeData.clearedStages.includes(stageKey);
+      const card = document.createElement("div");
+      card.className = `stage-card ${isCleared ? "cleared" : ""}`;
+      card.style.borderColor = isCleared ? "var(--gcp-green)" : "rgba(249, 115, 22, 0.6)";
+      card.innerHTML = `
+        <div>
+          <div style="font-size: 13px; font-weight: bold; color: #fdba74;">${stg.name}</div>
+          <div style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">
+            ${stg.questions.length}問 収録 ${isCleared ? "✅ CLEAR" : ""}
+          </div>
+        </div>
+        <button class="btn ${isCleared ? "btn-secondary" : ""}" style="padding: 6px 12px; font-size: 12px; background: ${isCleared ? "" : "linear-gradient(135deg, #ea580c, #c2410c)"};">
+          ${isCleared ? "再挑戦" : "開始 ▶"}
+        </button>
+      `;
+      card.onclick = () => {
+        audio.playTap();
+        quiz.startPracticeStage(stg.id);
+        startQuizSession();
+      };
+      grid.appendChild(card);
+    });
+  }
+
   document.getElementById("btn-stage-back").onclick = () => {
     audio.playTap();
     showScreen("home");
   };
 
-  // 📚 CDL暗記ブック（全200問 問題集＆解答解説）
+  // 📚 CDL暗記ブック（全200問 / 実践50問 問題集＆解答解説）
+  let bookCurrentTab = "base"; // "base" or "practice"
+
+  const btnBookTabBase = document.getElementById("btn-book-tab-base");
+  const btnBookTabPractice = document.getElementById("btn-book-tab-practice");
+
+  if (btnBookTabBase && btnBookTabPractice) {
+    btnBookTabBase.onclick = () => {
+      audio.playTap();
+      bookCurrentTab = "base";
+      btnBookTabBase.style.background = "rgba(66, 133, 244, 0.35)";
+      btnBookTabBase.style.borderColor = "var(--gcp-blue)";
+      btnBookTabBase.style.color = "#fff";
+      btnBookTabPractice.style.background = "";
+      btnBookTabPractice.style.borderColor = "";
+      btnBookTabPractice.style.color = "";
+      document.getElementById("book-section-filter").parentElement.style.display = "flex";
+      renderBookList();
+    };
+
+    btnBookTabPractice.onclick = () => {
+      audio.playTap();
+      bookCurrentTab = "practice";
+      btnBookTabPractice.style.background = "rgba(249, 115, 22, 0.35)";
+      btnBookTabPractice.style.borderColor = "#f97316";
+      btnBookTabPractice.style.color = "#fdba74";
+      btnBookTabBase.style.background = "";
+      btnBookTabBase.style.borderColor = "";
+      btnBookTabBase.style.color = "";
+      document.getElementById("book-section-filter").parentElement.style.display = "none";
+      renderBookList();
+    };
+  }
+
   document.getElementById("btn-mode-book").onclick = () => {
     audio.playTap();
     renderBookList();
@@ -244,21 +324,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     const container = document.getElementById("book-list-container");
     container.innerHTML = "";
 
-    const secFilter = document.getElementById("book-section-filter").value;
-    const searchKeyword = (document.getElementById("book-search-input").value || "").trim().toLowerCase();
     const activeData = storage.getActiveData();
+    const searchKeyword = (document.getElementById("book-search-input").value || "").trim().toLowerCase();
+    const sourceQuestions = bookCurrentTab === "base" ? quiz.questions : quiz.practiceQuestions;
 
-    let filtered = quiz.questions.filter((q) => {
-      if (secFilter === "weak") {
-        if (!activeData.weakQuestions.includes(q.id)) return false;
-      } else if (secFilter === "bookmark") {
-        if (!activeData.bookmarkedQuestions.includes(q.id)) return false;
-      } else if (secFilter !== "all") {
-        if (String(q.section_id) !== secFilter) return false;
+    let filtered = sourceQuestions.filter((q) => {
+      const qId = q.id || q.q_num;
+      if (bookCurrentTab === "base") {
+        const secFilter = document.getElementById("book-section-filter").value;
+        if (secFilter === "weak") {
+          if (!activeData.weakQuestions.includes(qId)) return false;
+        } else if (secFilter === "bookmark") {
+          if (!activeData.bookmarkedQuestions.includes(qId)) return false;
+        } else if (secFilter !== "all") {
+          if (String(q.section_id) !== secFilter) return false;
+        }
+      } else {
+        // practice
+        if (searchKeyword && activeData.weakQuestions.includes(qId)) {
+          // weak filter if needed
+        }
       }
 
       if (searchKeyword) {
-        const fullText = (q.question + " " + q.scenario_tag + " " + q.business_tip + " " + q.explanation + " " + q.choices.map((c) => c.text).join(" ")).toLowerCase();
+        const fullText = (q.question + " " + (q.scenario_tag || "") + " " + (q.business_tip || "") + " " + (q.explanation || "") + " " + q.choices.map((c) => c.text).join(" ")).toLowerCase();
         if (!fullText.includes(searchKeyword)) return false;
       }
       return true;
@@ -396,14 +485,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    const qId = q.id || q.q_num;
+    const isMulti = (q.multi_select && q.multi_select > 1) || (Array.isArray(q.answer) && q.answer.length > 1);
+    const requiredCount = q.multi_select || (Array.isArray(q.answer) ? q.answer.length : 1);
+
     // Header progress
     document.getElementById("quiz-progress-text").textContent = `問 ${quiz.currentIndex + 1} / ${quiz.currentQuestions.length}`;
-    document.getElementById("quiz-scenario-tag").textContent = q.scenario_tag || "ビジネス課題";
+    document.getElementById("quiz-scenario-tag").textContent = isMulti ? `${q.scenario_tag || "ビジネス課題"} [${requiredCount}つ選択]` : (q.scenario_tag || "ビジネス課題");
     document.getElementById("quiz-question-text").textContent = q.question;
 
     // ブックマーク状態
     const activeData = storage.getActiveData();
-    const isBookmarked = activeData.bookmarkedQuestions.includes(q.id);
+    const isBookmarked = activeData.bookmarkedQuestions.includes(qId);
     document.getElementById("btn-quiz-bookmark").textContent = isBookmarked ? "★ 復習中" : "☆ 復習";
 
     // Choices
@@ -411,14 +504,78 @@ document.addEventListener("DOMContentLoaded", async () => {
     choicesBox.innerHTML = "";
     document.getElementById("quiz-explanation-card").style.display = "none";
 
+    const multiSubmitBtn = document.getElementById("btn-quiz-multi-submit");
+    if (multiSubmitBtn) {
+      multiSubmitBtn.style.display = isMulti ? "block" : "none";
+      multiSubmitBtn.disabled = true;
+      multiSubmitBtn.textContent = `${requiredCount}つ選択してください (0/${requiredCount})`;
+    }
+
+    let selectedMultiLabels = [];
+
     q.choices.forEach((choice) => {
       const btn = document.createElement("button");
       btn.className = "choice-btn";
-      btn.innerHTML = `<span class="choice-label">${choice.label}.</span> <span>${choice.text}</span>`;
 
-      btn.onclick = () => handleChoiceSelect(choice.label, btn);
+      if (isMulti) {
+        btn.innerHTML = `<span class="choice-check">☐</span> <span class="choice-label">${choice.label}.</span> <span>${choice.text}</span>`;
+        btn.onclick = () => {
+          audio.playTap();
+          const idx = selectedMultiLabels.indexOf(choice.label);
+          if (idx >= 0) {
+            selectedMultiLabels.splice(idx, 1);
+            btn.classList.remove("selected");
+            const chk = btn.querySelector(".choice-check");
+            if (chk) chk.textContent = "☐";
+          } else {
+            if (selectedMultiLabels.length < requiredCount) {
+              selectedMultiLabels.push(choice.label);
+              btn.classList.add("selected");
+              const chk = btn.querySelector(".choice-check");
+              if (chk) chk.textContent = "☑";
+            } else {
+              // 既に上限まで選んでいる場合は入れ替え
+              const oldest = selectedMultiLabels.shift();
+              choicesBox.querySelectorAll(".choice-btn").forEach((b) => {
+                const l = b.querySelector(".choice-label");
+                if (l && l.textContent.replace(".", "").trim() === oldest) {
+                  b.classList.remove("selected");
+                  const c = b.querySelector(".choice-check");
+                  if (c) c.textContent = "☐";
+                }
+              });
+              selectedMultiLabels.push(choice.label);
+              btn.classList.add("selected");
+              const chk = btn.querySelector(".choice-check");
+              if (chk) chk.textContent = "☑";
+            }
+          }
+
+          if (multiSubmitBtn) {
+            if (selectedMultiLabels.length === requiredCount) {
+              multiSubmitBtn.disabled = false;
+              multiSubmitBtn.textContent = `選択した【${[...selectedMultiLabels].sort().join(", ")}】で回答を確定 ▶`;
+            } else {
+              multiSubmitBtn.disabled = true;
+              multiSubmitBtn.textContent = `あと${requiredCount - selectedMultiLabels.length}つ選択してください (${selectedMultiLabels.length}/${requiredCount})`;
+            }
+          }
+        };
+      } else {
+        btn.innerHTML = `<span class="choice-label">${choice.label}.</span> <span>${choice.text}</span>`;
+        btn.onclick = () => submitQuizAnswer([choice.label]);
+      }
+
       choicesBox.appendChild(btn);
     });
+
+    if (isMulti && multiSubmitBtn) {
+      multiSubmitBtn.onclick = () => {
+        audio.playTap();
+        multiSubmitBtn.style.display = "none";
+        submitQuizAnswer(selectedMultiLabels);
+      };
+    }
   }
 
   // ブックマーク切替
@@ -426,38 +583,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     audio.playTap();
     const q = quiz.getCurrentQuestion();
     if (!q) return;
-    const bookmarked = storage.toggleBookmark(q.id);
+    const qId = q.id || q.q_num;
+    const bookmarked = storage.toggleBookmark(qId);
     document.getElementById("btn-quiz-bookmark").textContent = bookmarked ? "★ 復習中" : "☆ 復習";
   };
 
-  function handleChoiceSelect(label, selectedBtn) {
+  function submitQuizAnswer(selectedLabels) {
+    const multiSubmitBtn = document.getElementById("btn-quiz-multi-submit");
+    if (multiSubmitBtn) multiSubmitBtn.style.display = "none";
+
     const allBtns = document.querySelectorAll(".choice-btn");
     allBtns.forEach((b) => (b.disabled = true));
 
-    const result = quiz.answerCurrent(label);
+    const result = quiz.answerCurrent(selectedLabels);
     storage.recordAnswer(result.qId, result.isCorrect);
 
     const q = quiz.getCurrentQuestion();
-    const correctLabel = result.correctAnswer.trim().toUpperCase();
-    const selectedLabel = label.trim().toUpperCase();
-
-    const correctChoiceObj = q.choices.find(c => c.label.toUpperCase() === correctLabel);
-    const correctText = correctChoiceObj ? correctChoiceObj.text : "";
+    const correctList = quiz._normalizeAnswers(result.correctAnswer);
+    const userList = quiz._normalizeAnswers(selectedLabels);
 
     // 全ボタンのスタイルとバッジ更新
     allBtns.forEach((b) => {
       const labelEl = b.querySelector(".choice-label");
       const bLabel = labelEl ? labelEl.textContent.replace(".", "").trim().toUpperCase() : "";
 
-      if (bLabel === selectedLabel) {
-        if (result.isCorrect) {
-          b.classList.add("correct");
-          b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-user-correct">⭕ あなたの回答（正解！）</span>`);
-        } else {
-          b.classList.add("incorrect");
-          b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-user-wrong">❌ あなたの回答</span>`);
-        }
-      } else if (bLabel === correctLabel) {
+      const isUserChosen = userList.includes(bLabel);
+      const isCorrectChoice = correctList.includes(bLabel);
+
+      if (isUserChosen && isCorrectChoice) {
+        b.classList.add("correct");
+        b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-user-correct">⭕ あなたの回答（正解！）</span>`);
+      } else if (isUserChosen && !isCorrectChoice) {
+        b.classList.add("incorrect");
+        b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-user-wrong">❌ あなたの回答</span>`);
+      } else if (!isUserChosen && isCorrectChoice) {
         b.classList.add("correct");
         b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-answer">👑 正解！</span>`);
       } else {
@@ -467,19 +626,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // 判定バナーの描画
     const banner = document.getElementById("quiz-judgement-banner");
+    const correctStr = correctList.join(", ");
+    const userStr = userList.join(", ");
+
     if (result.isCorrect) {
       audio.playCorrect();
       scene3d.jumpPlayer();
       banner.className = "judgement-banner banner-correct";
-      banner.innerHTML = `<div>⭕ <strong>大正解！ 正解は【${correctLabel}】です</strong><br><span style="font-size: 12px; font-weight: normal; color: #cbd5e1;">${correctLabel}. ${correctText}</span></div>`;
+      banner.innerHTML = `<div>⭕ <strong>大正解！ 正解は【${correctStr}】です</strong></div>`;
     } else {
       audio.playIncorrect();
       banner.className = "judgement-banner banner-incorrect";
-      banner.innerHTML = `<div>❌ <strong>不正解：あなたの回答【${selectedLabel}】 ➔ 正解は【${correctLabel}】</strong><br><span style="font-size: 12px; font-weight: normal; color: #fef08a;">${correctLabel}. ${correctText}</span></div>`;
+      banner.innerHTML = `<div>❌ <strong>不正解：あなたの回答【${userStr}】 ➔ 正解は【${correctStr}】</strong></div>`;
     }
 
     // あんちょこ＆解説表示
-    document.getElementById("quiz-business-tip").textContent = result.businessTip;
+    document.getElementById("quiz-business-tip").textContent = result.businessTip || "要点を整理して定着させましょう。";
     document.getElementById("quiz-explanation-text").textContent = result.explanation;
     document.getElementById("quiz-explanation-card").style.display = "flex";
   }
@@ -499,9 +661,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const q = quiz.getCurrentQuestion();
     if (!q) return;
 
-    const correctLabel = q.answer.trim().toUpperCase();
-    const correctChoiceObj = q.choices.find(c => c.label.toUpperCase() === correctLabel);
-    const correctText = correctChoiceObj ? correctChoiceObj.text : "";
+    const multiSubmitBtn = document.getElementById("btn-quiz-multi-submit");
+    if (multiSubmitBtn) multiSubmitBtn.style.display = "none";
+
+    const correctList = quiz._normalizeAnswers(q.answer);
+    const correctStr = correctList.join(", ");
 
     const allBtns = document.querySelectorAll(".choice-btn");
     allBtns.forEach((b) => {
@@ -509,7 +673,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const labelEl = b.querySelector(".choice-label");
       const bLabel = labelEl ? labelEl.textContent.replace(".", "").trim().toUpperCase() : "";
 
-      if (bLabel === correctLabel) {
+      if (correctList.includes(bLabel)) {
         b.classList.add("correct");
         if (!b.querySelector(".choice-tag")) {
           b.insertAdjacentHTML("beforeend", `<span class="choice-tag tag-answer">👑 正解！</span>`);
@@ -521,9 +685,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const banner = document.getElementById("quiz-judgement-banner");
     banner.className = "judgement-banner banner-correct";
-    banner.innerHTML = `<div>💡 <strong>正解は【${correctLabel}】です</strong><br><span style="font-size: 12px; font-weight: normal; color: #fef08a;">${correctLabel}. ${correctText}</span></div>`;
+    banner.innerHTML = `<div>💡 <strong>正解は【${correctStr}】です</strong></div>`;
 
-    document.getElementById("quiz-business-tip").textContent = q.business_tip;
+    document.getElementById("quiz-business-tip").textContent = q.business_tip || "";
     document.getElementById("quiz-explanation-text").textContent = q.explanation;
     document.getElementById("quiz-explanation-card").style.display = "flex";
   };
@@ -552,10 +716,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const expRes = storage.addExp(expGain);
 
     // ステージクリア保存
-    if (quiz.currentMode === "stage" && res.rate >= 70) {
+    if (res.rate >= 70) {
       const activeData = storage.getActiveData();
-      if (!activeData.clearedStages.includes(quiz.currentStageId)) {
-        activeData.clearedStages.push(quiz.currentStageId);
+      const stageKey = quiz.currentMode === "practice_stage" ? `practice_${quiz.currentStageId}` : quiz.currentStageId;
+      if (!activeData.clearedStages.includes(stageKey)) {
+        activeData.clearedStages.push(stageKey);
         storage.saveActiveData();
       }
     }
@@ -567,9 +732,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     const reviewBox = document.getElementById("result-review-container");
     if (reviewBox) {
       reviewBox.innerHTML = "";
+      const allPool = [...quiz.questions, ...quiz.practiceQuestions];
+
       quiz.userAnswers.forEach((ans, idx) => {
-        const q = quiz.questions.find((x) => x.id === ans.qId);
+        const q = allPool.find((x) => (x.id || x.q_num) === ans.qId);
         if (!q) return;
+
+        const selStr = Array.isArray(ans.selected) ? ans.selected.sort().join(", ") : ans.selected;
+        const corStr = Array.isArray(ans.correct) ? ans.correct.sort().join(", ") : ans.correct;
 
         const item = document.createElement("div");
         item.style.background = ans.isCorrect ? "rgba(52, 168, 83, 0.15)" : "rgba(234, 67, 53, 0.15)";
@@ -580,8 +750,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         item.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-            <strong>問${idx + 1} (${q.code})</strong>
-            <span>${ans.isCorrect ? '<span style="color:#86efac;font-weight:bold;">⭕ 正解</span>' : `<span style="color:#fca5a5;font-weight:bold;">❌ 回答【${ans.selected}】➔ 正解【${ans.correct}】</span>`}</span>
+            <strong>問${idx + 1} (${q.code || ("Q" + (q.id || q.q_num))})</strong>
+            <span>${ans.isCorrect ? '<span style="color:#86efac;font-weight:bold;">⭕ 正解</span>' : `<span style="color:#fca5a5;font-weight:bold;">❌ 回答【${selStr}】➔ 正解【${corStr}】</span>`}</span>
           </div>
           <div style="font-size: 11px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
             ${q.question}

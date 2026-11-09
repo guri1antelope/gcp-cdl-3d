@@ -9,7 +9,9 @@ class QuizEngine {
     this.questions = [];
     this.sections = [];
     this.stages = []; // [{id, sectionId, stageNum, title, qIds}]
-    this.currentMode = null; // 'stage', 'weak', 'mock', 'flash'
+    this.practiceQuestions = [];
+    this.practiceStages = [];
+    this.currentMode = null; // 'stage', 'practice_stage', 'weak', 'mock', 'flash'
     this.currentQuestions = [];
     this.currentIndex = 0;
     this.correctCount = 0;
@@ -25,10 +27,46 @@ class QuizEngine {
       const res = await fetch("data/cdl_questions.json");
       this.questions = await res.json();
       this.buildStages();
+
+      // 実践50問も合わせてロード（存在すれば）
+      await this.loadPracticeQuestions();
+
       return true;
     } catch (e) {
       console.error("Failed to load questions:", e);
       return false;
+    }
+  }
+
+  async loadPracticeQuestions() {
+    try {
+      const res = await fetch("data/exam_practice_50.json");
+      if (res.ok) {
+        this.practiceQuestions = await res.json();
+        this.buildPracticeStages();
+      }
+    } catch (e) {
+      console.log("Practice questions not yet available:", e);
+    }
+  }
+
+  buildPracticeStages() {
+    this.practiceStages = [];
+    const pageSize = 10;
+    const total = this.practiceQuestions.length;
+    const stageCount = Math.ceil(total / pageSize);
+
+    for (let i = 0; i < stageCount; i++) {
+      const slice = this.practiceQuestions.slice(i * pageSize, (i + 1) * pageSize);
+      this.practiceStages.push({
+        id: i + 1,
+        title: `実践対策 ステージ ${i + 1}`,
+        stageNum: i + 1,
+        stageCount: stageCount,
+        name: `実践対策 厳選50問 - ステージ ${i + 1}`,
+        questionIds: slice.map((q) => q.id || q.q_num),
+        questions: slice
+      });
     }
   }
 
@@ -71,6 +109,20 @@ class QuizEngine {
     });
   }
 
+  // 実践50問ステージ学習の開始
+  startPracticeStage(stageId) {
+    const stage = this.practiceStages.find((s) => s.id === stageId);
+    if (!stage) return false;
+
+    this.currentMode = "practice_stage";
+    this.currentStageId = stageId;
+    this.currentQuestions = [...stage.questions];
+    this.currentIndex = 0;
+    this.correctCount = 0;
+    this.userAnswers = [];
+    return true;
+  }
+
   // ステージ学習の開始
   startStage(stageId) {
     const stage = this.stages.find((s) => s.id === stageId);
@@ -88,7 +140,8 @@ class QuizEngine {
   // 弱点克服モードの開始
   startWeakPoints(weakIds) {
     if (!weakIds || weakIds.length === 0) return false;
-    const weakList = this.questions.filter((q) => weakIds.includes(q.id));
+    const allPool = [...this.questions, ...this.practiceQuestions];
+    const weakList = allPool.filter((q) => weakIds.includes(q.id || q.q_num));
     if (weakList.length === 0) return false;
 
     // シャッフルして最大15問
@@ -130,8 +183,9 @@ class QuizEngine {
     this.currentIndex = 0;
     this.correctCount = 0;
     this.userAnswers = [];
-    // ランダムに10問ピックアップ
-    this.currentQuestions = [...this.questions].sort(() => Math.random() - 0.5).slice(0, 10);
+    // ランダムに10問ピックアップ（全問題から）
+    const allPool = [...this.questions, ...this.practiceQuestions];
+    this.currentQuestions = [...allPool].sort(() => Math.random() - 0.5).slice(0, 10);
     return true;
   }
 
@@ -140,18 +194,37 @@ class QuizEngine {
     return this.currentQuestions[this.currentIndex];
   }
 
-  answerCurrent(selectedLabel) {
+  _normalizeAnswers(val) {
+    if (Array.isArray(val)) {
+      return val.map((s) => String(s).trim().toUpperCase()).sort();
+    }
+    if (typeof val === "string") {
+      if (val.includes(",")) {
+        return val.split(",").map((s) => s.trim().toUpperCase()).sort();
+      }
+      return [val.trim().toUpperCase()];
+    }
+    return [];
+  }
+
+  answerCurrent(selected) {
     const q = this.getCurrentQuestion();
     if (!q) return null;
 
-    const isCorrect = q.answer.trim().toUpperCase() === selectedLabel.trim().toUpperCase();
+    const userAns = this._normalizeAnswers(selected);
+    const correctAns = this._normalizeAnswers(q.answer);
+
+    const isCorrect = userAns.length === correctAns.length &&
+                      userAns.every((val, idx) => val === correctAns[idx]);
+
     if (isCorrect) {
       this.correctCount++;
     }
 
+    const qId = q.id || q.q_num;
     this.userAnswers.push({
-      qId: q.id,
-      selected: selectedLabel,
+      qId: qId,
+      selected: selected,
       correct: q.answer,
       isCorrect: isCorrect
     });
@@ -161,7 +234,7 @@ class QuizEngine {
       correctAnswer: q.answer,
       explanation: q.explanation,
       businessTip: q.business_tip,
-      qId: q.id
+      qId: qId
     };
   }
 
@@ -179,13 +252,15 @@ class QuizEngine {
     // セクション別スコア算出
     const secStats = {};
     this.userAnswers.forEach((ans) => {
-      const q = this.questions.find((x) => x.id === ans.qId);
+      const q = this.questions.find((x) => x.id === ans.qId) || this.practiceQuestions.find((x) => (x.id || x.q_num) === ans.qId);
       if (!q) return;
-      if (!secStats[q.section_id]) {
-        secStats[q.section_id] = { title: q.section_title, correct: 0, total: 0 };
+      const secId = q.section_id || "practice";
+      const secTitle = q.section_title || "実践対策 厳選50問";
+      if (!secStats[secId]) {
+        secStats[secId] = { title: secTitle, correct: 0, total: 0 };
       }
-      secStats[q.section_id].total++;
-      if (ans.isCorrect) secStats[q.section_id].correct++;
+      secStats[secId].total++;
+      if (ans.isCorrect) secStats[secId].correct++;
     });
 
     return {
