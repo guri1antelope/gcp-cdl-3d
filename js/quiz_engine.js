@@ -10,6 +10,7 @@ class QuizEngine {
     this.sections = [];
     this.stages = []; // [{id, sectionId, stageNum, title, qIds}]
     this.practiceQuestions = [];
+    this.practiceCategories = [];
     this.practiceStages = [];
     this.currentMode = null; // 'stage', 'practice_stage', 'weak', 'mock', 'flash'
     this.currentQuestions = [];
@@ -28,7 +29,7 @@ class QuizEngine {
       this.questions = await res.json();
       this.buildStages();
 
-      // 実践50問も合わせてロード（存在すれば）
+      // 実践問題も合わせてロード（存在すれば）
       await this.loadPracticeQuestions();
 
       return true;
@@ -40,7 +41,10 @@ class QuizEngine {
 
   async loadPracticeQuestions() {
     try {
-      const res = await fetch("data/exam_practice_50.json");
+      let res = await fetch("data/exam_practice.json");
+      if (!res.ok) {
+        res = await fetch("data/exam_practice_50.json");
+      }
       if (res.ok) {
         this.practiceQuestions = await res.json();
         this.buildPracticeStages();
@@ -52,22 +56,50 @@ class QuizEngine {
 
   buildPracticeStages() {
     this.practiceStages = [];
-    const pageSize = 10;
-    const total = this.practiceQuestions.length;
-    const stageCount = Math.ceil(total / pageSize);
+    this.practiceCategories = [];
 
-    for (let i = 0; i < stageCount; i++) {
-      const slice = this.practiceQuestions.slice(i * pageSize, (i + 1) * pageSize);
-      this.practiceStages.push({
-        id: i + 1,
-        title: `実践対策 ステージ ${i + 1}`,
-        stageNum: i + 1,
-        stageCount: stageCount,
-        name: `実践対策 厳選50問 - ステージ ${i + 1}`,
-        questionIds: slice.map((q) => q.id || q.q_num),
-        questions: slice
-      });
-    }
+    const catOrder = ["compute", "storage", "data", "network", "security", "ops"];
+    const catLabels = {
+      compute: "💻 Compute & コンテナ",
+      storage: "💾 ストレージ & DB",
+      data: "📊 データ分析・パイプライン",
+      network: "🌐 ネットワーク",
+      security: "🔐 IAM & セキュリティ・組織",
+      ops: "⚙️ 運用監視・コスト・CLI"
+    };
+
+    const catMap = new Map();
+    catOrder.forEach((cid) => {
+      catMap.set(cid, { id: cid, title: catLabels[cid], questions: [] });
+    });
+
+    this.practiceQuestions.forEach((q) => {
+      const cid = q.category_id && catMap.has(q.category_id) ? q.category_id : "ops";
+      catMap.get(cid).questions.push(q);
+    });
+
+    let globalStageId = 1;
+    catMap.forEach((cat) => {
+      if (cat.questions.length === 0) return;
+      this.practiceCategories.push(cat);
+
+      const pageSize = 10;
+      const stageCount = Math.ceil(cat.questions.length / pageSize);
+
+      for (let i = 0; i < stageCount; i++) {
+        const slice = cat.questions.slice(i * pageSize, (i + 1) * pageSize);
+        this.practiceStages.push({
+          id: globalStageId++,
+          categoryId: cat.id,
+          categoryTitle: cat.title,
+          stageNum: i + 1,
+          stageCount: stageCount,
+          name: `${cat.title} - ステージ ${i + 1}`,
+          questionIds: slice.map((q) => q.id || q.q_num),
+          questions: slice
+        });
+      }
+    });
   }
 
   buildStages() {

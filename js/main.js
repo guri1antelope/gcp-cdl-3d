@@ -235,21 +235,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderPracticeStageList() {
     const titleEl = document.getElementById("stage-select-title");
-    if (titleEl) titleEl.textContent = "🔥 実践対策 厳選50問（全5ステージ）";
+    if (titleEl) titleEl.textContent = "🔥 実践対策（カテゴリ別）";
 
     const grid = document.getElementById("stage-list-grid");
     grid.innerHTML = "";
     const activeData = storage.getActiveData();
 
+    let lastCatId = null;
     quiz.practiceStages.forEach((stg) => {
-      const stageKey = `practice_${stg.id}`;
+      if (stg.categoryId !== lastCatId) {
+        lastCatId = stg.categoryId;
+        const catObj = quiz.practiceCategories.find((c) => c.id === stg.categoryId);
+        const totalInCat = catObj ? catObj.questions.length : "";
+        const header = document.createElement("div");
+        header.style.fontSize = "14.5px";
+        header.style.fontWeight = "bold";
+        header.style.color = "#fdba74";
+        header.style.marginTop = grid.children.length > 0 ? "14px" : "4px";
+        header.style.marginBottom = "4px";
+        header.style.paddingLeft = "8px";
+        header.style.borderLeft = "4px solid #f97316";
+        header.textContent = `${stg.categoryTitle}（${totalInCat}問）`;
+        grid.appendChild(header);
+      }
+
+      const stageKey = `practice_${stg.categoryId}_${stg.stageNum}`;
       const isCleared = activeData.clearedStages.includes(stageKey);
       const card = document.createElement("div");
       card.className = `stage-card ${isCleared ? "cleared" : ""}`;
-      card.style.borderColor = isCleared ? "var(--gcp-green)" : "rgba(249, 115, 22, 0.6)";
+      card.style.borderColor = isCleared ? "var(--gcp-green)" : "rgba(249, 115, 22, 0.5)";
       card.innerHTML = `
         <div>
-          <div style="font-size: 15.5px; font-weight: bold; color: #fdba74;">${stg.name}</div>
+          <div style="font-size: 15.5px; font-weight: bold; color: #f8fafc;">ステージ ${stg.stageNum}</div>
           <div style="font-size: 13px; color: var(--text-sub); margin-top: 2px;">
             ${stg.questions.length}問 収録 ${isCleared ? "✅ CLEAR" : ""}
           </div>
@@ -272,8 +289,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     showScreen("home");
   };
 
-  // 📚 CDL暗記ブック（全200問 / 実践50問 問題集＆解答解説）
+  // 📚 CDL暗記ブック（基礎200問 / 実践対策 問題集＆解答解説）
   let bookCurrentTab = "base"; // "base" or "practice"
+
+  function populateBookFilterOptions() {
+    const sel = document.getElementById("book-section-filter");
+    if (!sel) return;
+    if (bookCurrentTab === "base") {
+      sel.innerHTML = `
+        <option value="all">全セクション (基礎${quiz.questions.length}問)</option>
+        <option value="1">第1章: デジタル変革</option>
+        <option value="2">第2章: データ変革</option>
+        <option value="3">第3章: AIによるイノベーション</option>
+        <option value="4">第4章: インフラ・アプリ近代化</option>
+        <option value="5">第5章: 信頼とセキュリティ</option>
+        <option value="6">第6章: 運用スケーリング</option>
+        <option value="weak">⚠️ 間違えた弱点問題のみ</option>
+        <option value="bookmark">★ 復習チェック問題のみ</option>
+      `;
+    } else {
+      let opts = `<option value="all">全カテゴリ (実践${quiz.practiceQuestions.length}問)</option>`;
+      quiz.practiceCategories.forEach((cat) => {
+        opts += `<option value="${cat.id}">${cat.title} (${cat.questions.length}問)</option>`;
+      });
+      opts += `<option value="weak">⚠️ 間違えた弱点問題のみ</option>`;
+      opts += `<option value="bookmark">★ 復習チェック問題のみ</option>`;
+      sel.innerHTML = opts;
+    }
+  }
 
   const btnBookTabBase = document.getElementById("btn-book-tab-base");
   const btnBookTabPractice = document.getElementById("btn-book-tab-practice");
@@ -288,7 +331,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       btnBookTabPractice.style.background = "";
       btnBookTabPractice.style.borderColor = "";
       btnBookTabPractice.style.color = "";
-      document.getElementById("book-section-filter").parentElement.style.display = "flex";
+      populateBookFilterOptions();
       renderBookList();
     };
 
@@ -301,13 +344,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       btnBookTabBase.style.background = "";
       btnBookTabBase.style.borderColor = "";
       btnBookTabBase.style.color = "";
-      document.getElementById("book-section-filter").parentElement.style.display = "none";
+      populateBookFilterOptions();
       renderBookList();
     };
   }
 
   document.getElementById("btn-mode-book").onclick = () => {
     audio.playTap();
+    populateBookFilterOptions();
     renderBookList();
     showScreen("book");
   };
@@ -325,29 +369,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     container.innerHTML = "";
 
     const activeData = storage.getActiveData();
+    const secFilter = document.getElementById("book-section-filter").value;
     const searchKeyword = (document.getElementById("book-search-input").value || "").trim().toLowerCase();
     const sourceQuestions = bookCurrentTab === "base" ? quiz.questions : quiz.practiceQuestions;
 
     let filtered = sourceQuestions.filter((q) => {
       const qId = q.id || q.q_num;
-      if (bookCurrentTab === "base") {
-        const secFilter = document.getElementById("book-section-filter").value;
-        if (secFilter === "weak") {
-          if (!activeData.weakQuestions.includes(qId)) return false;
-        } else if (secFilter === "bookmark") {
-          if (!activeData.bookmarkedQuestions.includes(qId)) return false;
-        } else if (secFilter !== "all") {
+      if (secFilter === "weak") {
+        if (!activeData.weakQuestions.includes(qId)) return false;
+      } else if (secFilter === "bookmark") {
+        if (!activeData.bookmarkedQuestions.includes(qId)) return false;
+      } else if (secFilter !== "all") {
+        if (bookCurrentTab === "base") {
           if (String(q.section_id) !== secFilter) return false;
-        }
-      } else {
-        // practice
-        if (searchKeyword && activeData.weakQuestions.includes(qId)) {
-          // weak filter if needed
+        } else {
+          if ((q.category_id || "ops") !== secFilter) return false;
         }
       }
 
       if (searchKeyword) {
-        const fullText = (q.question + " " + (q.scenario_tag || "") + " " + (q.business_tip || "") + " " + (q.explanation || "") + " " + q.choices.map((c) => c.text).join(" ")).toLowerCase();
+        const fullText = (q.question + " " + (q.scenario_tag || "") + " " + (q.category_title || "") + " " + (q.business_tip || "") + " " + (q.explanation || "") + " " + q.choices.map((c) => c.text).join(" ")).toLowerCase();
         if (!fullText.includes(searchKeyword)) return false;
       }
       return true;
@@ -359,6 +400,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     filtered.forEach((q) => {
+      const qId = q.id || q.q_num;
       const card = document.createElement("div");
       card.style.background = "var(--panel-bg)";
       card.style.border = "1px solid var(--panel-border)";
@@ -368,14 +410,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.style.flexDirection = "column";
       card.style.gap = "8px";
 
-      const isBookmarked = activeData.bookmarkedQuestions.includes(q.id);
-      const isWeak = activeData.weakQuestions.includes(q.id);
+      const isBookmarked = activeData.bookmarkedQuestions.includes(qId);
+      const isWeak = activeData.weakQuestions.includes(qId);
 
       card.innerHTML = `
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <div style="display: flex; gap: 8px; align-items: center;">
-            <span style="font-weight: bold; font-size: 15px; color: var(--gcp-blue);">問${q.id || q.q_num} (${q.code || ("Q" + (q.id || q.q_num))})</span>
-            <span class="scenario-tag" style="font-size: 12px; padding: 2px 8px;">${q.scenario_tag || "実践対策"}</span>
+            <span style="font-weight: bold; font-size: 15px; color: var(--gcp-blue);">問${q.q_num || q.id} (${q.code || qId})</span>
+            <span class="scenario-tag" style="font-size: 12px; padding: 2px 8px;">${q.scenario_tag || q.category_title || "実践対策"}</span>
             ${isWeak ? '<span style="font-size: 12px; background: rgba(234,67,53,0.25); color: #fca5a5; padding: 2px 8px; border-radius: 4px;">⚠️ 弱点</span>' : ''}
           </div>
           <button class="btn-book-bm btn btn-secondary" style="padding: 4px 10px; font-size: 13px;">
@@ -406,7 +448,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.querySelector(".btn-book-bm").onclick = (e) => {
         e.stopPropagation();
         audio.playTap();
-        const bm = storage.toggleBookmark(q.id);
+        const bm = storage.toggleBookmark(qId);
         e.target.textContent = bm ? "★ 復習中" : "☆ 復習";
       };
 
@@ -718,7 +760,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ステージクリア保存
     if (res.rate >= 70) {
       const activeData = storage.getActiveData();
-      const stageKey = quiz.currentMode === "practice_stage" ? `practice_${quiz.currentStageId}` : quiz.currentStageId;
+      let stageKey = quiz.currentStageId;
+      if (quiz.currentMode === "practice_stage") {
+        const stg = quiz.practiceStages.find((s) => s.id === quiz.currentStageId);
+        stageKey = stg ? `practice_${stg.categoryId}_${stg.stageNum}` : `practice_${quiz.currentStageId}`;
+      }
       if (!activeData.clearedStages.includes(stageKey)) {
         activeData.clearedStages.push(stageKey);
         storage.saveActiveData();

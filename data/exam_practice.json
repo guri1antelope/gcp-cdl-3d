@@ -1,0 +1,3667 @@
+[
+  {
+    "q_num": 1,
+    "question_id": "051",
+    "multi_select": 1,
+    "question": "分析チームは、Avro 形式のトランザクションファイルの大規模なアーカイブを、オンプレミスのシステムから Cloud Storage に移行しています。ファイルは、transaction_date=2026-06-01/ のような Hive 形式のディレクトリ構成で保存されています。アナリストは、BigQuery が管理するストレージにデータのコピーを保持せずに、BigQuery でアーカイブをクエリし、学習用データセットを作成する必要があります。クエリでは通常、日付範囲を指定します。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アナリストがクエリする前に、すべての Avro ファイルを BigQuery のネイティブテーブルに読み込む。"
+      },
+      {
+        "label": "B",
+        "text": "日付ディレクトリごとに bq load ジョブをスケジュールし、元のファイルと読み込み先のテーブルの両方を保持する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Storage のファイルを参照する BigQuery 外部テーブルを作成し、transaction_date に対する Hive パーティショニングを設定する。"
+      },
+      {
+        "label": "D",
+        "text": "ファイルを Cloud SQL にインポートし、アーカイブの主な分析手段としてフェデレーションクエリを使用する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "BigQuery の外部テーブル（External Table）を使用すると、Cloud Storage 上の Avro ファイルを BigQuery ストレージに複製することなく直接クエリを実行できます。さらに transaction_date=YYYY-MM-DD/ の Hive 形式レイアウトに対して Hive パーティショニングを設定することで、日付範囲フィルタによるプルーニングが機能し、不要なファイルのスキャンを排除してクエリコストを抑制できます。ネイティブテーブルへの取り込みや bq load はデータを二重保持するため要件に反します。",
+    "business_tip": "【正解: Cloud Storage のファイルを参照する BigQuery 外部テーブルを作成し、transaction_date に対する Hive パーティショニングを設定する。】\n👉 ポイント: Cloud Storage上のデータを複製せずBigQueryで直接分析するには外部テーブル（External Table）を使用し、Hive形式ディレクトリにはHiveパーティショニングを適用する。\n💡 判断軸: BigQueryにコピーしない＋GCS参照＝外部テーブル。ディレクトリ構造（key=val）＝Hiveパーティショニング。",
+    "id": "P051",
+    "code": "P-051",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "BigQuery 外部テーブル",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン"
+  },
+  {
+    "q_num": 2,
+    "question_id": "052",
+    "multi_select": 1,
+    "question": "新しいGoogle Cloudプロジェクトを作成し、Google Cloud CLIをインストールしました。あなたはそのプロジェクトのリソースを管理する権限を持っています。\n\ngcloud CLIを使用して新しいCompute Engineインスタンスを作成する前に、必要な設定を行う必要があります。\n\nどの手順が必要ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Compute Engine APIを有効にする。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Identityでユーザーを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "Compute Engine用のファイアウォールルールを先に作成する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Identityのアクセス管理を有効にする。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nCompute Engine APIが無効になっている場合、Compute Engineリソースを作成・管理するAPI呼び出しを実行できません。\nしたがって、Compute Engineを利用する前にCompute Engine APIを有効にします。\n\n【選択肢の解説】\n・A（正解）: Compute Engineリソースを作成する前にAPIを有効化する必要があります。\n・B: 本問では、既にgcloud CLIをインストールし、権限を持っている前提です。新しいユーザーを作成する必要はありません。\n・C: ファイアウォールルールは、インスタンス作成後に設定しても問題ありません（デフォルトで一部のルールが存在します）。インスタンス作成自体は、ファイアウォールルールなしで可能です。\n・D: Cloud Identityは、組織のユーザー管理や認証に関するサービスです。既に権限を持っており、gcloud CLIが動作している状態では、これは不要です。",
+    "business_tip": "【正解: Compute Engine APIを有効にする。】\n👉 ポイント: Google Cloudでは各サービスのリソースを作成・管理する前に、該当サービスのAPI（Compute Engine APIなど）を有効化しておく必要があります。\n💡 判断軸: 新規プロジェクトでサービスを利用する際、最初に行うべきは該当APIの有効化です。権限やCLIの準備が整っていてもAPIが無効ではリソース操作ができません。",
+    "id": "P052",
+    "code": "P-052",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Compute Engine API",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 3,
+    "question_id": "053",
+    "multi_select": 1,
+    "question": "あなたのチームが開発するNode.js アプリケーションはDockerイメージとしてパッケージ化されています。\nこのアプリケーションをCloud Runにデプロイするには、どのようなプロセスが推奨されますか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "DockerイメージをFilestoreに保存し、Cloud Runにデプロイする。"
+      },
+      {
+        "label": "B",
+        "text": "DockerイメージをCloud Storageに保存し、Cloud Runにデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "DockerイメージをArtifact Registryに保存し、Cloud Runにデプロイする。"
+      },
+      {
+        "label": "D",
+        "text": "DockerイメージをTransfer Applianceに保存し、Cloud Runにデプロイする。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nArtifact Registryは、Dockerイメージなどのアーティファクトを保存し管理するためのサービスです。Artifact Registryを利用すると、開発者はアプリケーションのビルドとデプロイのプロセスを簡素化し、セキュリティと信頼性を向上させることができます。したがって、本シナリオで推奨されるプロセスは、DockerイメージをArtifact Registryに保存し、その後Cloud Runにデプロイすることです。\n\n【選択肢の解説】\n・A: Filestoreはファイルベースのストレージサービスであり、Dockerイメージの保存には適していません。\n・B: Cloud Storageはオブジェクトベースのストレージサービスであり、Cloud Run が直接デプロイできるコンテナレジストリではありません。\n・C（正解）: Artifact RegistryにDockerイメージを保存し、そこからCloud Runへデプロイするのが標準的な推奨フローです。\n・D: Transfer Appliance は、大規模なデータセットを Google Cloudに転送するために使用される物理データ転送デバイスです。Dockerイメージの保存には適していません。",
+    "business_tip": "【正解: DockerイメージをArtifact Registryに保存し、Cloud Runにデプロイする。】\n👉 ポイント: コンテナイメージの保存・管理には「Artifact Registry（旧Container Registry）」を使用し、そこからCloud RunやGKEへデプロイするのが標準プロセスです。\n💡 判断軸: Cloud Runはコンテナレジストリ（Artifact Registry等）から直接イメージを取得して稼働します。Cloud StorageやFilestoreはコンテナイメージの直接配信には適しません。",
+    "id": "P053",
+    "code": "P-053",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Artifact Registry / Cloud Run",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 4,
+    "question_id": "054",
+    "multi_select": 1,
+    "question": "会社では日次売上データを分析し、毎日レポートを生成したいと考えています。売上データは大規模であり、処理には数時間かかります。運用コストを最小化しながら効率的にレポートを生成するにはどうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Compute Engine 上でバッチ処理を行い、結果を BigQuery に保存する。"
+      },
+      {
+        "label": "B",
+        "text": "データを直接 BigQuery にストリーミングし、クエリを実行する。"
+      },
+      {
+        "label": "C",
+        "text": "Dataflow で売上データをバッチ処理し、結果を BigQuery に保存する。"
+      },
+      {
+        "label": "D",
+        "text": "Pub/Sub にデータをストリーミングし、Cloud Run functions でレポートを作成する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "正解はCです。\nDataflow は Apache Beam ベースの大規模分散処理を実行できるフルマネージド＆サーバーレスサービスです。日次で数時間かかるような大規模バッチ処理でも、自動スケーリングにより短時間で効率的に処理して結果を BigQuery に格納できます。サーバー管理が不要なため運用コストも最小限に抑えられます。\n\n各選択肢の解説:\n・A: Compute Engine はインスタンスの起動停止やスケーリング管理、固定コストが発生し運用負荷が高くなります。\n・B: 日次バッチデータに対してストリーミング挿入を行うのはコストが高く、大規模クエリの処理要件とも合致しません。\n・C（正解）: Dataflow でバッチ処理し BigQuery に保存するのが、大規模 ETL・集計の標準構成です。\n・D: Cloud Run functions は最大タイムアウト制限（通常9分〜最長60分）があり、数時間かかる大規模バッチ処理には適しません。",
+    "business_tip": "【正解: Dataflow で売上データをバッチ処理し、結果を BigQuery に保存する。】\n👉 ポイント: 大規模データの分散バッチ処理にはサーバーレスな「Dataflow」を使用し、分析基盤「BigQuery」へ投入する。\n💡 判断軸: 「数時間かかる大規模バッチ」「運用コスト最小化」なら Compute Engine（手動管理）や Functions（タイムアウト制約）を避け、Dataflow を選択。",
+    "id": "P054",
+    "code": "P-054",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Dataflow / BigQuery",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン"
+  },
+  {
+    "q_num": 5,
+    "question_id": "055",
+    "multi_select": 1,
+    "question": "Node.jsで実装されたWebアプリケーションと、Goで実装されたバックエンドAPIをオンプレミスで実行しています。また、Pythonで書かれたデータ処理ジョブを毎週実行しています。\nGoogle Cloudへ移行する際、開発者中心のチームでも運用しやすく、サーバー管理の負荷を最小限にしたいと考えています。\n最も適切な構成はどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "WebアプリケーションをCloud Storageに移行し、APIをCloud Runに移行する。データ処理はCompute Engineで実行する。"
+      },
+      {
+        "label": "B",
+        "text": "WebアプリケーションとAPIをGKEへ移行し、データ処理をCloud Runで実行する。"
+      },
+      {
+        "label": "C",
+        "text": "WebアプリケーションをApp Engineへ移行し、APIとデータ処理をCompute Engineで実行する。"
+      },
+      {
+        "label": "D",
+        "text": "WebアプリケーションとAPIをCloud Runへ移行し、データ処理をCloud Run Jobsへ移行してCloud Schedulerから定期実行する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "正解はDです。\nCloud Run はコンテナ化された Web アプリや API をサーバーレスで稼働でき、インフラ管理の手間がありません。定期実行するバッチジョブには Cloud Run Jobs を使い、Cloud Scheduler でトリガーすることで、すべてのワークロードをサーバーレス化してサーバー管理負荷を最小化できます。\n\n各選択肢の解説:\n・A: Cloud Storage は静的ファイル配信用であり動的な Node.js アプリは実行できません。また Compute Engine はサーバー管理が発生します。\n・B: GKE はクラスタやノード運用の管理コストが高く、開発者中心チームの「サーバー管理最小化」に反します。\n・C: Compute Engine を含めると OS やパッチの管理負担が発生します。\n・D（正解）: Web/API は Cloud Run、定期バッチは Cloud Run Jobs + Cloud Scheduler に集約するのが運用負荷最小の構成です。",
+    "business_tip": "【正解: WebアプリケーションとAPIをCloud Runへ移行し、データ処理をCloud Run Jobsへ移行してCloud Schedulerから定期実行する。】\n👉 ポイント: Web/API は常駐・リクエスト駆動の「Cloud Run」、バッチ処理は「Cloud Run Jobs」＋「Cloud Scheduler」でフルサーバーレス化する。\n💡 判断軸: 「開発者中心チーム」「サーバー管理負荷の最小化」なら Compute Engine や GKE ではなく Cloud Run シリーズを選ぶ。",
+    "id": "P055",
+    "code": "P-055",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Run / Cloud Run Jobs",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 6,
+    "question_id": "056",
+    "multi_select": 1,
+    "question": "あなたはConfig Connectorを使用してデプロイしたCloud SQL インスタンスを管理しています。インスタンスを削除するには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "kubectl deleteを実行してCloud SQLリソースを削除する。"
+      },
+      {
+        "label": "B",
+        "text": "terraform destroyを使用してSQLインスタンスを直接削除する。"
+      },
+      {
+        "label": "C",
+        "text": "プロジェクトのConfig Connectorを無効にする。"
+      },
+      {
+        "label": "D",
+        "text": "SQLインスタンスのcnrm-systemラベルをfalseに変更する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nConfig Connectorでは、Google CloudリソースがKubernetesリソースとして管理されます。\n次のコマンドで、対応するConfig Connectorリソースを削除します。\n`kubectl delete <resource-type> <resource-name>`\nなお、Config Connectorリソースを削除すると、デフォルトでは対応するGoogle Cloudリソースも削除されます。リソースをGoogle Cloud側に残したい場合は、`cnrm.cloud.google.com/deletion-policy: \"abandon\"` を設定します。\n\n【選択肢の解説】\n・A（正解）: Config Connectorで管理されているリソースは、Kubernetesのカスタムリソースとして扱われるため、`kubectl delete` でリソースを削除すると、基盤となるGoogle Cloudリソースも連動して削除されます。\n・B: terraform destroyコマンドによるインスタンスの削除は Config Connector の管理をバイパスするため、Config Connector マニフェストで定義された状態と Google Cloud のリソースの実際の状態との間に不一致が生じる可能性があります。\n・C: プロジェクトのConfig Connectorを無効にすると、そのプロジェクト内のリソースはConfig Connectorを使用して管理できなくなりますが、既存のCloud SQLインスタンスは削除されません。\n・D: インスタンスのラベルを変更してもリソースは削除されません。",
+    "business_tip": "【正解: kubectl deleteを実行してCloud SQLリソースを削除する。】\n👉 ポイント: Config Connector配下のリソースはKubernetesマニフェストで宣言的管理されているため、ライフサイクル操作（作成・変更・削除）も kubectl コマンドで行います。\n💡 判断軸: Config Connector環境で直接Terraformやコンソールから削除するとマニフェストとの不整合（ドリフト）が発生します。Kubernetes側のリソースを kubectl delete するのが正解です。",
+    "id": "P056",
+    "code": "P-056",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Config Connector / kubectl",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 7,
+    "question_id": "057",
+    "multi_select": 1,
+    "question": "あなたはLooker Studioを使用して、BigQueryのテーブルを可視化しています。\nBigQueryのテーブルには最新のデータが正常に保存されていることを確認済みですが、Looker Studioのグラフには古いデータが表示されています。\nこの問題を解決するために、最初に確認すべき設定はどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "BigQueryデータセットのロケーション設定"
+      },
+      {
+        "label": "B",
+        "text": "BigQueryテーブルのパーティション設定"
+      },
+      {
+        "label": "C",
+        "text": "Looker Studioデータソースのデータ更新頻度（Data freshness）設定"
+      },
+      {
+        "label": "D",
+        "text": "BigQueryジョブのクエリキャッシュ設定"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【正解: C】\nBigQuery 側に最新データが存在するにもかかわらず Looker Studio 上で古いデータが表示される場合、最も可能性が高い原因は Looker Studio のキャッシュ機能です。Looker Studio はパフォーマンス向上とクエリコスト削減のためにデータを一定時間キャッシュします。この保持期間を定義しているのがデータソース設定の「データの更新頻度（Data freshness）」です。デフォルト設定（例: 15分、4時間、12時間など）によって古いキャッシュが表示されている可能性があるため、最初にこの設定を確認・変更するか、レポート上の「データを更新」ボタンを押してキャッシュを無効化する必要があります。\n\n【不正解の解説】\n・A: データセットの地理的ロケーション（リージョン）はデータの保管場所を決定する設定であり、データの更新や表示のキャッシュ時間には影響しません。\n・B: パーティション分割はクエリのスキャン量（コスト）削減や検索速度向上のための設定であり、Looker Studio 側のデータの更新遅延とは直接関係ありません。\n・D: BigQuery 自体にもクエリ結果のキャッシュ（24時間）が存在しますが、ベーステーブルのデータが更新された場合、BigQuery は自動的にキャッシュを無効化して最新データを読み込みます。したがって、問題の主因は Looker Studio 側のキャッシュ（Data freshness）になります。",
+    "business_tip": "【正解: Looker Studioデータソースのデータ更新頻度（Data freshness）設定】\n👉 ポイント: BigQuery に最新データがあるのに Looker Studio に反映されない場合、Looker Studio 側の「データの更新頻度（Data freshness）」のキャッシュが原因である可能性が最も高い。\n💡 判断軸: BigQuery 自体のキャッシュはデータ更新時に自動無効化される。Looker Studio 側のキャッシュ間隔設定を確認・短縮するか手動更新を行う。",
+    "id": "P057",
+    "code": "P-057",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Looker Studio / BigQuery",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン"
+  },
+  {
+    "q_num": 8,
+    "question_id": "058",
+    "multi_select": 1,
+    "question": "あなたは、対応する Compute Engine マシンタイプで SAP HANA を実行するためのストレージを選定しています。データベースには、単一のデータボリュームで約250,000 IOPS の性能が必要です。また、データは VM のメモリに依存せず、VM を停止して再び起動した後も保持される必要があります。どのストレージを選択すればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "データベースファイルを格納できる容量の RAM ディスク。"
+      },
+      {
+        "label": "B",
+        "text": "必要な IOPS を指定してプロビジョニングした Hyperdisk Extreme ボリューム。"
+      },
+      {
+        "label": "C",
+        "text": "シーケンシャル処理の帯域幅を重視して選択した Hyperdisk Throughput ボリューム。"
+      },
+      {
+        "label": "D",
+        "text": "データベースファイルの唯一の保存先として使用する Local SSD ボリューム。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【正解: B】\nHyperdisk Extreme は、高い IOPS を必要とするデータベース向けのブロックストレージです。単一ボリュームで最大 350,000 IOPS を指定できるため、対応するマシンタイプ・ボリューム容量・性能設定を選べば、約 250,000 IOPS の要件に対応できます。VM のメモリとは独立してデータを保持でき、通常の VM 停止・起動で内容を失わない永続ストレージです。\n\n【不正解の解説】\n・A: RAM ディスクはメモリ上のストレージです。高速でも、VM 停止後にデータを保持する要件を満たしません。\n・C: Hyperdisk Throughput はスループットを重視した用途向けです。単一ボリュームに約 250,000 IOPS を求める今回の用途には、IOPS を指定できる Hyperdisk Extreme が適しています。\n・D: Local SSD は一時データ向けのストレージで、停止時のデータ保持にも対応構成や保存操作などの条件があります。永続データの唯一の保存先として、通常の停止・起動を前提に選ぶべき構成ではありません。",
+    "business_tip": "【正解: 必要な IOPS を指定してプロビジョニングした Hyperdisk Extreme ボリューム。】\n👉 ポイント: 単一ボリュームで超高IOPS（最大350,000 IOPS）を要求し、VM停止時もデータ保持が必要なワークロード（SAP HANA等）には「Hyperdisk Extreme」を選択する。\n💡 判断軸: RAMディスクやLocal SSDはVM停止でデータが消失する。Hyperdisk Throughputはスループット重視。高IOPSかつ永続性ならHyperdisk Extreme。",
+    "id": "P058",
+    "code": "P-058",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Hyperdisk Extreme / SAP HANA",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 9,
+    "question_id": "059",
+    "multi_select": 1,
+    "question": "Cloud Run アプリケーションで使用しているサービスアカウントの管理を、新しい運用チームに引き継ぎます。あなたは、そのサービスアカウントを利用できるプリンシパルを変更する担当であり、サービスアカウント自体に設定された IAM ポリシーを変更する権限が必要です。プロジェクト全体の IAM ポリシーを変更する必要はありません。\n適用可能な最も狭い範囲で、どの事前定義ロールをリクエストすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "サービスアカウントを所有するプロジェクトに対する Editor ロール。"
+      },
+      {
+        "label": "B",
+        "text": "そのサービスアカウントに対する Service Account Admin ロール。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Run サービスに対する Cloud Run Invoker ロール。"
+      },
+      {
+        "label": "D",
+        "text": "サービスアカウントを所有するプロジェクトに対する Owner ロール。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nサービスアカウント自身のIAMポリシーを変更するには、iam.serviceAccounts.setIamPolicy 権限が必要です。Service Account Admin（roles/iam.serviceAccountAdmin）にはこの権限が含まれ、サービスアカウント単位で付与できます。対象のサービスアカウントに付与すれば、プロジェクト全体のIAM管理権限を要求せずに、誰がそのサービスアカウントを利用できるかを管理できます。\n\n【選択肢の解説】\n・A: Editorはプロジェクト内のリソースを広く変更できる一方、必要な iam.serviceAccounts.setIamPolicy 権限を含みません。付与範囲も要件より広すぎます。\n・B（正解）: そのサービスアカウントのリソースレベルで Service Account Admin ロールを付与することで、最小権限の原則（最も狭い範囲）を満たしながらサービスアカウントの利用者を管理できます。\n・C: Cloud Run InvokerはCloud Runサービスの呼び出しに使うロールです。実行に使用するサービスアカウントのIAMポリシーは変更できません。\n・D: プロジェクトのOwnerは必要な範囲を超える管理権限を持ちます。対象サービスアカウントだけを管理する今回の要件では、付与範囲が広すぎます。",
+    "business_tip": "【正解: そのサービスアカウントに対する Service Account Admin ロール。】\n👉 ポイント: サービスアカウントの利用者（IAMポリシー）を変更するには iam.serviceAccounts.setIamPolicy 権限が必要で、これをプロジェクト単位ではなく特定サービスアカウントのリソース単位で付与するのが最小権限の原則です。\n💡 判断軸: 「プロジェクト全体のIAMポリシーを変更する必要はない」「最も狭い範囲」という要件から、プロジェクトレベルのOwner/Editorではなく、対象サービスアカウント自体に対するService Account Adminを適用します。",
+    "id": "P059",
+    "code": "P-059",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Service Account Admin ロール",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 10,
+    "question_id": "060",
+    "multi_select": 1,
+    "question": "あなたは、Google Cloud 上で \"staging\" という名前の GKE クラスタを管理しています。\"staging\" を gcloud CLI コマンドのデフォルトクラスタとして設定するには、どのコマンドを使用すればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "kubectl config set-cluster staging"
+      },
+      {
+        "label": "B",
+        "text": "gcloud container clusters update staging"
+      },
+      {
+        "label": "C",
+        "text": "gcloud config set container/cluster staging"
+      },
+      {
+        "label": "D",
+        "text": "gcloud config configurations activate staging"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【正解: C】\ngcloud CLI において、特定のサービス（この場合は GKE）のデフォルトリソース（クラスタ名など）をローカル環境に設定するには、gcloud config set コマンドを使用します（container/cluster プロパティ）。\n\n【不正解の解説】\n・A: kubectl の設定を変更するコマンドであり、gcloud CLI コマンドのデフォルト値を設定するものではありません。\n・B: クラスタ自体の設定（ノード数の自動スケーリング設定や機能の有効化など）を Google Cloud 側で更新するためのコマンドです。\n・D: gcloud の「設定構成（Named Configuration）」全体（アカウントやプロジェクトの切り替えセット）を切り替えるコマンドであり、特定サービス内のデフォルトクラスタを指定するものではありません。",
+    "business_tip": "【正解: gcloud config set container/cluster staging】\n👉 ポイント: gcloud CLI において特定サービス（GKE等）のデフォルト対象リソースを設定するには `gcloud config set <プロパティ> <値>`（container/cluster）を使用する。\n💡 判断軸: `kubectl config` は kubectl 用。`container clusters update` はクラスタ自体の変更。`configurations activate` はNamed Configurationの切替。",
+    "id": "P060",
+    "code": "P-060",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "gcloud config set",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 11,
+    "question_id": "061",
+    "multi_select": 1,
+    "question": "Google Cloud上で金融アプリケーション向けのリアルタイム分析基盤を構築しています。アプリケーションから大量のイベントデータが継続的に生成されます。イベントには構造化データと非構造化データが含まれていますが、分析処理によって必要な項目を抽出し、最終的には構造化された分析データとして保存したいと考えています。\n高いスケーラビリティと耐障害性を実現するには、どの構成が最も適切ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Pub/Subにデータをストリーミングし、Dataflowで処理してBigQueryへ送信する。"
+      },
+      {
+        "label": "B",
+        "text": "Pub/Subにデータを送信し、Dataprocで処理してFirestoreへ保存する。"
+      },
+      {
+        "label": "C",
+        "text": "Dataflowでデータを処理し、Cloud Data Fusionを介してCloud Storageへ保存する。"
+      },
+      {
+        "label": "D",
+        "text": "Dataflowでデータを処理し、Storage Transfer Serviceを介してFirestoreへ送信する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "正解はAです。\nGoogle Cloud におけるリアルタイム分析の標準構成（ゴールデンパターン）は「Pub/Sub → Dataflow → BigQuery」です。Pub/Sub が大量のストリーミングイベントを確実にバッファリングし、Dataflow が非構造化データから必要項目をリアルタイムに抽出・構造化し、BigQuery が構造化データを保存して高速な分析クエリを実行します。\n\n各選択肢の解説:\n・A（正解）: Pub/Sub（取込・バッファ）→ Dataflow（ストリーム変換）→ BigQuery（データウェアハウス・分析）の組み合わせが要件を完全に満たします。\n・B: Firestore は NoSQL ドキュメント DB であり、大規模な分析クエリ実行基盤には適していません。\n・C: 取込バッファの Pub/Sub がなく、Cloud Data Fusion や Cloud Storage の組み合わせも分析要件に適合しません。\n・D: Storage Transfer Service はファイル転送サービスであり、リアルタイムストリーミングパイプラインには使用しません。",
+    "business_tip": "【正解: Pub/Subにデータをストリーミングし、Dataflowで処理してBigQueryへ送信する。】\n👉 ポイント: ストリーミングデータの収集・処理・分析の鉄板アーキテクチャは「Pub/Sub（収集） → Dataflow（ETL/加工） → BigQuery（蓄積/分析）」。\n💡 判断軸: 「リアルタイム/ストリーミング」「大量イベント」「構造化して分析」と来たら「Pub/Sub → Dataflow → BigQuery」一択。",
+    "id": "P061",
+    "code": "P-061",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Pub/Sub / Dataflow / BigQuery",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン"
+  },
+  {
+    "q_num": 12,
+    "question_id": "062",
+    "multi_select": 1,
+    "question": "成長中のスタートアップ企業でGoogle Cloudを管理しています。各エンジニアが自分で新しいプロジェクトを作成できるようにしたいと考えています。ただし、個人のクレジットカード情報を使って請求アカウントを作成させることは避けたいと考えています。\n最小限の権限でこの要件を満たすには、どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "各エンジニアにProject Creatorロールだけを付与する。"
+      },
+      {
+        "label": "B",
+        "text": "各エンジニアにBilling Account Administratorロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "企業のBilling Accountを用意し、エンジニアにProject CreatorとBilling Account Userの権限を付与する。"
+      },
+      {
+        "label": "D",
+        "text": "各エンジニアにBudget管理権限を付与し、作成したプロジェクトを監視する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nGoogle Cloud で開発者が新しいプロジェクトを作成し、それを会社の費用に正しく紐付けるために必要な最小権限の組み合わせは以下の2つです。\n1. プロジェクト作成者（roles/resourcemanager.projectCreator）: 組織配下で新規プロジェクトを作成する権限。\n2. 請求アカウントユーザー（roles/billing.user）: 作成したプロジェクトを会社の特定請求アカウントに紐付ける（リンクする）権限。\n会社で一元管理された請求アカウントをあらかじめ作成しておき、エンジニアにこの2つのロールを付与することで、個人のクレジットカードを使わせることなく、最小限の権限でプロジェクト作成を許可できます。\n\n【選択肢の解説】\n・A: Project Creator だけでは、請求アカウントを関連付けることができません。プロジェクト作成時に請求アカウントの関連付けが必要です。\n・B: Billing Account Administrator は 請求アカウントの管理 に関する全ての権限を持ちます。これは過剰な権限です。\n・C（正解）: 会社のBilling Accountを用意し、Project CreatorとBilling Account User（利用権限）を付与するのが、最小限の権限で要件を満たすベストプラクティスです。\n・D: Budget管理権限 は 予算の監視 に関する権限で、プロジェクトの作成には関連しません。",
+    "business_tip": "【正解: 企業のBilling Accountを用意し、エンジニアにProject CreatorとBilling Account Userの権限を付与する。】\n👉 ポイント: 開発者にプロジェクト作成と請求紐付けを行わせる最小権限の組み合わせは「Project Creator」＋「Billing Account User」です。\n💡 判断軸: Billing Account Administratorは請求先変更や解約など過剰な権限を与えてしまいます。一方Project Creator単体では請求アカウントの紐付けができません。",
+    "id": "P062",
+    "code": "P-062",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "プロジェクト・請求管理権限",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 13,
+    "question_id": "063",
+    "multi_select": 1,
+    "question": "外部のデザイン会社が、1つの Cloud Storage バケットから承認済みのメディアファイルをダウンロードし、一覧表示する必要があります。ファイルのアップロード、上書き、削除を許可してはならず、プロジェクト内のほかのバケットにもアクセスできないようにする必要があります。この会社は現在、あなたのプロジェクトで Google Cloud の権限を持っていません。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "approved-media バケットに対する Storage Object Creator ロールをデザイン会社に付与する。"
+      },
+      {
+        "label": "B",
+        "text": "プロジェクトに対する Storage Object Viewer ロールをデザイン会社に付与する。"
+      },
+      {
+        "label": "C",
+        "text": "approved-media バケットに対する Storage Object Viewer ロールをデザイン会社に付与する。"
+      },
+      {
+        "label": "D",
+        "text": "approved-media バケットに対する Storage Object User ロールをデザイン会社に付与する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Storage Object Viewer（roles/storage.objectViewer）ロールは、オブジェクトの読み取り（ダウンロード）および一覧表示（リスティング）に必要な権限を提供します。これをバケット単位（approved-media バケット）で付与することで、対象外のバケットへのアクセスを遮断し、アップロードや変更・削除権限を与えずに要件を満たす最小権限を安全に設定できます。プロジェクトレベルの付与では他バケットも閲覧可能になってしまい、Creator はアップロード専用、User は作成・変更・削除も含み権限が過剰です。",
+    "business_tip": "【正解: approved-media バケットに対する Storage Object Viewer ロールをデザイン会社に付与する。】\n👉 ポイント: オブジェクトの閲覧・ダウンロードのみを許可するには Storage Object Viewer を使用し、対象バケット単体に対して付与する。\n💡 判断軸: 特定バケットのみ＝バケットレベルでIAM付与（プロジェクト単位はNG）。閲覧・ダウンロードのみ＝Storage Object Viewer（UserやCreatorはNG）。",
+    "id": "P063",
+    "code": "P-063",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Storage IAM 権限",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 14,
+    "question_id": "064",
+    "multi_select": 1,
+    "question": "Cloud RunでWebサービスを実行しています。ピーク時間帯に急激なトラフィック増加が発生すると、レイテンシが悪化することがあります。調査したところ、新しいコンテナインスタンスの起動と初期化に時間がかかっていることが分かりました。\n初期リクエストのレイテンシを抑え、可用性にも配慮した構成にするには、どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "最大インスタンス数を10に設定する。"
+      },
+      {
+        "label": "B",
+        "text": "同時実行数を1に設定する。"
+      },
+      {
+        "label": "C",
+        "text": "最小インスタンス数を3に設定する。"
+      },
+      {
+        "label": "D",
+        "text": "コンテナのメモリ上限を増やす。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "全体的な説明:\n問題の原因は、急激なアクセス増加時に発生するコンテナの「コールドスタート（インスタンスの新規起動と初期化処理による遅延）」です。\nCloud Run の 最小インスタンス数（min-instances）を設定することで、トラフィックがゼロや少ない状態であっても、指定した数（例: 3）のインスタンスをあらかじめ起動（ウォームアップ）状態として常時待機させることができます。これにより、突発的なアクセス増加時でも初期リクエストが即座に処理され、レイテンシの悪化を防ぐことができます。\n\n各選択肢の説明:\nA. 最大インスタンス数（max-instances）はスケールアウトの上限を抑えるための設定です。コールドスタート自体を回避する効果はありません。\nB. 同時実行数（concurrency）を1に下げると、1つのコンテナが同時に1つのリクエストしか処理できなくなるため、アクセス増加時にかえって大量の新しいインスタンスを起動せざるを得なくなり、コールドスタートの頻度と遅延が悪化します。\nC. 最小インスタンス数を設定してウォーム状態のインスタンスを待機させておくことで、急激なトラフィック増加時のコールドスタート遅延を防止できます。\nD. メモリを増強することでCPU性能が上がり初期化処理がわずかに速くなる可能性はありますが、コールドスタートそのものを解消する根本的な対策ではありません。",
+    "business_tip": "【正解: 最小インスタンス数を3に設定する。】\n👉 ポイント: Cloud Run のコールドスタート（起動・初期化遅延）を解消するには「最小インスタンス数（min-instances）」を設定する。\n💡 判断軸: 最大インスタンス数の上限設定や同時実行数の引き下げはコールドスタートを防げない。常時ウォーム状態で待機させる min-instances のみ有効。",
+    "id": "P064",
+    "code": "P-064",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Run 最小インスタンス",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 15,
+    "question_id": "065",
+    "multi_select": 1,
+    "question": "あなたは、IP範囲 192.168.1.0/24 のサブネットを使用しています。VMの追加によってIPアドレスが不足してきたため、既存のサブネットを拡張したいと考えています。\nどの変更が適切ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "サブネット範囲を 192.168.1.0/24 から 192.168.0.0/22 に拡張する。"
+      },
+      {
+        "label": "B",
+        "text": "サブネット範囲を 192.168.1.0/24 から 192.168.1.0/26 に縮小する。"
+      },
+      {
+        "label": "C",
+        "text": "VPCのサブネット作成モードを自動モードに変更する。"
+      },
+      {
+        "label": "D",
+        "text": "サブネットのIPv4範囲をIPv6へ変換する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "正解はAです。\nGoogle Cloud VPC のサブネットは、既存の CIDR 範囲を完全に包含するより広い範囲（プレフィックス長を小さくした値）へダウンタイムなしで拡張できます。192.168.0.0/22 の範囲は 192.168.0.0〜192.168.3.255 であり、元の 192.168.1.0/24 を内包しているため拡張として正しく機能します。\n\n各選択肢の解説:\n・A（正解）: 元の 192.168.1.0/24 を完全に包含する 192.168.0.0/22（IP数1024個）へ無停止で拡張できます。\n・B: /26 への変更は縮小（64個）であり、そもそもサブネット CIDR の縮小操作は Google Cloud ではサポートされていません。\n・C: 自動モードからカスタムモードへの変換は可能ですが、カスタムモードから自動モードへ戻すことはできません。\n・D: 既存の IPv4 サブネットを IPv6 へ直接置き換えることはできません（デュアルスタック追加は可能ですが IPv4 アドレス不足の解消には CIDR 拡張が基本です）。",
+    "business_tip": "【正解: サブネット範囲を 192.168.1.0/24 から 192.168.0.0/22 に拡張する。】\n👉 ポイント: VPC サブネットは「拡張」のみ可能（縮小は不可）。拡張時は既存範囲を包含するプレフィックス長が小さい CIDR（/24 → /22 等）を指定する。\n💡 判断軸: サブネットの IP 枯渇時は CIDR 拡張（包含関係を満たすこと）。縮小不可、カスタムから自動モードへの逆戻りも不可。",
+    "id": "P065",
+    "code": "P-065",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "VPC サブネット CIDR 拡張",
+    "category_id": "network",
+    "category_title": "ネットワーク"
+  },
+  {
+    "q_num": 16,
+    "question_id": "066",
+    "multi_select": 1,
+    "question": "あなたの会社では、機密性の高い顧客データをGoogle Cloud Storageバケットに保存しています。Compute Engine VMインスタンスで実行中のアプリケーションだけがバケットにアクセスできるようにするには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "bucketOwnerRead定義済みACLをバケットに適用する。"
+      },
+      {
+        "label": "B",
+        "text": "アプリケーション用のサービスアカウントを作成し、対象バケットに対するStorage Object Viewer IAMロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "バケットで VPC Service Controlsを有効にし、アプリケーションのIP範囲に制限をかける。"
+      },
+      {
+        "label": "D",
+        "text": "バケットでCloud Armor認証を有効にし、アプリケーションが動作するVMインスタンスを許可する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "正解はBです。\nCompute Engine VM で動くアプリケーションに Google Cloud Storage へのアクセスを許可する標準的な方法は、専用のサービスアカウントを作成して VM にアタッチし、そのサービスアカウントに必要な IAM ロール（Storage Object Viewer など）をバケット単位で付与することです。これにより、特定の VM のみが最小権限でバケットにアクセス可能となります。\n\n各選択肢の解説:\n・A: bucketOwnerRead 定義済み ACL はバケット所有者プロジェクトに読み取り権限を与えるもので、特定 VM だけにアクセス制限することはできません。\n・B（正解）: アプリケーション専用サービスアカウントを作成・アタッチし、バケットに Storage Object Viewer を付与するのが最小権限の原則に即した標準手順です。\n・C: VPC Service Controls はリソース境界を画定してデータ流出を防御する仕組みであり、特定 VM から特定バケットへのアクセス権限を付与するものではありません。\n・D: Cloud Armor は HTTP(S) ロードバランサ向けの WAF/DDoS 防御であり、Storage バケットのアクセス制御には使えません。",
+    "business_tip": "【正解: アプリケーション用のサービスアカウントを作成し、対象バケットに対するStorage Object Viewer IAMロールを付与する。】\n👉 ポイント: Compute Engine から Cloud Storage などの GCP サービスへの安全なアクセスは「専用サービスアカウント（SA）」を作成して VM に設定し、IAM ロールで最小権限を付与する。\n💡 判断軸: 「VM から GCS バケットへのセキュアなアクセス制御」はサービスアカウント＋IAMロール。Cloud Armor や VPC SC ではない。",
+    "id": "P066",
+    "code": "P-066",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "専用サービスアカウント",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 17,
+    "question_id": "067",
+    "multi_select": 1,
+    "question": "内部 IPv4 アドレスだけを持つ Compute Engine VM で、公開ソフトウェアリポジトリからパッケージをダウンロードする必要があります。組織ポリシーにより、この VM への外部 IP アドレスの割り当ては禁止されています。VPC にはデフォルトインターネットゲートウェイへの必要なルートがあり、外向きの通信も許可されています。インターネットから一方的に開始される接続を受け付けずに、外向きの接続を可能にするマネージドのソリューションが必要です。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "別の VPC との間に VPC Network Peering を作成し、そのネットワークのインターネットゲートウェイを利用する。"
+      },
+      {
+        "label": "B",
+        "text": "VM のサブネットとリージョンを対象に、Cloud NAT で Public NAT を構成する。"
+      },
+      {
+        "label": "C",
+        "text": "ソフトウェアリポジトリからの通信を許可する、上り方向のファイアウォールルールを追加する。"
+      },
+      {
+        "label": "D",
+        "text": "予約済みの内部 IPv4 アドレスを VM に割り当てる。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "全体的な説明:\nPublic NATは、外部IPv4アドレスを持たないVMからインターネットへの接続を可能にします。VMから開始した接続の送信元アドレスを変換し、その応答をVMへ戻しますが、インターネット側から一方的に開始される接続は受け付けません。対象サブネットのあるリージョンでCloud RouterとPublic NATを構成します。問題文では必要なルートと外向き通信の許可が既にあるため、この構成で公開リポジトリへ接続できます。\n\n各選択肢の説明:\nA. VPC Network Peeringを作成しただけでは、別VPCのデフォルトインターネットゲートウェイを共有して外部接続できるようにはなりません。\nB. VMのサブネットとリージョンを対象にCloud NATでPublic NATを構成することで、外部IPを持たないVMからの外向きインターネット接続のみを安全に許可できます。\nC. 上り方向のファイアウォールルールは受信通信の許可を制御します。外部アドレスのないVMに送信元NATの機能を提供するものではありません。\nD. 内部IPv4アドレスを固定しても、インターネットへの通信に必要なアドレス変換は行われません。",
+    "business_tip": "【正解: VM のサブネットとリージョンを対象に、Cloud NAT で Public NAT を構成する。】\n👉 ポイント: 「外部IPなしのVMから、インターネットへの外向き接続だけを許可したい（インバウンドは遮断）」ときは Cloud NAT（Public NAT）。\n💡 判断軸: 内部IPのみのVMがパッチや外部パッケージを取得するための定番マネージドNATサービスが Cloud NAT。",
+    "id": "P067",
+    "code": "P-067",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud NAT",
+    "category_id": "network",
+    "category_title": "ネットワーク"
+  },
+  {
+    "q_num": 18,
+    "question_id": "068",
+    "multi_select": 2,
+    "question": "あなたの会社は、継続的に利用されるミッションクリティカルな財務アプリケーションを運用しています。アプリケーションのファイルは、オーストラリアのSydneyとMelbourneの両地域から利用されます。ファイルを両地域に冗長化し、頻繁なアクセスを前提として保存するには、どの構成を選択すべきですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Sydneyリージョンのリージョナルバケットを使用する。"
+      },
+      {
+        "label": "B",
+        "text": "SydneyとMelbourneを組み合わせたデュアルリージョンを使用する。"
+      },
+      {
+        "label": "C",
+        "text": "Nearlineストレージクラスを使用する。"
+      },
+      {
+        "label": "D",
+        "text": "Coldlineストレージクラスを使用する。"
+      },
+      {
+        "label": "E",
+        "text": "Standardストレージクラスを使用する。"
+      }
+    ],
+    "answer": [
+      "B",
+      "E"
+    ],
+    "explanation": "SydneyとMelbourneの2地域に冗長化するためには、両リージョンを組み合わせたデュアルリージョンを選択します。また、頻繁なアクセスを前提とするミッションクリティカルなデータには、アクセス料金が発生せず低レイテンシで利用できる Standard ストレージクラスが最適です。Nearline は月1回程度以下、Coldline は四半期に1回程度以下の低頻度アクセス向けであり、頻繁なアクセスには不向きで追加のデータ取得コストが発生します。リージョナルバケットでは複数地域間での冗長化要件を満たせません。",
+    "business_tip": "【正解: SydneyとMelbourneを組み合わせたデュアルリージョンを使用する。 / Standardストレージクラスを使用する。】\n👉 ポイント: 2拠点間の冗長化にはデュアルリージョンを選択し、頻繁にアクセスするミッションクリティカルデータにはStandardクラスを選択する。\n💡 判断軸: 複数拠点冗長＝デュアル／マルチリージョン。アクセス頻度が高い＝Standard（NearlineやColdlineはアクセス料金が発生し不向き）。",
+    "id": "P068",
+    "code": "P-068",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Storage デュアルリージョン",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 19,
+    "question_id": "069",
+    "multi_select": 1,
+    "question": "あなたの会社ではGoogle Cloud上でWebアプリケーションを運用しています。アプリケーションのリソースは複数のプロジェクトに分散しています。\n複数プロジェクトにまたがるリソースに対して、アプリケーション単位でIAMポリシーを効率的に適用したいと考えています。Resource Managerの階層構造を利用して、この要件を満たすにはどうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アプリケーション用のFolderを作成し、関連するプロジェクトをそのFolderに配置して、FolderにIAMポリシーを設定する。"
+      },
+      {
+        "label": "B",
+        "text": "Billing Accountを作成し、IAMポリシーをBilling Accountに設定する。"
+      },
+      {
+        "label": "C",
+        "text": "新しいプロジェクトを作成し、既存リソースにラベルを付けてそのプロジェクトにまとめる。"
+      },
+      {
+        "label": "D",
+        "text": "各リソースに同じラベルを付与し、そのラベルを対象にIAMポリシーを設定する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "正解はAです。\nGoogle Cloud のリソース階層（組織 > フォルダ > プロジェクト > リソース）では、上位の Folder に設定した IAM ポリシーが配下のすべてのプロジェクトとリソースに継承されます。複数プロジェクトを1つの Folder にまとめることで、アプリケーション単位の効率的なアクセス制御が可能です。\n\n各選択肢の解説:\n・A（正解）: アプリケーション用の Folder を作成してプロジェクトをまとめ、Folder レベルで IAM を付与すれば配下に自動継承されます。\n・B: Billing Account（請求先アカウント）は課金管理用であり、リソースのアクセス制御境界としては使いません。\n・C: ラベルによって別プロジェクトのリソースを1つのプロジェクトにまとめることはできません。\n・D: ラベルはコスト分析やメタデータ管理用であり、直接 IAM ポリシーを適用する対象にはできません。",
+    "business_tip": "【正解: アプリケーション用のFolderを作成し、関連するプロジェクトをそのFolderに配置して、FolderにIAMポリシーを設定する。】\n👉 ポイント: Resource Manager の階層構造では、上位階層（Folder）に付与した IAM ポリシーが配下のプロジェクト・リソースに継承される。\n💡 判断軸: 複数プロジェクトを横断して一括で IAM 管理したいときは「Folder（フォルダ）」を作成して配下にまとめる。",
+    "id": "P069",
+    "code": "P-069",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "フォルダ階層 IAM 継承",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 20,
+    "question_id": "070",
+    "multi_select": 1,
+    "question": "あなたの組織は、個人への IAM 権限付与を、チーム単位のアクセス管理に切り替えています。ID 管理チームは、アクセス制御に使うグループを、Cloud Identity でセキュリティグループとして明示的に指定することを求めています。従業員がチームに参加したり離れたりした際には、アクセス権も変更される必要があります。あなたは Cloud Identity API を使用してグループの作成を自動化しています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "cloudidentity.googleapis.com/groups.discussion_forum ラベルだけを付けてグループを作成し、セキュリティ用途として明示的に指定されたグループとして扱う。"
+      },
+      {
+        "label": "B",
+        "text": "従業員ごとにサービスアカウントを作成し、各従業員にそのキーを管理する権限を付与する。"
+      },
+      {
+        "label": "C",
+        "text": "cloudidentity.googleapis.com/groups.discussion_forum と cloudidentity.googleapis.com/groups.security の両方のラベルを付けてグループを作成し、そのグループに IAM ロールを付与する。"
+      },
+      {
+        "label": "D",
+        "text": "チームごとにサービスアカウントを作成し、その秘密鍵をチームメンバーに配布する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Cloud Identity でセキュリティグループを作成する場合、通常の Google グループを表す cloudidentity.googleapis.com/groups.discussion_forum ラベルに加えて、cloudidentity.googleapis.com/groups.security ラベルを明示的に labels に設定する必要があります。このセキュリティグループに IAM ロールを付与することで、メンバーの加入・離脱に応じて権限が一元管理されます。サービスアカウントや秘密鍵を人間の従業員に個別に配布・管理させる手法はセキュリティ上のアンチパターンです。",
+    "business_tip": "【正解: cloudidentity.googleapis.com/groups.discussion_forum と cloudidentity.googleapis.com/groups.security の両方のラベルを付けてグループを作成し、そのグループに IAM ロールを付与する。】\n👉 ポイント: Cloud Identityでセキュリティグループを定義する場合、discussion_forum ラベルと groups.security ラベルの両方を指定する。\n💡 判断軸: セキュリティグループのAPI作成＝groups.discussion_forum ＋ groups.security の2つのラベル設定が必須。",
+    "id": "P070",
+    "code": "P-070",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Google グループ IAM 管理",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 21,
+    "question_id": "071",
+    "multi_select": 1,
+    "question": "あなたの組織では、複数のプロジェクトのアプリケーションログを、1つの Cloud Logging バケットに保存しています。サポートチームは、storefront プロジェクトのすべてのログと、バックエンドアプリケーションのエラーログだけを閲覧する必要があります。バックエンドでは、エラーを専用のログ ID backend-errors に出力し、エラー以外のエントリには別のログ ID を使用しています。サポートチームには、ログを集約しているプロジェクトへのアクセス権がまだありません。ログを重複して保存せずに、この閲覧範囲を強制する必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "バケットの _AllLogs ビューへのアクセス権をチームに付与する。共有ダッシュボードに必要なプロジェクトとログ ID のフィルタを追加し、ほかのログエントリを開かないようチームに依頼する。"
+      },
+      {
+        "label": "B",
+        "text": "storefront のすべてのログ、またはバックエンドプロジェクトのログ ID backend-errors に一致するログを選択する flexible filter を持つログビューを作成する。そのビューに対する roles/logging.viewAccessor をチームに付与し、Logs Explorer でそのビューを使用するよう案内する。"
+      },
+      {
+        "label": "C",
+        "text": "必要なプロジェクトとログ ID のフィルタを持つログビューを作成する。ログを集約しているプロジェクトに対する roles/logging.viewAccessor を、条件なしでチームに付与する。フィルタ済みビューの名前をチームに共有する。"
+      },
+      {
+        "label": "D",
+        "text": "ログを集約しているプロジェクトに対する Logs Viewer ロールをチームに付与する。必要なエントリを取得する Logs Explorer クエリを保存し、常にそのクエリを使うようチームに依頼する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【正解: B】\nログビューは、同じログバケット内で閲覧できるログを絞り込む仕組みです。flexible filter では OR 条件を使えるため、「storefront の全ログ」または「バックエンドの指定ログ ID」という範囲を 1 つのビューで表現できます。ログを別のバケットへ複製する必要はありません。そのビュー自体に roles/logging.viewAccessor を付与することで、チームの閲覧権限を限定します。\n\n【不正解の解説】\n・A: _AllLogs ビューはバケット内の全ログを対象とします。ダッシュボードで表示を絞っても、ほかのログへのアクセス権は残ります。クエリやダッシュボードのフィルタだけでは、権限による制限にはなりません。\n・C: プロジェクトに条件なしで付与した roles/logging.viewAccessor は、そのプロジェクト内の全ログビューに適用されます。共有したビュー以外も閲覧できるため、範囲を強制できません。\n・D: Logs Viewer をプロジェクトに付与しても、指定したログだけに閲覧を限定することはできません。保存クエリの使用を依頼するだけではアクセス制御になりません。",
+    "business_tip": "【正解: storefront のすべてのログ、またはバックエンドプロジェクトのログ ID backend-errors に一致するログを選択する flexible filter を持つログビューを作成する。そのビューに対する roles/logging.viewAccessor をチームに付与し、Logs Explorer でそのビューを使用するよう案内する。】\n👉 ポイント: ログバケット内の特定ログのみを閲覧制限するには「ログビュー（Log View）」を作成し、そのビュー単位で `roles/logging.viewAccessor` を付与する。\n💡 判断軸: クエリやダッシュボードによる依頼ベースの運用は権限制御にならない。プロジェクト単位の付与だと全ビューが見えてしまうため、特定ビューへの権限付与が必須。",
+    "id": "P071",
+    "code": "P-071",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Logging ログビュー",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 22,
+    "question_id": "072",
+    "multi_select": 1,
+    "question": "Compute Engine上のアプリケーションがCloud StorageなどのGoogle APIs and servicesを利用する必要があります。会社のセキュリティポリシーにより、VMには外部IPアドレスを割り当てず、インターネットへ直接アクセスさせることも禁止されています。\n安全にGoogle APIs and servicesへアクセスするには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "サービスAPIを VPC Service Controlsに追加し、VPCを関連付ける。"
+      },
+      {
+        "label": "B",
+        "text": "サブネット上で限定公開のGoogleアクセスを有効にする。"
+      },
+      {
+        "label": "C",
+        "text": "NATゲートウェイをセットアップし、それを介してトラフィックをルーティングする。"
+      },
+      {
+        "label": "D",
+        "text": "VPC とサービス ネットワークの間にCloud VPNを構成する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【正解: B】\n限定公開の Google アクセス（Private Google Access）を有効にすると、Compute Engine インスタンスが外部 IP アドレスなしで Google Cloud サービス（Cloud Storage など）にアクセスできるようになります。Compute Engine インスタンスが存在するサブネット上でこれを有効にすると、アプリケーションはインターネットを経由せずプライベートな内部経路で Google マネージドサービスにアクセスできます。\n\n【不正解の解説】\n・A: VPC Service Controls はデータの持ち出し防止や境界防御を行うセキュリティ機能であり、プライベートアクセスを有効にする手段ではありません。\n・C: NAT ゲートウェイはインスタンスのインターネットアクセスを可能としますが、同じプロジェクトやリージョン内のマネージドサービスへのプライベートアクセスを直接提供することはできません（インターネット経由のアクセスになってしまうためポリシーに反します）。\n・D: Cloud VPN は VPC とリモートネットワーク間の IPsec VPN 接続を可能にしますが、Google API へのプライベートアクセスを提供するものではありません。",
+    "business_tip": "【正解: サブネット上で限定公開のGoogleアクセスを有効にする。】\n👉 ポイント: 外部IPを持たないVMからGoogle Cloud API（Cloud Storage等）へ内部通信するには「限定公開のGoogleアクセス（Private Google Access）」をサブネット単位で有効化する。\n💡 判断軸: NATはインターネットへ出るためのもの、VPNはハイブリッド接続用、VPC Service Controlsは境界防御。外部IPなしでのGoogle API接続は「限定公開のGoogleアクセス」。",
+    "id": "P072",
+    "code": "P-072",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "限定公開の Google アクセス",
+    "category_id": "network",
+    "category_title": "ネットワーク"
+  },
+  {
+    "q_num": 23,
+    "question_id": "073",
+    "multi_select": 1,
+    "question": "あなたの Cloud Run アプリケーションは、接続プールを使用して Cloud SQL にアクセスしています。コードを変更した後、接続を再利用せずに、リクエストごとに新しいデータベース接続を作成している可能性に気づきました。アプリケーションは、データベースへの物理接続を開くたびに、構造化ログのエントリを1件出力しています。これらの接続作成イベントを時系列グラフで表示する必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "接続を開いたことを示すエントリに一致する、カウンタ型のログベース指標を Cloud Logging で作成し、Cloud Monitoring でグラフに表示する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Trace のサンプリングだけを使用して、すべての新規データベース接続の正確な件数を計算する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Run インスタンス数をグラフに表示し、各インスタンスがデータベース接続をちょうど1つだけ開くと想定する。"
+      },
+      {
+        "label": "D",
+        "text": "現在開いているデータベース接続数だけを確認し、その値を各期間内に作成された接続数として使用する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "全体的な説明:\nカウンタ型のログベース指標は、フィルタに一致したログエントリの件数を数えます。物理接続を開くたびに1件のログが出力されるため、そのイベントを選ぶフィルタを設定すれば、接続作成回数を指標にできます。Cloud Monitoringで期間ごとに集計して表示すると、接続作成の増減を追跡できます。なお、新しく作成したログベース指標に過去のログが自動で遡及集計されるわけではありません。\n\n各選択肢の説明:\nA. アプリケーションが出力する特定の構造化ログに対してカウンタ型のログベース指標を作成し、Cloud Monitoringでグラフ化することで、接続作成イベントの発生推移を正確に可視化できます。\nB. サンプリングされたトレースには、すべての接続作成イベントが含まれるとは限りません。全件の正確な件数を求める方法にはなりません。\nC. 1つのCloud Runインスタンスが複数の接続を開いたり、接続を繰り返し作成したりする可能性があります。インスタンス数と接続作成回数は一致しません。\nD. 現在開いている接続数は、その時点の状態を示す値です。期間内に新しく作られた接続の件数とは異なります。",
+    "business_tip": "【正解: 接続を開いたことを示すエントリに一致する、カウンタ型のログベース指標を Cloud Logging で作成し、Cloud Monitoring でグラフに表示する。】\n👉 ポイント: 「特定のログが出現した回数（発生イベント数）を時系列で可視化」するには、Cloud Logging の「カウンタ型ログベース指標」を定義し、Cloud Monitoring でグラフ表示する。\n💡 判断軸: サンプリング（Trace）では全件捕捉できず、現時点の接続数（ゲージ）やインスタンス数では新規接続イベントの発生回数を測れない。ログ件数を数える「カウンタ指標」が正解。",
+    "id": "P073",
+    "code": "P-073",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "ログベース指標 / Monitoring",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 24,
+    "question_id": "074",
+    "multi_select": 1,
+    "question": "GKE アプリケーションから、必要な権限を持つ IAM サービスアカウントを使用して、Google Cloud の監視 API を呼び出す必要があります。セキュリティポリシーでは、サービスアカウントキーの作成が禁止されています。ユーザー認証情報を共有したり、すべてのノードの ID を変更したりせずに、アプリケーションでそのサービスアカウントの権限を使用する必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "開発者のユーザーアクセストークンを Kubernetes Secret に保存し、手動で更新する。"
+      },
+      {
+        "label": "B",
+        "text": "プロジェクトのキー作成禁止ポリシーを無効にし、アプリケーション用のキーを生成する。"
+      },
+      {
+        "label": "C",
+        "text": "別のプロジェクトでサービスアカウントキーを作成し、アプリケーションの Pod にマウントする。"
+      },
+      {
+        "label": "D",
+        "text": "Workload Identity Federation for GKE を構成し、アプリケーションの Kubernetes ServiceAccount を IAM サービスアカウントに関連付ける。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "全体的な説明:\nWorkload Identity Federation for GKEを使うと、Podがサービスアカウントキーを保持せずにGoogle Cloud APIへアクセスできます。この問題では、既に必要な権限を持つIAMサービスアカウントを利用するため、Kubernetes ServiceAccountとの関連付けを設定します。対象IAMサービスアカウント上での roles/iam.workloadIdentityUser の付与と、Kubernetes ServiceAccountへのアノテーションを構成し、そのServiceAccountをPodに指定します。ノード全体のIDを変更せずに、アプリケーション単位で権限を利用できます。\n\n各選択肢の説明:\nA. 開発者の認証情報をアプリケーションへ共有するため、要件に反します。トークンの手動更新も必要になり、管理負担が増えます。\nB. キー作成禁止のポリシーを無効にしてキーを生成する方法は、組織のセキュリティ要件に反します。\nC. 別プロジェクトで作成しても、サービスアカウントキーをPodに配布する構成であることは変わりません。キーを使わない要件を満たしません。\nD. Workload Identity Federation for GKE を構成し、Kubernetes ServiceAccount を IAM サービスアカウントに関連付けることで、キー作成なしでPod単位の安全な権限借用が実現できます。",
+    "business_tip": "【正解: Workload Identity Federation for GKE を構成し、アプリケーションの Kubernetes ServiceAccount を IAM サービスアカウントに関連付ける。】\n👉 ポイント: GKE上のPodから安全にGCPリソースにアクセスする推奨方式は「Workload Identity Federation for GKE」。\n💡 判断軸: 秘密鍵（サービスアカウントキー）の発行・配布や個人トークンの流用は厳禁。Kubernetes SAとIAM SAを紐付けるWorkload Identityが唯一の正解。",
+    "id": "P074",
+    "code": "P-074",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Workload Identity Federation",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 25,
+    "question_id": "075",
+    "multi_select": 2,
+    "question": "機密データを含む Cloud Storage バケットを管理しています。メタデータや構成情報の読み取りを含む、すべての読み取りおよび書き込み操作を記録したいと考えています。また、ログをサードパーティのログ管理システムにエクスポートする必要があります。何を行うべきですか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Audit Logs ページで Admin Write ログを有効にする。"
+      },
+      {
+        "label": "B",
+        "text": "Audit Logs ページで Admin Read、Data Read、Data Write を有効にする。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Monitoring でカスタム監視ジョブを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Run functions を使用して Cloud Logging からログをエクスポートする。"
+      },
+      {
+        "label": "E",
+        "text": "Cloud Logging のシンク先として Pub/Sub トピックを作成し、ログ管理システムをサブスクライバとして追加する。"
+      }
+    ],
+    "answer": [
+      "B",
+      "E"
+    ],
+    "explanation": "Cloud Audit Logs の「データアクセス監査ログ（Data Access Audit Logs）」はデフォルトで無効になっています。メタデータの読み取り（Admin Read）やデータの読み書き（Data Read / Data Write）を含むすべての操作を記録するには、Audit Logs ページでこれらを明示的に有効化する必要があります。また、Cloud Logging からサードパーティのログ管理ツール（Datadog, Splunk 等）へリアルタイムにログを連携する標準的なアーキテクチャは、Log Router（ログシンク）を使って Pub/Sub トピックへ出力し、サードパーティ側をサブスクライバとして接続する方法です。Cloud Monitoring は数値メトリクス監視用であり、Cloud Run functions による自作コードでのエクスポートは不要です。",
+    "business_tip": "【正解: Audit Logs ページで Admin Read、Data Read、Data Write を有効にする。 / Cloud Logging のシンク先として Pub/Sub トピックを作成し、ログ管理システムをサブスクライバとして追加する。】\n👉 ポイント: 読み取りやデータ操作の監査ログはデフォルト無効のため明示的有効化が必要。外部ログ基盤へのリアルタイム転送はLog RouterとPub/Subを連携させる。\n💡 判断軸: すべてのアクセス記録＝Admin Read + Data Read + Data Write。サードパーティ転送＝Cloud Logging シンク → Pub/Sub。",
+    "id": "P075",
+    "code": "P-075",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Audit Logs / Pub/Sub",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 26,
+    "question_id": "076",
+    "multi_select": 1,
+    "question": "あなたの管理するアプリケーションはGoogle Cloud上のマネージドインスタンスグループ(MIG)で実行されています。VMのうちの一つが期待通りに動作していないことに気づきました。MIG内の指定したVMをMIGの構成に従って再作成したいと思います。どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud compute instances stop コマンドを実行してVMを停止する。"
+      },
+      {
+        "label": "B",
+        "text": "VM を削除するために gcloud compute instances delete コマンドを実行する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud compute instance-groups managed recreate-instances コマンドを実行してVMを再作成する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud compute instance-groups managed instance-configs update コマンドを実行して、インスタンスの構成を更新する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【正解: C】\ngcloud compute instance-groups managed recreate-instances コマンドは、MIG内の指定したVMをMIGのテンプレートに従って再作成します。これにより、問題のあるVMを自動的に新しいVMに置き換えることができ、MIGの構成（例: インスタンステンプレート、自動修復設定）に従った状態に戻すことができます。\n\n【不正解の解説】\n・A: VMを停止しても、再起動された場合には同じ状態で復帰します。MIGの構成に従った再作成は行われません。\n・B: MIG の管理外で VM 単体を直接削除する操作です。オートヒーリング等の構成によっては新しい VM が補填されることもありますが、指定した VM を確実にテンプレートどおり再作成するには専用の recreate-instances を利用するのが標準手順です。\n・D: ステートフル MIG などにおいて、個別のインスタンス構成（特定ディスクや IP の固定など）を適用・更新するためのコマンドであり、VM の再作成処理を行うものではありません。",
+    "business_tip": "【正解: gcloud compute instance-groups managed recreate-instances コマンドを実行してVMを再作成する。】\n👉 ポイント: MIG内の特定VMに不具合が生じ、テンプレートに従って再作成・初期化したい場合は `recreate-instances` コマンドを使用する。\n💡 判断軸: 単なる `stop` や `delete` ではなく、MIGの管理下で指定インスタンスをテンプレート通り再作成する専用コマンドを選ぶ。",
+    "id": "P076",
+    "code": "P-076",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "MIG recreate-instances",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 27,
+    "question_id": "077",
+    "multi_select": 1,
+    "question": "あなたがGoogle Cloudでホストしているアプリケーションは、Cloud SQL for PostgreSQLをデータベースとして利用しています。データの増大により、Cloud SQLインスタンスのストレージ容量が不足してきたため、容量を拡張する必要があります。\nアプリケーションを停止せずにストレージ容量を増やすには、どうすればよいでしょうか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud SQLインスタンスを停止し、ディスクサイズを変更してから再起動する。"
+      },
+      {
+        "label": "B",
+        "text": "Google Cloudサポートに連絡し、ストレージ容量の拡張を依頼する。"
+      },
+      {
+        "label": "C",
+        "text": "新しいCloud SQLインスタンスを作成し、データを移行してから切り替える。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud SQLコンソールまたはCLIでインスタンスのストレージ容量を増やす。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "全体的な説明:\nCloud SQLでは、データベースインスタンスを停止することなく、オンラインでストレージ容量を拡張（サイズアップ）できます。Google Cloud コンソールや gcloud CLI（gcloud sql instances patch コマンドなど）からストレージサイズを変更することで、アプリケーションのダウンタイムを発生させずにシームレスに容量を増やすことが可能です。\n\n各選択肢の説明:\nA. Cloud SQL のストレージ拡張はオンライン処理に対応しているため、インスタンスを停止・再起動する必要はありません。\nB. ユーザー自身がコンソールや CLI から即座に容量を変更可能です。サポートへ連絡する必要はありません。\nC. 既存インスタンスのままストレージサイズを動的に変更できるため、わざわざ新しいインスタンスを立ち上げてデータ移行を行う必要はありません。\nD. Cloud SQLコンソールまたはCLIでインスタンスのストレージ容量を増やすことで、停止なしでオンライン拡張できます。",
+    "business_tip": "【正解: Cloud SQLコンソールまたはCLIでインスタンスのストレージ容量を増やす。】\n👉 ポイント: Cloud SQLのストレージ増量は、インスタンスを稼働させたままオンラインで実行できる（ダウンタイム不要）。\n💡 判断軸: 停止・再起動やデータ移行、サポートへの依頼は不要。コンソールかCLI（gcloud）から直接増やせる（※容量の縮小はできない点に注意）。",
+    "id": "P077",
+    "code": "P-077",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud SQL ストレージ容量拡張",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 28,
+    "question_id": "078",
+    "multi_select": 1,
+    "question": "あなたはGoogle Kubernetes Engine (GKE)クラスターで複数のマイクロサービスを実行しています。そのうちの一つは、高いメモリ対CPU比を必要とするデータ分析サービスを実行しています。他のマイクロサービスで実行しているワークロードは、汎用マシンタイプ用に最適化されています。各ワークロードでリソースを効率的に使用するためには、クラスタをどのように最適化すれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "データ分析マイクロサービス用に、メモリ最適化マシンタイプでノードプールを作成する。他のマイクロサービスには、汎用マシンタイプのノードプールを使用する。"
+      },
+      {
+        "label": "B",
+        "text": "データ分析マイクロサービス用に、コンピューティング最適化マシンタイプでノードプールを作成する。他のマイクロサービスには、メモリ最適化マシンタイプのノードプールを使用する。"
+      },
+      {
+        "label": "C",
+        "text": "データ分析マイクロサービス用ノードにSpot VMを使用する。"
+      },
+      {
+        "label": "D",
+        "text": "メモリ使用量メトリクスに基づき、データ分析マイクロサービスポッドの自動スケーリングを有効化する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "ワークロードごとに異なるリソース要件（高いメモリ対CPU比と汎用）がある場合、それぞれの要件に合わせたマシンタイプで専用のノードプールを作成するのが最も効率的です。データ分析サービスにはメモリ最適化ノードプールを、他のサービスには汎用ノードプールを割り当てることで、リソースの余剰や枯渇を防ぎコストパフォーマンスを最大化できます。Spot VM は可用性リスクがあり、ポッド自動スケーリングだけではハードウェア構成の不整合は解決できません。",
+    "business_tip": "【正解: データ分析マイクロサービス用に、メモリ最適化マシンタイプでノードプールを作成する。他のマイクロサービスには、汎用マシンタイプのノードプールを使用する。】\n👉 ポイント: 特性の異なるワークロードが混在する場合、特性ごとに専用のノードプールを作成して適切なマシンタイプ（メモリ最適化・汎用など）を割り当てる。\n💡 判断軸: 異なるリソース要件（高メモリ vs 汎用）＝専用ノードプールを用途別マシンタイプで分離。",
+    "id": "P078",
+    "code": "P-078",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "GKE ノードプール最適化",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 29,
+    "question_id": "079",
+    "multi_select": 1,
+    "question": "開発用プロジェクトに、高額な費用がかかるテスト VM があります。この VM は、月間予算を使い切った際には停止しても構いません。プロジェクトでは、アラート通知のみを行う Cloud Billing 予算を使用しています。実際の費用が予算額に達したことを予算の更新データが示したら、VM を自動的に停止する必要があります。チームは課金情報の反映に遅延があることを許容しており、ほかの料金は引き続き発生し得ることも理解しています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "予算のメール通知のしきい値を100％に設定し、予算の機能によって VM が停止されることを期待する。"
+      },
+      {
+        "label": "B",
+        "text": "予算を Pub/Sub に接続し、Cloud Run 関数で報告された費用を確認して、しきい値に達したら VM を停止する。"
+      },
+      {
+        "label": "C",
+        "text": "予算の通知メールが届いたら VM のファイアウォールの優先度を下げ、コンピューティング料金が発生しなくなるようにする。"
+      },
+      {
+        "label": "D",
+        "text": "報告された費用が予算額に達するたびに、プロジェクトを新しい請求先アカウントに移す。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "正解はBです。\nCloud Billing の予算通知自体にはリソースを停止する機能はありません。予算更新データを Pub/Sub にパブリッシュし、それを受信した Cloud Run 関数（Cloud Functions）が Compute Engine API を呼び出して VM を停止させることで、予算超過時の自動停止を実現します。\n\n各選択肢の解説:\n・A: 予算のメール通知を設定しても、VM が自動停止することはありません。停止処理を行う仕組みが別途必要です。\n・B（正解）: 予算を Pub/Sub に連携し、Cloud Run 関数で費用データを確認して VM 停止 API を実行する構成が適切です。\n・C: ファイアウォール規則の優先度を変更しても VM の稼働・課金は止まりません。\n・D: 請求先アカウントを変更しても VM は停止せず、要件を満たしません。",
+    "business_tip": "【正解: 予算を Pub/Sub に接続し、Cloud Run 関数で報告された費用を確認して、しきい値に達したら VM を停止する。】\n👉 ポイント: Cloud Billing 予算は通知専用のため、自動停止には「Cloud Billing 予算 → Pub/Sub → Cloud Run 関数 / Cloud Functions → リソース停止」のイベント連携を組む。\n💡 判断軸: 予算超過に応じた自動アクションは、Pub/Sub とサーバーレス関数を連携させてプログラムから制御する。",
+    "id": "P079",
+    "code": "P-079",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Billing 予算自動停止",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 30,
+    "question_id": "080",
+    "multi_select": 1,
+    "question": "あなたの会社では、次のデータパイプラインを構築しています。\nCloud Firestore -> Cloud Run functions -> BigQuery -> Looker Studio\n\nCloud Firestoreに新しいデータが登録されると、Cloud Run functionsがそのデータを処理してBigQueryへ書き込み、そのBigQueryのデータをLooker Studioで可視化しています。\n現在、Looker Studioに最新データが表示されていません。\nこの問題の原因を効率的に特定するために、最初に行うべき対応はどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Looker Studioのデータ更新頻度（Data freshness）設定を変更する。"
+      },
+      {
+        "label": "B",
+        "text": "BigQueryのクエリキャッシュを無効にする。"
+      },
+      {
+        "label": "C",
+        "text": "Looker Studioで新しいデータソースを作成し直す。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Run functionsのログを確認し、FirestoreからBigQueryへのデータ連携処理が正常に実行されているか確認する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【正解: D】\n複数コンポーネントを接続したデータパイプラインで「最新データが表示されない」問題が発生した場合、トラブルシューティングの第一歩はパイプラインの中間処理（データの抽出・加工・書き込み）が正常に行われているかを切り分けることです。Cloud Run functions のログ（Cloud Logging）を確認することで、迅速に原因の所在を絞り込むことができます（エラーログが出ているか、ログ自体が出力されていないか、処理が正常完了しているかで次の調査箇所を特定できる）。\n\n【不正解の解説】\n・A: もし Cloud Run functions が失敗していて BigQuery にデータが入っていない場合、Looker Studio 側の設定を変更しても解決せず、問題の原因特定にもなりません。\n・B: BigQuery はテーブルに新しいデータが正しく追加・更新された場合、クエリキャッシュを自動的に無効化します。また、パイプライン全体の切り分け手法としても不適切です。\n・C: 原因が特定できていない段階でデータソースを再作成するのは、根本的な問題解決にならずトラブルシューティングの手順として適切ではありません。",
+    "business_tip": "【正解: Cloud Run functionsのログを確認し、FirestoreからBigQueryへのデータ連携処理が正常に実行されているか確認する。】\n👉 ポイント: データ連携パイプラインのトラブルシューティングでは、まずデータ中間処理（Cloud Run functions）の実行ログを確認し、上流か下流かの切り分けを行う。\n💡 判断軸: 原因箇所の切り分け前に可視化ツール側（Looker Studio）の設定変更や再作成を行っても、上流障害の場合は特定も解決もできない。",
+    "id": "P080",
+    "code": "P-080",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "データパイプライン障害調査",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン"
+  },
+  {
+    "q_num": 31,
+    "question_id": "081",
+    "multi_select": 1,
+    "question": "経理部門のアナリストは、前日の料金がどの Compute Engine VM で発生したかを、VM ごとに特定する必要があります。関連するすべてのプロジェクトは1つの Cloud Billing アカウントを使用しており、集約先となる BigQuery データセットも用意されています。収集プログラムを作成したり、データを不必要に重複させたりせずに、課金レコードを自動で取り込みたいと考えています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "毎日の処理が終わった後に、コンソールから料金テーブルを手動でエクスポートする。"
+      },
+      {
+        "label": "B",
+        "text": "予算の状態を示す通知をデータセットに送信し、VM ごとの料金レコードとして使用する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Billing アカウントからデータセットへの、詳細な使用料金データのエクスポートを有効にする。"
+      },
+      {
+        "label": "D",
+        "text": "標準の使用料金データのエクスポートだけを有効にし、個々の VM リソースの費用も含まれていると想定する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "全体的な説明:\n詳細な使用料金データのBigQueryエクスポートには、標準の使用料金データに加えて、Compute Engine VMなどのリソース単位の情報が含まれます。1つのCloud Billingアカウントから用意済みのデータセットへエクスポートすれば、関連プロジェクトの料金データを自動で集約し、VM別に分析できます。課金データには反映の遅延があるため、前日分が常に即時確定しているとは限りません。\n\n各選択肢の説明:\nA. 手動エクスポートでは自動取り込みの要件を満たさず、毎日の運用作業が必要になります。\nB. 予算通知は予算額と集計された費用などを伝えるものです。個々のVMに対応する詳細な課金レコードの代わりにはなりません。\nC. Cloud Billing アカウントから詳細な使用料金データのエクスポートを有効にすることで、リソース単位の費用レコードをBigQueryに自動集約できます。\nD. 標準エクスポートには、詳細エクスポートで提供されるVMなどのリソース単位の料金情報が含まれません。",
+    "business_tip": "【正解: Cloud Billing アカウントからデータセットへの、詳細な使用料金データのエクスポートを有効にする。】\n👉 ポイント: VMなどの個別リソース単位で費用を分析するには「詳細な使用料金データのエクスポート（Detailed export）」をBigQuery向けに有効化する。\n💡 判断軸: 「標準エクスポート」はプロジェクトやサービス単位の集計のみでリソース単位は含まれない。リソース別の分析要件が出たら即「詳細エクスポート」を選ぶ。",
+    "id": "P081",
+    "code": "P-081",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Billing 詳細データ出力",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 32,
+    "question_id": "082",
+    "multi_select": 2,
+    "question": "あなたの組織はGoogle Cloud Compute Engine上でデータベースを運用しています。あなたは、ゾーン障害が発生した場合でもデータベースのデータがすぐに利用できるようにしたいと考えています。次のオプションのうち、最も効率的なアプローチとなる手順を2つ選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "データをゾーン永続ディスクに保存する。"
+      },
+      {
+        "label": "B",
+        "text": "データをリージョン永続ディスクに保存する。"
+      },
+      {
+        "label": "C",
+        "text": "ディスクのスナップショットスケジュールを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "同じリージョンの別のゾーンにスタンバイVMインスタンスを作成する。"
+      },
+      {
+        "label": "E",
+        "text": "同じリージョンの同じゾーンにスタンバイVMインスタンスを作成する。"
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "全体的な説明:\nデータベースのデータをリージョン永続ディスクに保存することで、ゾーン障害が発生してもデータへのアクセスが可能な状態を維持できます。また、同じリージョンの別のゾーンにスタンバイVMインスタンスを作成することで、ゾーン障害が発生した場合にフェイルオーバーが可能になります。スタンバイVMは、同じリージョン永続ディスクを使用するように設定でき、最新のデータにアクセスできます。\n\n各選択肢の説明:\nA. データがゾーン永続ディスクに保存されている場合、ゾーン障害が発生した場合にゾーンが復元されるまでデータは使用できません。\nB. リージョン永続ディスクは同一リージョン内の2つのゾーン間でデータを自動同期複製するため、ゾーン障害時もデータが保護されます。\nC. ディスクのスナップショット スケジュールを作成することは、バックアップの目的では適していますが、ゾーン障害が発生した場合にデータがすぐに利用できるという要件には対応しません。\nD. 同じリージョンの別ゾーンにスタンバイVMを配置することで、プライマリゾーン障害時に即座にフェイルオーバーしてディスクを再接続し利用を再開できます。\nE. 同じリージョンの同じゾーンにスタンバイVMインスタンスを作成すると、ゾーンに障害が発生した場合、プライマリVMインスタンスとスタンバイVMインスタンスの両方が使用できなくなります。",
+    "business_tip": "【正解: データをリージョン永続ディスクに保存する。 / 同じリージョンの別のゾーンにスタンバイVMインスタンスを作成する。】\n👉 ポイント: Compute Engine におけるゾーン障害対策（高可用性）は、「リージョン永続ディスク（同一リージョン内2ゾーン間での同期複製）」＋「別ゾーンへのスタンバイVM配置」の組み合わせ。\n💡 判断軸: ゾーン永続ディスクや同一ゾーンのスタンバイはゾーン障害で共倒れする。スナップショットからの復旧は即時利用要件を満たさない。",
+    "id": "P082",
+    "code": "P-082",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "リージョン永続ディスク / 高可用性",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 33,
+    "question_id": "083",
+    "multi_select": 1,
+    "question": "映画制作会社で、予告編動画をオンプレミスのファイルサーバーに保存しています。これらの動画ファイルを、毎晩Cloud Storageへ自動的に転送したいと考えています。転送処理の運用負荷を抑えながら、定期的な増分転送を実現するには、どの方法が最も適切ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Transfer Applianceを毎日使用してファイルを転送する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Filestoreを構成し、Cloud Runで転送処理を実行する。"
+      },
+      {
+        "label": "C",
+        "text": "Storage Transfer Serviceを構成し、オンプレミスのファイルシステムからCloud Storageへ定期転送する。"
+      },
+      {
+        "label": "D",
+        "text": "Pub/SubとCloud Run functionsを使用して動画ファイルを転送する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "オンプレミスのファイルシステム（POSIX/NFS等）から Cloud Storage へ、スケジュールに沿って自動的かつ効率的に差分データを同期するには、Storage Transfer Service のオンプレミス用エージェントを構成するのが最適です。Google Cloud 側で転送ジョブや差分検出がフルマネージドで管理されるため、スクリプトの作成や運用保守が不要です。Transfer Appliance は物理機器郵送による大規模移行用であり、毎日の定期オンライン転送には適しません。Cloud Run や Pub/Sub による自作は運用負荷が高くなります。",
+    "business_tip": "【正解: Storage Transfer Serviceを構成し、オンプレミスのファイルシステムからCloud Storageへ定期転送する。】\n👉 ポイント: オンプレミスのファイルサーバーからCloud Storageへの定期・増分データ転送は、Storage Transfer Serviceのエージェントを使うことで運用負荷を最小化できる。\n💡 判断軸: オンプレミスからGCSへの定期・差分転送＋運用負荷最小＝Storage Transfer Service。",
+    "id": "P083",
+    "code": "P-083",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Storage Transfer Service",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 34,
+    "question_id": "084",
+    "multi_select": 1,
+    "question": "あなたは、Google Cloud上のロードバランサーへ次の2つのサブドメインからアクセスできるようにCloud DNSを設定する必要があります。\n\n・login.myproject.com\n・www.myproject.com\n\nロードバランサーのIPv4アドレスを 203.0.113.10 とします。\nDNSレコードを効率的に構成するには、どの方法が適切ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "myproject.com にCNAMEを作成し、各サブドメインにAAAAレコードを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "myproject.com に 203.0.113.10 を指すAレコードを作成し、login と www を myproject.com のCNAMEとして設定する。"
+      },
+      {
+        "label": "C",
+        "text": "myproject.com にAレコードを作成し、login と www をNSレコードとして設定する。"
+      },
+      {
+        "label": "D",
+        "text": "login と www にそれぞれロードバランサーのIPv4アドレスを指定したAレコードを作成する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nロードバランサーの IPv4 アドレスを指す設定を Apex ドメイン（myproject.com）の A レコードとして1箇所にまとめ、各サブドメイン（login, www）からはそのドメインを参照する CNAME レコードを作成するのが最も効率的な構成です。\nこの構成にすることで、将来ロードバランサーの IP アドレスが変更された際も myproject.com の A レコードを1箇所修正するだけで済むため、変更漏れを防ぎ管理負荷を最小限に抑えられます。\n\n【選択肢の解説】\n・A: AAAA レコードは IPv6 用ですが、提示されたアドレスは IPv4（203.0.113.10）です。また、DNSの標準仕様により、ゾーン頂点（myproject.com）に CNAME レコードを設定することはできません。\n・B（正解）: ApexドメインにAレコードを作成し、サブドメイン（login, www）をCNAMEで紐付けることで、IPアドレス変更時の修正を1箇所に集約できます。\n・C: NS レコードはサブドメインの管理権限を別の DNS サーバーへ委任するためのものであり、Web サーバー（ロードバランサー）の IP アドレスへの名前解決には使用しません。\n・D: 名前の解決自体は可能ですが、IP アドレスの変更時にすべてのサブドメインの A レコードを更新する必要が生じるため、B と比べて運用管理の手間が増えてしまいます。",
+    "business_tip": "【正解: myproject.com に 203.0.113.10 を指すAレコードを作成し、login と www を myproject.com のCNAMEとして設定する。】\n👉 ポイント: 複数サブドメインで同一IPを共有する場合、親ドメインにAレコードを定義し、サブドメインはCNAMEで親を参照させる構成が運用変更コスト最小です。\n💡 判断軸: 個別にAレコードを直打ちすると将来のIP変更時に全レコードの更新が必要になります。ゾーン頂点（Apex）にはCNAMEは置けないため、ApexにAレコード、サブドメインにCNAMEが鉄則です。",
+    "id": "P084",
+    "code": "P-084",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud DNS A/CNAME レコード",
+    "category_id": "network",
+    "category_title": "ネットワーク"
+  },
+  {
+    "q_num": 35,
+    "question_id": "085",
+    "multi_select": 1,
+    "question": "あなたはグローバルに展開するeコマース企業で開発者として勤務しています。現在、商品リストとユーザーレビューといったリレーショナルデータを保存する新しいアプリケーションを開発しています。データベースは、低レイテンシで、世界中のユーザーからの高い読み取りと書き込みの負荷をサポートできる必要があります。開発中および新しいリージョンでのローンチ後にスキーマの変更が必要となりますが、スキーマ変更によるダウンタイムは回避する必要があります。\n上記の要件を満たすデータベースを以下から選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud SQL"
+      },
+      {
+        "label": "B",
+        "text": "AlloyDB for PostgreSQL"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Spanner"
+      },
+      {
+        "label": "D",
+        "text": "Bigtable"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "正解はCです。\nCloud Spanner は、グローバル規模で強整合性と水平スケーラビリティを提供するフルマネージドリレーショナルデータベースです。ダウンタイムなしでオンライントランザクションを実行したままスキーマ変更を適用できるため、無停止でのスキーマ更新要件を満たします。\n\n各選択肢の解説:\n・A: Cloud SQL はシングルリージョン中心のサービスであり、世界規模の書き込みスケーラビリティや無停止スキーマ更新には限界があります。\n・B: AlloyDB for PostgreSQL は高性能なリレーショナル DB ですが、マルチリージョンでのグローバル分散書き込みや無停止スキーマ更新の要件では Cloud Spanner が最適です。\n・C（正解）: グローバル分散、高スループット、強整合性リレーショナル、無停止スキーマ変更の全要件をクリアします。\n・D: Bigtable は NoSQL データベースであり、リレーショナルデータ構造の要件を満たしません。",
+    "business_tip": "【正解: Cloud Spanner】\n👉 ポイント: グローバル規模の強整合性リレーショナル DB で、かつスキーマ変更をダウンタイムなし（オンラインスキーマ更新）で行えるのは Cloud Spanner。\n💡 判断軸: 「リレーショナル」「グローバル/水平スケーラビリティ」「無停止スキーマ変更」が揃ったら Cloud Spanner。",
+    "id": "P085",
+    "code": "P-085",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Spanner",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 36,
+    "question_id": "086",
+    "multi_select": 1,
+    "question": "会社ではNode.js で実装されたマイクロサービスアプリケーションをオンプレミス環境で実行しています。各マイクロサービスは Docker コンテナで実装され、CI/CD パイプラインを使用してデプロイされています。Google Cloud のサーバーレス環境へ最小限の労力で移行し、運用コストも抑えたいと考えています。\nどの手順を選択すべきでしょうか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アプリケーションをモノリシックアーキテクチャヘリファクタリングし、Cloud Run functions にデプロイする。"
+      },
+      {
+        "label": "B",
+        "text": "アプリケーションをモノリシックアーキテクチャヘリファクタリングし、Docker イメージを Compute Engine にデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "現在の CI/CD パイプラインを利用し、Docker イメージを GKE にデプロイする。"
+      },
+      {
+        "label": "D",
+        "text": "現在の CI/CD パイプラインを利用し、Docker イメージを Cloud Run にデプロイする。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nアプリケーションはすでに Docker コンテナ化されているため、Cloud Run は最適な移行先です。サーバーレスであり、未使用時には自動的にスケールダウン（0 まで縮退）するため、運用コストも低く抑えられます。\n\n【選択肢の解説】\n・A: モノリスへの再設計は大きな工数が必要です。また、Cloud Run functions（旧Cloud Functions）は単一機能のイベント駆動向けです。\n・B: 選択肢Aと同様に、モノリスへの再設計は大きな工数となります。またCompute Engineはサーバーレスではありません。\n・C: GKE での運用は Cloud Run よりもクラスタ管理等の負荷が高くなります。\n・D（正解）: 既存のCI/CDパイプラインとDockerイメージを活用してCloud Runにデプロイすることで、最小限の労力で完全サーバーレス環境に移行し、運用コストを削減できます。",
+    "business_tip": "【正解: 現在の CI/CD パイプラインを利用し、Docker イメージを Cloud Run にデプロイする。】\n👉 ポイント: 既存のコンテナ資産を活かして「サーバーレス」「最小限の労力・運用コスト」で移行するなら、マネージドコンテナ基盤である Cloud Run が最適解です。\n💡 判断軸: GKEはクラスタ管理の運用コストが発生し、Compute EngineはIaaSで管理負荷大、モノリス化は莫大な移行工数がかかるため不適です。",
+    "id": "P086",
+    "code": "P-086",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Run CI/CD デプロイ",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ"
+  },
+  {
+    "q_num": 37,
+    "question_id": "087",
+    "multi_select": 1,
+    "question": "開発チームの新しいメンバーは、プロジェクトでCompute Engineインスタンスを起動および停止できる必要があります。Googleが推奨するプラクティスに従い、このメンバーに必要な権限を効率的に付与するにはどうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "プロジェクトレベルでCompute Admin IAMロールを付与する。"
+      },
+      {
+        "label": "B",
+        "text": "プロジェクトレベルでCompute Instance Admin IAMロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "カスタムロールを作成し、compute.instances.startおよびcompute.instances.stopの権限を付与する。プロジェクトレベルでユーザーにカスタムロールを付与する。"
+      },
+      {
+        "label": "D",
+        "text": "Compute Admin IAMロールに基づいてカスタムロールを作成する。カスタムロールから不要なパーミッションを除外し、プロジェクトレベルのユーザーに付与する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【正解: C】\nこのシナリオでは、カスタムロールを作成して最小権限の原則を実施し、ユーザーがタスク実行に必要な権限のみを持つようにするというベストプラクティスに従います。インスタンスの開始および停止権限を持つカスタムロールを作成することで、不必要な権限を付与することなく、新しいチームメンバーに必要なアクセスを提供することができます。\n\n【不正解の解説】\n・A: プロジェクトレベルでCompute Admin IAMロールを付与すると、インスタンスの起動と停止だけが必要なメンバーにとって必要以上のアクセスが与えられる為、推奨されません。\n・B: 選択肢Aと同様に、プロジェクトレベルでCompute Instance Admin IAMロールを付与すると、メンバーにとって必要以上のアクセスが与えられる為、推奨されません。\n・D: Compute Admin IAMロールに基づいたカスタムロールを作成することは最も効率的な方法ではありません。Compute Adminロールには多くの権限が含まれているので、不要な権限を削除するのに時間がかかります。compute.instances.start権限とcompute.instances.stop権限のみを付与するカスタムロールを作るアプローチがより効率的です。",
+    "business_tip": "【正解: カスタムロールを作成し、compute.instances.startおよびcompute.instances.stopの権限を付与する。プロジェクトレベルでユーザーにカスタムロールを付与する。】\n👉 ポイント: 起動・停止のみといった特定操作に絞る場合は、最小権限の原則に基づき必要な権限（start/stop）のみを含めた「カスタムロール」を新規作成して付与する。\n💡 判断軸: 既存管理者ロールからの不要権限除外は手間がかかり非効率。必要な権限だけをゼロから追加してカスタムロールを作成するのがベストプラクティス。",
+    "id": "P087",
+    "code": "P-087",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Compute Engine カスタムロール",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 38,
+    "question_id": "088",
+    "multi_select": 1,
+    "question": "10.22.0.0/22 のアドレス範囲を使用する新しいVPCと既存VPCの間に、高可用性のVPN接続を構成する必要があります。\n次の要件があります。\n\n・ゾーンやVPNトンネルの障害に備えて冗長化する\n・BGPによる動的ルーティングを使用する\n・手動で静的ルートを管理する負荷を減らす\n\nどの構成が適切ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "自動モードVPCと単一のVPNトンネルを使用する。"
+      },
+      {
+        "label": "B",
+        "text": "カスタムモードVPC、HA VPNゲートウェイ、Cloud Router、冗長VPNトンネルを使用する。"
+      },
+      {
+        "label": "C",
+        "text": "自動モードVPCと単一のVPNトンネルを使用し、静的ルートを設定する。"
+      },
+      {
+        "label": "D",
+        "text": "カスタムモードVPCと単一のVPNトンネルを使用する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\n要件である「高可用性（冗長化）」「BGPによる動的ルーティング」「手動管理の削減」をすべて満たすには、HA VPN（High Availability VPN）と Cloud Router を組み合わせた構成が必要です。\nHA VPNでは冗長なVPNトンネルを構成することで、トンネル障害に対する可用性を高められます。またCloud Routerを利用するとBGPによる動的ルート交換が可能になります。\n\n【選択肢の解説】\n・A: 単一の VPN トンネルでは冗長化（高可用性）が確保できず、単一障害点（SPOF）となります。また、自動モード VPC は全リージョンにデフォルト CIDR が割り当てられるため、特定の IP 範囲指定には適していません。\n・B（正解）: カスタムモードVPC（特定IPアドレス範囲の定義）、HA VPNゲートウェイと冗長VPNトンネル（99.99%のSLA・高可用性冗長化）、Cloud Router（BGP動的ルーティングによる手動管理削減）により、すべての要件を満たします。\n・C: 静的ルートの使用は「手動管理の負荷を減らす」「BGPによる動的ルーティングを使用する」という要件に直接反します。また、単一トンネルのため冗長化もされません。\n・D: 単一の VPN トンネルでは冗長化ができず、高可用性の要件を満たすことができません。",
+    "business_tip": "【正解: カスタムモードVPC、HA VPNゲートウェイ、Cloud Router、冗長VPNトンネルを使用する。】\n👉 ポイント: 高可用性（冗長化）とBGP動的ルーティングを両立するハイブリッド接続には「HA VPN」＋「Cloud Router」の組み合わせが必須です。\n💡 判断軸: 単一トンネルはSPOFになり不可。自動モードVPCはIP範囲（10.22.0.0/22等）を自由に設計できないため、カスタムモードVPCを選択します。",
+    "id": "P088",
+    "code": "P-088",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "HA VPN / Cloud Router",
+    "category_id": "network",
+    "category_title": "ネットワーク"
+  },
+  {
+    "q_num": 39,
+    "question_id": "089",
+    "multi_select": 2,
+    "question": "各プロジェクトのチームは、メールではなく Slack で運用状況を確認しています。受信した Cloud Billing の予算データで、チームの支出がしきい値を超えたことが分かったら、そのチームのチャネルにメッセージを転送する必要があります。課金通知の遅延は許容されますが、メッセージを自動処理し、インフラの保守を最小限に抑えた連携が必要です。どうすればよいですか？(2つ選択してください)",
+    "choices": [
+      {
+        "label": "A",
+        "text": "課金データを BigQuery にエクスポートし、テーブルをポーリングしてしきい値の変化を調べる Cloud Composer ワークフローを保守する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Billing の予算に Pub/Sub トピックを接続し、プログラムによる予算通知を送信するよう構成する。"
+      },
+      {
+        "label": "C",
+        "text": "課金レポートを継続的にポーリングして Slack にメッセージを投稿する、Compute Engine のマネージドインスタンスグループを実行する。"
+      },
+      {
+        "label": "D",
+        "text": "Pub/Sub トピックをトリガーとする Cloud Run 関数を構成し、通知内の支出がしきい値を超えた場合に対応するチームの Slack チャネルへ投稿する。"
+      },
+      {
+        "label": "E",
+        "text": "課金レポートをダウンロードする Cloud Scheduler ジョブを設定し、しきい値に関するメッセージを投稿するよう運用担当者に依頼する。"
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "全体的な説明:\nB. Cloud Billing の予算に Pub/Sub トピックを接続し、プログラムによる予算通知を送信するよう構成する。 Cloud Billingの予算をPub/Subトピックに接続すると、現在の支出額や予算額を含む更新通知が自動で配信されます。課金レポートやテーブルを自前でポーリングする仕組みを保守する必要がありません。\nD. Pub/Sub トピックをトリガーとする Cloud Run 関数を構成し、通知内の支出がしきい値を超えた場合に対応するチームの Slack チャネルへ投稿する。 Pub/Subへの更新通知でCloud Run関数を起動し、対象予算と報告された支出を確認して、しきい値を超えたときに対応するSlackチャネルへ投稿すれば、VMを保守せずに連携できます。予算通知は定期的な更新データなので、受信するたびに無条件で投稿するのではなく、通知内容に基づいて判定することが必要です。\n\n各選択肢の説明:\nA. BigQueryへのエクスポートとCloud Composerによるポーリングは、予算のしきい値をSlackへ通知するだけの用途には構成と管理作業が増えます。\nB. Cloud Billingの予算通知をPub/Subトピックに接続することで、完全サーバーレスなイベント駆動型通知が送信できます。\nC. VMで継続的にポーリングする構成は、インスタンスや実行プロセスの保守が必要です。用意された予算通知と関数を使う方が要件に適しています。\nD. Pub/SubトリガーのCloud Run関数（旧Cloud Functions）により、サーバーレスかつインフラ保守ゼロでSlack転送を自動処理できます。\nE. 運用担当者へ投稿を依頼する手順が残るため、メッセージの自動処理という要件を満たしません。",
+    "business_tip": "【正解: Cloud Billing の予算に Pub/Sub トピックを接続し、プログラムによる予算通知を送信するよう構成する。 / Pub/Sub トピックをトリガーとする Cloud Run 関数を構成し、通知内の支出がしきい値を超えた場合に対応するチームの Slack チャネルへ投稿する。】\n👉 ポイント: 予算超過のアラートをSlack等へ自動転送する最小保守構成は「Cloud Billing 予算通知 → Pub/Sub → Cloud Run 関数」。\n💡 判断軸: GCE（VM）のポーリングやComposer、手動対応は保守負担が大きい。完全サーバーレスなイベント駆動パイプライン（Pub/Sub ＋ Cloud Run 関数）がベストプラクティス。",
+    "id": "P089",
+    "code": "P-089",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Billing Slack 通知",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 40,
+    "question_id": "090",
+    "multi_select": 1,
+    "question": "会社では機密データをCloud Storageに保存しています。通常とは異なるユーザーによる大量のオブジェクト読み取りなど、データ流出の兆候となるアクセスパターンを検出したいと考えています。\n最も適切な方法はどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Sensitive Data Protectionを使用して、Cloud Storage上の機密情報を定期的にスキャンする。"
+      },
+      {
+        "label": "B",
+        "text": "VPC Service Controlsを構成し、サービス境界を設定する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Storageの使用量メトリクスに対してCloud Monitoringアラートを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Audit LogsのData Accessログを収集し、Cloud Loggingのログベースのアラートで不審なアクセスを検出する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\n特定のユーザーによる大量のオブジェクト読み取りなど、「誰が・いつ・何をしたか」という個別操作のアクセスパターンを検知するには、Cloud Audit Logs の Data Access（データアクセス）ログが必須です。\nData Access ログ（Data Read）を有効化してオブジェクトの読み取りイベントを記録し、Cloud Logging で特定の条件（短時間の大量アクセスや特定ユーザーの不審な挙動）をトリガーとするログベースのアラートを設定することで、データ流出の兆候を迅速に検出できます。\n\n【選択肢の解説】\n・A: 旧 Cloud DLP です。バケット内にクレカ番号や個人情報（PII）などの機密データが含まれているかをスキャン・検出するサービスであり、ユーザーのアクセスパターンや挙動を監視するものではありません。\n・B: 許可されていないネットワークや境界外へのデータ持ち出しを防止（アクセス制御・予防）するためのサービス境界機能です。不審なアクセスパターンの検出やアラート通知を目的としたものではありません。\n・C: Cloud Monitoring の標準メトリクスは、バケット全体のリクエスト数や使用量などの集計値を監視します。「どのユーザーが大量のオブジェクトを読み取ったか」というユーザーごとの個別挙動を特定・検知することはできません。\n・D（正解）: Data Accessログによりユーザー単位のアクセス操作を追跡し、Cloud Loggingのログベースアラートで不審なアクセスパターンを検知します。",
+    "business_tip": "【正解: Cloud Audit LogsのData Accessログを収集し、Cloud Loggingのログベースのアラートで不審なアクセスを検出する。】\n👉 ポイント: 「誰がどのデータにアクセスしたか」という個別の読み取り挙動を監視・検知するには、Cloud Audit Logsの「Data Access（Data Read）」ログと「ログベースのアラート」を組み合わせます。\n💡 判断軸: Cloud Monitoringメトリクスは全体の集計値のみでユーザー特定不可。VPC SCは境界遮断（防止）であり検知ではない。Sensitive Data Protection（DLP）はデータ内容の機密性検査ツールです。",
+    "id": "P090",
+    "code": "P-090",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Data Access ログアラート",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 41,
+    "question_id": "091",
+    "multi_select": 1,
+    "question": "あなたは、手動で作成された複数の Google Cloud プロジェクトについて、所有者の記録を作成しています。事前のレビューで、各プロジェクトには作成時に自動付与された Owner のバインディングだけがそのまま残っており、ほかの所有者は追加されていないことが確認されています。現在のアクセス設定から、各プロジェクトを作成したユーザーを特定する必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "プロジェクトの IAM ページを開き、Owner ロールが直接付与されているユーザーを特定する。"
+      },
+      {
+        "label": "B",
+        "text": "Resource Manager がすべてのプロジェクトに自動で付ける creator ラベルを確認する。"
+      },
+      {
+        "label": "C",
+        "text": "親フォルダの管理者を、プロジェクトの作成者として扱う。"
+      },
+      {
+        "label": "D",
+        "text": "関連付けられた Cloud Billing アカウントの支払い担当者を、プロジェクトの作成者として扱う。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【正解: A】\nユーザーが手動でプロジェクトを作成すると、通常、そのユーザーにプロジェクトの Owner（roles/owner）ロールが自動付与されます。この問題では、作成時のバインディングがそのまま残り、ほかの所有者は追加されていないことが確認されています。そのため、プロジェクトに直接付与された Owner を調べると作成者を特定できます。（※Ownerが後から変更された環境では、現在のIAM設定だけで作成者を断定できるわけではありません）\n\n【不正解の解説】\n・B: Resource Manager がすべてのプロジェクトへ作成者を示す creator ラベルを自動設定する仕組みはありません。\n・C: 親フォルダの管理者と、個々のプロジェクトを作成したユーザーは同一とは限りません。\n・D: 請求先アカウントの支払い担当者は課金を管理する立場であり、プロジェクトの作成者を示す情報ではありません。",
+    "business_tip": "【正解: プロジェクトの IAM ページを開き、Owner ロールが直接付与されているユーザーを特定する。】\n👉 ポイント: プロジェクト作成時には作成者に Owner ロールが自動付与される。初期状態のまま変更がない場合は IAM の Owner ロール確認で作成者を特定できる。\n💡 判断軸: GCPには自動付与される creator ラベル等は存在しない。親フォルダ管理者や請求担当者はプロジェクト作成者と同一とは限らない。",
+    "id": "P091",
+    "code": "P-091",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Owner ロール棚卸し",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 42,
+    "question_id": "092",
+    "multi_select": 1,
+    "question": "あなたはtest-clusterとprod-clusterという 2 つのGoogle Cloud Kubernetes (GKE)クラスターを管理しています。test-clusterはStandardクラスター、prod-clusterはAutopilotクラスターです。\n\nkubectl get nodesコマンドを実行すると、test-clusterのノードのみが表示されます。kubectl get nodes コマンドを介して prod-cluster のノードのステータスを確認するには、どのコマンドを実行する必要がありますか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud container clusters list"
+      },
+      {
+        "label": "B",
+        "text": "gcloud container clusters get-credentials prod-cluster"
+      },
+      {
+        "label": "C",
+        "text": "kubectl config use-context"
+      },
+      {
+        "label": "D",
+        "text": "kubectl config set-credentials prod-cluster"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【正解: B】\ngcloud container clusters get-credentials コマンドは、適切な認証情報とエンドポイント情報を使用して kubeconfig ファイルを更新し、kubectl が Google Kubernetes Engine の特定のクラスターを指すようにします。\n\n【不正解の解説】\n・A: gcloud container clusters list コマンドは、特定のクラスターのノードではなく、プロジェクト内のすべてのクラスターを一覧表示します。\n・C: kubectl config use-context コマンドは、現在のコンテキストを切り替えるコマンドです。クラスターへのアクセスに必要な認証情報の取得や構成は行いません。\n・D: kubectl config set-credentials コマンドは、新しいユーザー認証情報を kubeconfig ファイルに設定するために使用されます。既存のクラスター認証情報を取得したり、コンテキストを特定のクラスターに設定する用途には使用できません。",
+    "business_tip": "【正解: gcloud container clusters get-credentials prod-cluster】\n👉 ポイント: kubectlで別のGKEクラスターを操作するには、`gcloud container clusters get-credentials <クラスター名>` で認証情報を取得しkubeconfigを更新する。\n💡 判断軸: クラスター未設定や切替時は `get-credentials`。単なる既存コンテキスト切替(`use-context`)では認証情報の新規取得やエンドポイント設定は行われない。",
+    "id": "P092",
+    "code": "P-092",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "GKE get-credentials",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 43,
+    "question_id": "093",
+    "multi_select": 1,
+    "question": "あなたの会社は、Google Cloudのコストを最小限に抑えたいと考えています。プロジェクトや部門全体でリソースの種類ごとに支出を表示するためのカスタムダッシュボードを構築する必要があります。以下から適切なソリューションを選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "費用のフィルタリングが可能な Cloud Billingレポートを使用する。"
+      },
+      {
+        "label": "B",
+        "text": "請求データを BigQuery にエクスポートし、Looker Studioでダッシュボードを構築する。"
+      },
+      {
+        "label": "C",
+        "text": "請求データを Cloud Storageにエクスポートし、Dataflow で分析する。"
+      },
+      {
+        "label": "D",
+        "text": "Billing API にクエリを実行し、Cloud Monitoringカスタムダッシュボードで視覚化する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "全体的な説明:\nプロジェクトや部門（ラベル単位など）をまたいで、リソース種類ごとの詳細なコスト分析や自由度の高いカスタムダッシュボードを構築するには、Cloud Billing データの BigQuery エクスポートと Looker Studio の組み合わせが Google Cloud のベストプラクティスです。\n・BigQuery へのエクスポート: 請求データを自動かつ継続的に BigQuery へ出力し、SQL を用いた柔軟な集計・分析を可能にします。\n・Looker Studio（旧 Data Studio）: BigQuery とネイティブに接続でき、部門別・リソース別・ラベル別などの多角的なカスタムダッシュボードを簡単に構築・共有できます。\n\n各選択肢の説明:\nA. 標準の Cloud Billing レポートでも基本的なフィルタリングやグラフ表示は可能ですが、高度なカスタマイズや独自レイアウトによる「カスタムダッシュボードの構築」には限界があります。\nB. 請求データをBigQueryにエクスポートしLooker Studioでダッシュボードを構築することで、低コストで柔軟な可視化が可能です。\nC. CSV/JSON として Cloud Storage に出力して Dataflow でパイプライン処理を行うのは構造が複雑すぎ、無駄な計算リソース費用が発生するため「コストの最小化」に反します。\nD. Cloud Monitoring はインフラやアプリケーションのパフォーマンス（メトリクス）を監視するツールであり、財務・請求データの詳細なダッシュボード構築には適していません。",
+    "business_tip": "【正解: 請求データを BigQuery にエクスポートし、Looker Studioでダッシュボードを構築する。】\n👉 ポイント: 請求・コストのカスタムダッシュボード化は「BigQueryエクスポート ＋ Looker Studio」が定石構成。\n💡 判断軸: 既存のBillingレポートでは独自画面の構築ができず、DataflowやCloud Monitoringは過剰・用途違い。SQL集計（BigQuery）×BI（Looker Studio）を選ぶ。",
+    "id": "P093",
+    "code": "P-093",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Billing BigQuery / Looker Studio",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 44,
+    "question_id": "094",
+    "multi_select": 1,
+    "question": "Google Cloud 上で、運用負荷を最小限に抑えながら、迅速にマネージド PostgreSQL データベースをデプロイする必要があります。最も適切な方法はどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "PostgreSQL インストールガイドに従って、Compute Engine VM に手動で PostgreSQL をインストールする。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud SQL for PostgreSQL インスタンスを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "StatefulSet を使用して Google Kubernetes Engine (GKE) 上に PostgreSQL をデプロイする。"
+      },
+      {
+        "label": "D",
+        "text": "Terraform を使用して PostgreSQL をデプロイする。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Cloud SQL for PostgreSQL はフルマネージドのリレーショナルデータベースサービスです。プロビジョニング、バックアップ、OS/DBのセキュリティパッチ適用、高可用性（フェイルオーバー）構成などを自動で行うため、運用負荷を最小限に抑えつつ迅速に導入できます。Compute Engine や GKE 上での自前運用はパッチやバックアップの管理負荷が高く、Terraform はインフラ構成ツールであり DB の運用負荷自体を軽減するものではありません。",
+    "business_tip": "【正解: Cloud SQL for PostgreSQL インスタンスを作成する。】\n👉 ポイント: PostgreSQLのフルマネージドサービスは Cloud SQL。バックアップやパッチ適用を自動化し運用負荷を最小化する。\n💡 判断軸: 運用負荷最小＋リレーショナルDB（PostgreSQL/MySQL/SQL Server）＝Cloud SQL。",
+    "id": "P094",
+    "code": "P-094",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud SQL for PostgreSQL",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB"
+  },
+  {
+    "q_num": 45,
+    "question_id": "095",
+    "multi_select": 1,
+    "question": "あなたが管理するCompute EngineインスタンスのCPU 使用率が 3 分以上にわたって 80% を超えた場合に自動的に通知を受け取りたいと考えています。次の選択肢のうち、最も適切なものはどれでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Monitoringでアラートポリシーを作成し、CPU 使用率の指標が指定されたしきい値を 3 分間超えたときに通知する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Loggingを使用してログベースの指標を実装する。CPU 使用率のログを収集し、異常がないか分析する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Monitoringの指標をBigQueryにエクスポートし、Looker Studioを使用してインスタンスのパフォーマンスをモニタリングする。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Monitoringの指標を手動で定期的に確認し、CPU使用率の問題を特定する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "全体的な説明:\nCloud Monitoringアラートポリシーを作成すると、CPU使用率が80%を超える状態が3分間継続した場合に自動的に通知をトリガーするルールを設定できます。これにより、複雑な手順を設定することなく、プロアクティブなアラートを取得できるようになります。\n\n各選択肢の説明:\nA. Cloud Monitoringのアラートポリシーを作成することで、メトリクスが閾値を超えた際の自動通知を直接的かつシンプルに実現できます。\nB. Cloud Logging を使用してログベースの指標を実装する場合、持続的に高い利用率を検出するために、カスタムの解析およびフィルタリングルールを構築する必要があります。このアプローチは、Cloud Monitoringアラートポリシーを使用する場合と比較し、複雑で非効率的となる可能性があります。\nC. Cloud MonitoringとBigQueryおよびLooker Studioの組み合わせは、リアルタイム通知には対応しておらず、本シナリオの要件である自動通知が満たされません。\nD. 手動で指標を確認するアプローチはリアルタイムでの通知が難しく、即座の対応が難しいため、効果的ではありません。",
+    "business_tip": "【正解: Cloud Monitoringでアラートポリシーを作成し、CPU 使用率の指標が指定されたしきい値を 3 分間超えたときに通知する。】\n👉 ポイント: CPU使用率などのメトリクス（指標）が閾値を超えた際の自動通知は、Cloud Monitoring のアラートポリシーで設定する。\n💡 判断軸: ログ分析（Cloud Logging）や可視化（Looker Studio）、手動確認ではなく、指標の閾値監視と通知は Cloud Monitoring の標準機能を使うのが最短・確実。",
+    "id": "P095",
+    "code": "P-095",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Monitoring CPU アラート",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI"
+  },
+  {
+    "q_num": 46,
+    "question_id": "096",
+    "multi_select": 1,
+    "question": "あなたは新しいユーザーをCloud Identityに追加します。ユーザーは既存の個人Googleアカウントとemailアドレスを保持しています。Googleが推奨する方法に従い、Cloud Identityへの追加時にアカウントの競合を避けるにはどうすれば良いでしょうか？以下から選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "ユーザーに個人Googleアカウントを削除するよう強制する。"
+      },
+      {
+        "label": "B",
+        "text": "ユーザーの個人アカウントをCloud Identityに移行するよう招待する。"
+      },
+      {
+        "label": "C",
+        "text": "別の電子メール アドレスを使用して、新しい Cloud Identityアカウントを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "電子メール エイリアスを使用するようにユーザーを招待する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "正解はBです。\n企業のドメイン宛メールアドレスで既に個人の Google アカウントが作成されている場合、Cloud Identity 導入時にアカウント競合（コンフリクト）が発生します。Google のベストプラクティスでは、未管理ユーザーの移行ツールを使って「既存の個人アカウントを組織管理の Cloud Identity アカウントへ移行する招待」を送り、ユーザーに承諾してもらうことでデータを維持したまま管理下に移行します。\n\n各選択肢の解説:\n・A: アカウント削除の強制は個人データ喪失につながり、推奨されません。\n・B（正解）: 移行招待を送信し、組織管理下のアカウントへと安全に引き継ぎます。\n・C: 別のメールアドレスを作成すると管理が二重化・混乱するため不適切です。\n・D: メールエイリアスは別名にすぎず、アカウント競合の根本解決にはなりません。",
+    "business_tip": "【正解: ユーザーの個人アカウントをCloud Identityに移行するよう招待する。】\n👉 ポイント: 既存の個人 Google アカウントと同アドレスで Cloud Identity を導入する際は、「未管理ユーザー移行ツール」で管理下への移行招待を送る。\n💡 判断軸: アカウント削除や別アドレス作成ではなく、「移行への招待（未管理アカウントの移行）」が Google 公式の推奨手順。",
+    "id": "P096",
+    "code": "P-096",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Cloud Identity アカウント移行",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 47,
+    "question_id": "097",
+    "multi_select": 2,
+    "question": "開発チームが使用するサービスアカウントキーについて、以下の要件を満たす必要があります。\n\n1. サービスアカウントキーが必要なすべてのサービスアカウントは、sa-keys というプロジェクト内で作成する。\n2. 新しく作成するサービスアカウントキーの有効期間は1週間（168時間）以内とする。\n3. これらのルールを、できるだけ少ない運用作業で組織全体に適用する。\n\n要件を満たすために行うべき設定を2つ選択してください。\n該当するものをすべて選んでください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "組織レベルでサービスアカウントキーの作成を禁止し、sa-keys プロジェクトをそのポリシーの例外として設定する。"
+      },
+      {
+        "label": "B",
+        "text": "sa-keys プロジェクト内のサービスアカウントを、他のプロジェクトのリソースへアタッチできないようにする組織ポリシーを適用する。"
+      },
+      {
+        "label": "C",
+        "text": "新しく作成するサービスアカウントキーの有効期間を168時間に制限する組織ポリシーを適用する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Run JobsとCloud Schedulerを使用して、sa-keys プロジェクト内のすべてのサービスアカウントキーを毎週ローテーションする。"
+      },
+      {
+        "label": "E",
+        "text": "Cloud Run functionsとCloud Schedulerを使用して、sa-keys プロジェクト内のすべてのサービスアカウントキーを毎週ローテーションする。"
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nGoogle Cloud の組織ポリシー（Organization Policy）機能を使用することで、コードの記述や運用スクリプトの作成・保守を行わずに、最小限の運用作業でルールを強制適用できます。\n\n【選択肢の解説】\n・A（正解）: 組織レベルでサービスアカウントキーの作成を禁止し、sa-keys プロジェクトをそのポリシーの例外として設定することで、sa-keys 以外のプロジェクトでのキー作成を防ぐことができます。\n・C（正解）: 組織ポリシーの制約（constraints/iam.serviceAccountKeyExpiryHours）を使用して、新しく作成するサービスアカウントキーの有効期間を168時間に制限できます。\n・B: sa-keys 内のサービスアカウントを他プロジェクトで利用できなくする設定であり、キーの作成場所制限や有効期間の制約要件とは関係ありません。\n・D: Cloud Run JobsとCloud Schedulerで定期的にキーをローテーションする方法は実装できますが、カスタム処理が必要となり、Organization Policyを利用する方法より運用負荷が高くなります。\n・E: 選択肢Dと同様にカスタムコードによる運用が必要であり、今回の「最小限の運用作業」という要件には適していません。",
+    "business_tip": "【正解: 組織レベルでサービスアカウントキーの作成を禁止し、sa-keys プロジェクトをそのポリシーの例外として設定する。 / 新しく作成するサービスアカウントキーの有効期間を168時間に制限する組織ポリシーを適用する。】\n👉 ポイント: 組織全体へのガバナンス・セキュリティルールの適用には、カスタムスクリプト（Cloud Run等）ではなく「組織ポリシー（Organization Policy）」を活用するのが運用負荷最小のベストプラクティスです。\n💡 判断軸: 「最小限の運用作業」でキー作成の制限や有効期限（168時間）を強制するには、組織ポリシーの制約を組織レベルで適用し、必要に応じて特定プロジェクトのみ例外設定します。",
+    "id": "P097",
+    "code": "P-097",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "SAキー禁止組織ポリシー",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 48,
+    "question_id": "098",
+    "multi_select": 2,
+    "question": "開発チームは、複数のGoogle CloudプロジェクトでCompute EngineとCloud Storageを利用します。ユーザーごとに個別のIAMバインディングを設定するのではなく、グループ単位で一貫した最小権限を付与したいと考えています。適切な方法を2つ選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "開発者をGoogleグループに追加し、そのグループをIAMのプリンシパルとして使用する。"
+      },
+      {
+        "label": "B",
+        "text": "各開発者の個人Googleアカウントに直接、必要なIAMロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "必要な権限だけを含む組織レベルのカスタムロールを作成し、そのロールをGoogleグループに付与する。"
+      },
+      {
+        "label": "D",
+        "text": "各プロジェクトのすべての開発者にEditor基本ロールを付与する。"
+      },
+      {
+        "label": "E",
+        "text": "各プロジェクトで同一のOwner基本ロールを開発者へ付与する。"
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "開発者を Google グループに集約して IAM のプリンシパルとしてロールをバインドすることで、プロジェクトをまたいだ一貫性のあるアクセス制御と、メンバー異動・退職時の運用負荷軽減が図れます。また、Owner や Editor などの基本ロールは過剰な権限を与えるため、業務に必要な権限のみを定義した組織レベルのカスタムロールを作成してグループに付与することが「最小権限の原則」に適合します。個別アカウントへの直接付与は要件に反します。",
+    "business_tip": "【正解: 開発者をGoogleグループに追加し、そのグループをIAMのプリンシパルとして使用する。 / 必要な権限だけを含む組織レベルのカスタムロールを作成し、そのロールをGoogleグループに付与する。】\n👉 ポイント: メンバー管理はGoogleグループで行い、権限は過剰な基本ロールではなく必要な権限のみに絞ったカスタムロールを付与する。\n💡 判断軸: グループ単位の管理＝Googleグループに権限付与。最小権限＝カスタムロール（Owner/Editor基本ロールはNG）。",
+    "id": "P098",
+    "code": "P-098",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Googleグループ + 組織カスタムロール",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 49,
+    "question_id": "099",
+    "multi_select": 1,
+    "question": "あなたの会社はオンプレミスで運用しているアプリケーションをGoogle Cloudに移行しています。移行先であるLinuxインスタンスにSSHでアクセスする必要があります。最小限のコストで安全なアクセスを管理するには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "各インスタンスのパブリックIP アドレスを作成し、ポート 22でインターネットからのSSHアクセスを許可する。"
+      },
+      {
+        "label": "B",
+        "text": "--tunnel-through-iapフラグを指定してgcloud compute sshコマンドを実行する。"
+      },
+      {
+        "label": "C",
+        "text": "踏み台ホストを構築し、SSH アクセスを一元化する。"
+      },
+      {
+        "label": "D",
+        "text": "サードパーティのSSH管理ツールを使用してインスタンスにアクセスする。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "--tunnel-through-iap フラグを指定して gcloud compute ssh コマンドを実行すると、Identity-Aware Proxy (IAP) の TCP 転送を利用して暗号化トンネル経由で VM に接続できます。VM にパブリック IP を付与する必要がなく、専用の踏み台ホスト（Bastion host）を構築・維持する追加コストも不要なため、最小限のコストで安全なアクセス管理を実現できます。インターネットからのポート22開放は重大なセキュリティリスクとなります。",
+    "business_tip": "【正解: --tunnel-through-iapフラグを指定してgcloud compute sshコマンドを実行する。】\n👉 ポイント: パブリックIPや踏み台サーバーなしでVMに安全接続するには Identity-Aware Proxy (IAP) のTCPトンネリングを使用する。\n💡 判断軸: 安全なSSH接続＋踏み台ホスト不要・コスト最小＝IAP（--tunnel-through-iap）。",
+    "id": "P099",
+    "code": "P-099",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "IAP SSH トンネリング",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 50,
+    "question_id": "100",
+    "multi_select": 1,
+    "question": "あなたの会社では、本番環境が複数のGoogle Cloudプロジェクトに分散しています。\n次の2つを防止したいと考えています。\n• 本番プロジェクトそのものの誤削除\n• 重要なCompute Engine VMなど、削除保護に対応したリソースの誤削除\nどの方法が最も適切ですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "すべての本番プロジェクトでCloud Armorを有効にする。"
+      },
+      {
+        "label": "B",
+        "text": "各本番プロジェクトにProject Lienを設定し、重要なリソースではDeletion Protectionを有効にする。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Asset Inventoryを使用して削除されたリソースを監視する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Audit Logsで削除イベントを検知し、アラートを作成する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "正解はBです。\nプロジェクト自体の削除を防ぐには Project Lien（プロジェクトのリーエン / 先取特権）を設定し、VM インスタンスなどの個別リソースの誤削除を防ぐには Deletion Protection（削除保護）を有効化します。この2つにより事前防御として誤削除を防止できます。\n\n各選択肢の解説:\n・A: Cloud Armor は DDoS 防御や WAF 機能を提供するサービスであり、リソース削除保護とは無関係です。\n・B（正解）: プロジェクト誤削除には Project Lien、リソース誤削除には Deletion Protection を適用するのが適切な予防策です。\n・C: Cloud Asset Inventory はリソース変更や削除の監視・可視化ツールであり、削除操作自体を防止できません。\n・D: 監査ログとアラートは削除発生後の事後検知であり、未然防止にはなりません。",
+    "business_tip": "【正解: 各本番プロジェクトにProject Lienを設定し、重要なリソースではDeletion Protectionを有効にする。】\n👉 ポイント: プロジェクト自体の誤削除は「Project Lien（リーエン）」、VM 等の個別リソースの誤削除は「Deletion Protection（削除保護）」で事前ブロックする。\n💡 判断軸: 誤削除の「未然防止」が求められたら、事後検知（監査ログ・アラート・インベントリ）ではなく Lien と Deletion Protection を選ぶ。",
+    "id": "P100",
+    "code": "P-100",
+    "section_id": "practice",
+    "section_title": "実践対策",
+    "scenario_tag": "Project Lien / 削除保護",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織"
+  },
+  {
+    "q_num": 51,
+    "question_id": "101",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Firestore",
+    "multi_select": 1,
+    "question": "あなたの会社ではコンテンツ管理システムを開発しています。画像、動画、ドキュメント ファイルは Cloud Storage に保存しますが、アプリケーションには、小規模なメタデータやカタログ レコードを保存するためのオペレーショナル データベースが必要です。フィールドはメディアの種類によって異なり、スキーマは頻繁に変更されます。また、多数のクライアントに対する高速なクエリとリアルタイム更新、および自動スケーリングが必要です。\n最も適した Google Cloud のデータベース サービスはどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud SQL"
+      },
+      {
+        "label": "B",
+        "text": "Memorystore for Redis"
+      },
+      {
+        "label": "C",
+        "text": "Firestore"
+      },
+      {
+        "label": "D",
+        "text": "BigQuery"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "正解は C（Firestore）。\n・C（正解）: Firestore は柔軟でスキーマレスなデータモデル、自動スケーリング、インデックスを使ったクエリ、リアルタイム リスナーを備えた NoSQL ドキュメント データベース。小規模なドキュメントを大量に保存する用途に最適で、このシナリオのメタデータやカタログ レコードに適している（1 MiB 制限があるため大容量メディア自体は Cloud Storage に保存する）。\n・A（不正解）: Cloud SQL はリレーショナルデータの保存とクエリに適したフルマネージドRDBだが、リレーショナルスキーマやインスタンス容量の管理が必要であり、柔軟なドキュメントモデルや自動スケーリングの要件には向かない。\n・B（不正解）: Memorystore for Redis はキャッシュと高速なデータ取得向けのインメモリ データストアであり、メタデータやカタログ ドキュメントを永続的に保持する信頼できる記録システムには適していない。\n・D（不正解）: BigQuery は大規模データセットに対する高速な分析 SQL クエリ向けのフルマネージド データ ウェアハウスであり、多数クライアントに対して低レイテンシの読み取りやリアルタイム更新を提供するオペレーショナル ドキュメント データベースではない。",
+    "business_tip": "【正解: Firestore】\n👉 ポイント: 大容量ファイル本体は Cloud Storage に保存し、頻繁に変わる小規模なメタデータ管理・リアルタイム同期・自動スケーリングが必要な場合は Firestore を選ぶ。\n💡 判断軸: スキーマレス＋リアルタイム更新＋自動スケーリング＋小規模ドキュメント＝Firestore。",
+    "id": "P101",
+    "code": "P-101",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 52,
+    "question_id": "102",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Run / サーバーレス",
+    "multi_select": 1,
+    "question": "スタートアップ企業では、Google Cloud にデプロイするウェブ アプリケーションの Docker イメージを開発しました。開発チームは、インフラストラクチャの管理を気にすることなく、アプリケーション開発に集中したいと考えています。需要に基づいて自動的にスケーリングし、実際の使用量に対してのみ課金されるソリューションが必要です。次のうち、どの Google Cloud サービスを使用すべきですか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "DockerイメージをArtifact Registryにアップロードし、アプリケーションをGoogle Kubernetes Engine (GKE) Standardクラスタにデプロイする。"
+      },
+      {
+        "label": "B",
+        "text": "Docker イメージを Cloud Storage にアップロードし、Container-Optimized OS を使用する Compute Engine にアプリケーションをデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "DockerイメージをArtifact Registryにアップロードし、アプリケーションをCloud Runにデプロイする。"
+      },
+      {
+        "label": "D",
+        "text": "Docker イメージを Cloud Storage にアップロードし、アプリケーションを Cloud Run functionsとしてデプロイする。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nCloud Runはフルマネージドのサーバーレス・プラットフォームであり、コンテナ化されたアプリケーションを実行できます。需要に応じて自動的にスケールし、コード実行時に使用したリソースに対してのみ課金されます。そのため、インフラ管理のオーバーヘッドなしにアプリケーション開発に集中したいチームにとって理想的なソリューションとなります。\n\n【各選択肢の説明】\n・A（不正解）：GKEではコンテナ化されたアプリケーションを実行できますが、ノード、クラスタ、スケーリングポリシーなど、基盤となるKubernetesインフラストラクチャを管理する必要があります。さらに、GKE Standardクラスタは、クラスタ自体の運用に関連するコストが発生するため、実際の使用量のみに基づいた課金を超える可能性があります。\n・B（不正解）：Container-Optimized OS を使用する Compute Engine にアプリケーションをデプロイすると、コンテナ化されたアプリケーションを仮想マシン上で実行できます。しかし、この方法では、仮想マシンのスケーリング、パッチ適用、基盤インフラストラクチャの保守などを管理する必要があります。これは、インフラストラクチャ管理を最小限に抑え、実際の使用量に対してのみ料金を支払いたいという開発チームの要望には適していません。\n・C（正解）：DockerイメージをArtifact Registryにアップロードし、フルマネージドで自動スケーリング・実行時従量課金に対応したCloud Runにデプロイするのが最適です。\n・D（不正解）：Cloud Run Functions は、ソースコードからデプロイされ、HTTP リクエストまたはイベントに応答する単一目的の関数向けです。Cloud Storage にアップロードされた任意の Docker イメージを直接実行するものではありません。",
+    "business_tip": "【正解: DockerイメージをArtifact Registryにアップロードし、アプリケーションをCloud Runにデプロイする。】\n👉 ポイント: Dockerコンテナをインフラ管理ゼロ・自動スケール・実行時のみ課金で動かすなら、Artifact Registry + Cloud Run 一択。\n💡 判断軸: コンテナ＋サーバーレス＋従量課金＝Cloud Run。単一目的の関数（ソースコード）＝Cloud Run functions。クラスタの細かな制御が必要＝GKE。",
+    "id": "P102",
+    "code": "P-102",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 53,
+    "question_id": "103",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Backup and DR Service",
+    "multi_select": 1,
+    "question": "会社では、複数の Compute Engine インスタンス上で重要なワークロードを実行しています。災害復旧ポリシーでは、復旧ポイントが24時間以内であること、バックアップを7日間保持すること、およびインスタンス全体を復元できる変更不可能なバックアップを一元管理することが求められています。\nカスタムの運用作業を最小限に抑えたいと考えています。どうすればよいですか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "毎日実行してインスタンスのマシンイメージを作成し、7日より古いイメージを削除するカスタム Cloud Run function を作成する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud storage を使用してディスク ファイルを Cloud Storage バケットにコピーする cron スクリプトを毎日実行し、ライフサイクル ルールによって7日後にオブジェクトを削除する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Scheduler を構成し、新しいマシンイメージを作成して7日より古いマシンイメージを削除する Cloud Run function を毎日呼び出す。"
+      },
+      {
+        "label": "D",
+        "text": "ロックされた7日間の最小強制保持期間を持つ Backup and DR Service のバックアップ ボールトを作成する。毎日のバックアップ ルールと7日間の保持期間を設定したバックアップ プランを作成し、そのプランを Compute Engine インスタンスに関連付ける。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "正解は D。\n・D（正解）: Backup and DR Service のバックアップ プランでは Compute Engine インスタンスのポリシーベースのスケジュールバックアップを構成でき、バックアップ ボールトは変更不能かつ削除不能なストレージを提供する。最小強制保持期間をロックすることで短縮を防ぎ、毎日のルールで24時間以内の復旧ポイント要件を満たしつつ、カスタムのスケジューリングコードなしで7日後に自動期限切れにできる。\n・A（不正解）: マシンイメージはインスタンスの構成とディスクを取り込めるが、スケジューリング・エラー処理・保持・モニタリングをカスタム関数で実装する必要があり、バックアップ ボールトによる一元的で削除不能な保護も提供されない。\n・B（不正解）: 実行中のディスクからファイルをコピーしてもインスタンス全体の信頼性の高いバックアップにならず、構成の保持や一貫性のある復旧ポイントを提供できず、カスタム運用ロジックも必要になる。\n・C（不正解）: Cloud Scheduler でマシンイメージ作成を自動化してもカスタムコードが必要であり、一元管理されたバックアップ ポリシーと変更不可能なバックアップ ストレージが提供されない。",
+    "business_tip": "【正解: ロックされた7日間の最小強制保持期間を持つ Backup and DR Service のバックアップ ボールトを作成する。毎日のバックアップ ルールと7日間の保持期間を設定したバックアップ プランを作成し、そのプランを Compute Engine インスタンスに関連付ける。】\n👉 ポイント: Compute Engine インスタンス全体の定期バックアップと変更不可・削除不可（イミュータブル）な一元保持には、Backup and DR Service のバックアップ プランとロック済みバックアップ ボールトを使う。\n💡 判断軸: VM 全体保護＋変更不可＋最小運用＝Backup and DR Service（ボールト＋最小強制保持期間のロック）。",
+    "id": "P103",
+    "code": "P-103",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 54,
+    "question_id": "104",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE Autopilot",
+    "multi_select": 1,
+    "question": "ウェブ アプリケーションを Google Cloud にデプロイする必要があります。このアプリケーションは高可用性を備え、変動するトラフィック負荷に対応できなければなりません。さらに、インフラストラクチャ管理を最小限に抑えながら、Kubernetes マニフェストを使用してワークロードを定義およびデプロイする必要があります。このアプリケーションでは、特権ワークロードやクラスタノードの詳細な制御は必要ありません。このシナリオに最適な Google Cloud サービスはどれですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Run"
+      },
+      {
+        "label": "B",
+        "text": "App Engine"
+      },
+      {
+        "label": "C",
+        "text": "Google Kubernetes Engine（GKE）Autopilot"
+      },
+      {
+        "label": "D",
+        "text": "Google Kubernetes Engine（GKE）Standard"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "GKE Autopilot は、Kubernetes ワークロード マニフェストに基づいてコンピューティング リソースをプロビジョニングし、ノード、スケーリング、セキュリティのデフォルト設定、アップグレードなどのクラスタ インフラストラクチャを管理します。特権が必要なワークロードや Autopilot の制約に適合しない詳細なインフラストラクチャ オプションが必要な場合を除き、多くの本番環境ワークロードで Autopilot が推奨されています。そのため、Kubernetes によるデプロイ制御を維持しながら、インフラストラクチャ管理を最小限に抑えられます。\n\n・A (Cloud Run): コンテナ化されたアプリケーション向けのサーバーレス プラットフォームです。高可用性と自動スケーリングを提供しますが、Kubernetes マニフェストを直接使用することはできません。\n・B (App Engine): 高可用性と自動スケーリングを提供するフルマネージド プラットフォームですが、Kubernetes マニフェストを使用してデプロイ プロセスを完全に制御することはできません。\n・D (GKE Standard): Kubernetes マニフェスト、高可用性、自動スケーリングに対応しますが、ノード プールの計画と管理をはじめ、クラスタ インフラストラクチャのより多くの部分を利用者側で管理する必要があります。ノードを詳細に制御する必要がある場合や、Autopilot でサポートされない構成が必要な場合に適しています。",
+    "business_tip": "【正解: Google Kubernetes Engine（GKE）Autopilot】\n👉 ポイント: Kubernetes マニフェストを使いつつ、ノードやクラスタ基盤の運用管理を最小限にしたい場合は GKE Autopilot を選ぶ。\n💡 判断軸: K8sマニフェスト必須＋運用最小化＝GKE Autopilot。ノードの詳細制御や特権ワークロードが必要＝GKE Standard。K8s不要のコンテナ＝Cloud Run。",
+    "id": "P104",
+    "code": "P-104",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 55,
+    "question_id": "105",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "gcloud / サービスアカウント認証",
+    "multi_select": 1,
+    "question": "あなたが所属する開発チームは、提供されたスクリプトから gcloud コマンドを呼び出し、Google Cloud プロジェクトのリソースを管理する必要があります。このスクリプトは、service-account-key.json という名前のサービス アカウント キー ファイルを使用して認証する必要があります。スクリプトを実行するローカルマシンには Google Cloud CLI がインストールされています。スクリプトの認証をどのように構成すればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "サービス アカウント キー ファイルを Google Cloud CLI のインストール ディレクトリに配置し、credentials.json に名前を変更する。"
+      },
+      {
+        "label": "B",
+        "text": "JSON キーファイルへのパスを指定して、GOOGLE_APPLICATION_CREDENTIALS 環境変数をエクスポートする。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud auth login --key-file=service-account-key.json コマンドを実行する。"
+      },
+      {
+        "label": "D",
+        "text": "スクリプトの実行環境で、CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE に service-account-key.json の絶対パスを設定する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "この環境変数を使用すると、キーを CLI のアクティブな認証情報ストアにインポートすることなく、gcloud で使用する認証情報ファイルを指定できます。サービス アカウント キーにはセキュリティ リスクがあるため、環境が対応している場合は、サービス アカウントの権限借用や Workload Identity Federation など、キーを使用しない方法を優先してください。\n\n・A（不正解）: キーファイルをインストールディレクトリに配置して名前を変更するだけでは、gcloud がその認証情報を検出して使用することはありません。\n・B（不正解）: JSON キーファイルへのパスを指定して GOOGLE_APPLICATION_CREDENTIALS 環境変数をエクスポートすると、クライアントライブラリ用の Application Default Credentials が構成されます。ただし、gcloud コマンドで使用する認証情報は選択されません。\n・C（不正解）: gcloud auth login コマンドには --key-file フラグがありません。このコマンドは、サービス アカウント キーを指定する有効な方法ではありません。",
+    "business_tip": "【正解: スクリプトの実行環境で、CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE に service-account-key.json の絶対パスを設定する。】\n👉 ポイント: GOOGLE_APPLICATION_CREDENTIALSはアプリ/クライアントライブラリ用（ADC）であり、gcloud CLI自身の認証には効かない。gcloudコマンドにキーファイルを一時適用するには CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE を使う（なお gcloud auth login には --key-file フラグが存在しない）。\n💡 判断軸: クライアントライブラリ認証＝GOOGLE_APPLICATION_CREDENTIALS、gcloud CLIの認証ファイル上書き＝CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE。",
+    "id": "P105",
+    "code": "P-105",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 56,
+    "question_id": "106",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "VPC・サブネット",
+    "multi_select": 1,
+    "question": "Google Cloud CLI を使用するアプリケーションを実行し、同じサブネット内に300台の Compute Engine VM インスタンスを作成しようとしました。アプリケーションの実行後、Google Cloud コンソールで結果を確認したところ、300台のうち一部の VM が作成されていませんでした。考えられる原因を次の選択肢から選んでください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アプリケーションが Google Cloud にアクセスできなかった。"
+      },
+      {
+        "label": "B",
+        "text": "サブネットが /24 マスクを使用して作成されており、使用可能なすべての IP アドレスが使い果たされた。"
+      },
+      {
+        "label": "C",
+        "text": "アプリケーションを実行したアカウントに、VM の作成に必要な権限が付与されていなかった。"
+      },
+      {
+        "label": "D",
+        "text": "ユーザー1人あたり最大250台の VM のみ作成できるように、組織のポリシーが設定されている。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "/24 サブネットには256個の IPv4 アドレスが含まれます。Google Cloud では、サブネットのプライマリ IPv4 範囲の先頭2個と末尾2個のアドレスが予約されるため、使用可能なアドレスは252個です。このサブネットに、NIC を1つ持つ VM を300台デプロイしようとすると、使用可能なアドレスが不足し、残りの VM の作成が失敗します。\n\n・A (アクセス不可): 300台のうち一部の VM は正常にデプロイされているため、接続の不足が原因ではありません。\n・C (権限不足): 一部の VM は正常にデプロイされているため、アクセス権限の不足が原因ではありません。\n・D (組織ポリシー上限250台): Google Cloud には、ユーザー1人あたりの VM 作成数を250台に制限する標準的な組織ポリシーはありません。Compute Engine の VM と CPU の割り当ては通常、プロジェクト単位・リージョン単位であり、割り当てに起因する失敗は失敗した作成処理によって報告されます。",
+    "business_tip": "【正解: サブネットが /24 マスクを使用して作成されており、使用可能なすべての IP アドレスが使い果たされた。】\n👉 ポイント: Google Cloud のサブネットでは各範囲から4つの IP（先頭2つ・末尾2つ）が予約されるため、/24（256個）で使えるのは最大252個となる。\n💡 判断軸: 一部のリソースだけ作成成功・残りが失敗＝権限や接続ではなく、サブネットIP枯渇やクォータ上限を疑う。/24＝最大252台。",
+    "id": "P106",
+    "code": "P-106",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 57,
+    "question_id": "107",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "gcloud CLI・プロキシ",
+    "multi_select": 1,
+    "question": "ワークステーション上の Google Cloud CLI にプロキシ サーバーを構成しており、プロキシの認証情報を安全に保ちたいと考えています。認証情報がログや構成ファイルに保存されないようにするには、どうすればよいですか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud config set proxy/username USERNAME および gcloud config set proxy/password PASSWORD を実行する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud コマンドを実行する前に、CLOUDSDK_PROXY_USERNAME および CLOUDSDK_PROXY_PASSWORD 環境変数を設定する。"
+      },
+      {
+        "label": "C",
+        "text": "認証情報をエンコードしたファイルに保存し、そのファイルを gcloud の構成から参照する。"
+      },
+      {
+        "label": "D",
+        "text": "プロキシ認証情報を gcloud の構成ファイルに手動で入力する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "CLOUDSDK_PROXY_USERNAME および CLOUDSDK_PROXY_PASSWORD 環境変数は、その値をアクティブな gcloud CLI 構成や gcloud CLI ログに書き込まずに、proxy/username および proxy/password プロパティを指定します。\n\n・A (gcloud config set を実行): gcloud config set でプロキシ認証情報を設定すると、アクティブな gcloud CLI 構成に保存されます。また、コマンドラインにリテラル値として入力した認証情報は、シェル履歴にも記録される可能性があります。\n・C (エンコードしたファイルに保存): エンコードされたファイルの管理は複雑さを増します。また、エンコードによって認証情報を見えにくくすることはできますが、ファイルが侵害された場合、認証情報がデコードされるリスクは依然としてあります。\n・D (構成ファイルに手動入力): 認証情報を gcloud の構成ファイルに手動で入力すると平文で保存されるため、ファイルの読み取り権限を持つすべてのユーザーがアクセスできるようになります。また、これらの認証情報がログに記録される可能性もあり、セキュリティ リスクが生じます。",
+    "business_tip": "【正解: gcloud コマンドを実行する前に、CLOUDSDK_PROXY_USERNAME および CLOUDSDK_PROXY_PASSWORD 環境変数を設定する。】\n👉 ポイント: gcloud のプロキシ認証情報を構成ファイルやログ・シェル履歴に残したくない場合は、CLOUDSDK_PROXY_* の環境変数経由で渡す。\n💡 判断軸: gcloud config set や設定ファイル直書き＝平文保存・ログ残存リスクあり。環境変数（CLOUDSDK_PROXY_USERNAME / PASSWORD）＝設定ファイルとログに書き込まれない。",
+    "id": "P107",
+    "code": "P-107",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 58,
+    "question_id": "108",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン",
+    "scenario_tag": "BigQuery / 割り当て・監視",
+    "multi_select": 2,
+    "question": "会社では、月次の財務レポート作成に BigQuery を使用しています。最近、スケジュールされたクエリが HTTP 403 Forbidden レスポンスと「Quota exceeded」というエラー メッセージを返して失敗するようになりました。到達した割り当てまたは上限を特定し、影響を受けているスケジュール クエリ ジョブを確認する必要があります。どうすればよいですか？（2つ選択してください）",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Trace を構成して問題を分析する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Profiler でエラーを確認し、問題を分析する。"
+      },
+      {
+        "label": "C",
+        "text": "Logs Explorer を使用して BigQuery の Cloud Audit Logs を検索し、ステータスまたはメッセージに「Quota exceeded」または「limit」が含まれるエントリを探す。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Monitoring でエラーを確認し、問題を分析する。"
+      },
+      {
+        "label": "E",
+        "text": "リージョンの INFORMATION_SCHEMA.JOBS_BY_PROJECT ビューにクエリを実行し、失敗したスケジュール クエリ ジョブの error_result やリソース使用量の詳細を確認する。"
+      }
+    ],
+    "answer": [
+      "C",
+      "E"
+    ],
+    "explanation": "C. Logs Explorer を使用して BigQuery の Cloud Audit Logs を検索し、ステータスまたはメッセージに「Quota exceeded」または「limit」が含まれるエントリを探す。BigQuery の割り当てに関するトラブルシューティング ガイドでは、割り当ておよび上限エラーを検出するための Logs Explorer フィルタが提供されています。該当する監査ログ エントリから、オペレーション、プリンシパル、影響を受けたリソース、詳細なエラー メッセージを特定できます。この詳細なエラー メッセージに、到達した具体的な割り当てまたは上限が記載されています。\nE. リージョンの INFORMATION_SCHEMA.JOBS_BY_PROJECT ビューにクエリを実行し、失敗したスケジュール クエリ ジョブの error_result やリソース使用量の詳細を確認する。JOBS ビューでは、ジョブ履歴と、ユーザー、タイムスタンプ、宛先テーブル、処理バイト数、スロット使用量、error_result などのフィールドを確認できます。これらの情報は、失敗したスケジュール クエリ ジョブを特定するのに役立ちます。\n\n・A（不正解）: Cloud Trace は、アプリケーションの分散トレースを行い、パフォーマンスやレイテンシを測定するために使用します。BigQuery の「Quota exceeded」エラーの診断には直接関係しません。\n・B（不正解）: Cloud Profiler は、CPU やメモリの使用量など、アプリケーションのパフォーマンス特性を分析する継続的なプロファイリング ツールです。BigQuery の「Quota exceeded」エラーの診断には関係しません。\n・D（不正解）: Cloud Monitoring では、サポートされている割り当て使用量と上限の指標をグラフで確認できますが、失敗した処理を特定するために必要な個々のスケジュール クエリのエラー レコードは表示されません。",
+    "business_tip": "【正解: Logs Explorer を使用して BigQuery の Cloud Audit Logs を検索し、ステータスまたはメッセージに「Quota exceeded」または「limit」が含まれるエントリを探す。 / リージョンの INFORMATION_SCHEMA.JOBS_BY_PROJECT ビューにクエリを実行し、失敗したスケジュール クエリ ジョブの error_result やリソース使用量の詳細を確認する。】\n👉 ポイント: 到達した具体的な割り当て上限はBigQueryのCloud Audit Logs（Logs Explorer）から特定し、失敗した個別ジョブの詳細やスロット・処理バイト数はINFORMATION_SCHEMA.JOBS_BY_PROJECTで確認する。\n💡 判断軸: BigQueryのQuota exceeded調査＝Audit Logs（具体的な上限特定）＋ INFORMATION_SCHEMA.JOBS_BY_PROJECT（失敗ジョブと負荷確認）。",
+    "id": "P108",
+    "code": "P-108",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 59,
+    "question_id": "109",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage",
+    "multi_select": 1,
+    "question": "組織では、Standard Storage クラスを使用して顧客データ ファイルを Cloud Storage に保存しています。これらのファイルは最初の 45 日間は頻繁にアクセスされますが、それ以降は月に 1 回程度しかアクセスされません。ストレージ コストを最適化するため、45 日後にこれらのファイルを低コストのストレージ クラスへ自動的に移行したいと考えています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "バケットで Autoclass を有効にし、Nearline Storage クラスを最終ストレージ クラスとして設定する。"
+      },
+      {
+        "label": "B",
+        "text": "45 日後にオブジェクトを Coldline Storage クラスへ移行するオブジェクト ライフサイクル ポリシーを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "45 日後にオブジェクトを Nearline Storage クラスへ移行するオブジェクト ライフサイクル ポリシーを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "45 日間のバケット保持ポリシーを設定し、バケットをロックする。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Nearline Storage クラスは、月に 1 回程度アクセスされるデータ向けに設計されており、最小保存期間は 30 日です。Cloud Storage のすべてのストレージ クラスでは低レイテンシのオンライン アクセスが提供されます。一方、Nearline はデータ取得料金が発生し、可用性がわずかに低くなる代わりに、Standard より保存料金が低くなります。年齢条件を 45 日に設定し、SetStorageClass アクションを使用する Object Lifecycle Management ルールを作成することで、必要なタイミングで確実に移行できます。\n\n・A (Autoclass): Autoclass はアクセス パターンに基づいてストレージ クラスを自動的に管理できますが、設定した日数の経過後にファイルを移行するために特別に設計された機能ではありません。このシナリオのような予測可能なアクセス パターンよりも、動的なアクセス パターンに適しています。\n・B (Coldline): Coldline Storage クラスは、四半期に 1 回程度以下の頻度でアクセスされるデータ向けで、最小保存期間は 90 日です。月に 1 回程度アクセスするため、Nearline の方が適しています。\n・D (保持ポリシー): 保持ポリシーは、指定した期間中にオブジェクトが削除または変更されることを防ぐために使用します。オブジェクトを別のストレージ クラスへ移行するものではありません。",
+    "business_tip": "【正解: 45 日後にオブジェクトを Nearline Storage クラスへ移行するオブジェクト ライフサイクル ポリシーを作成する。】\n👉 ポイント: 「○日後に別クラスへ移行」など予測できるスケジュール移行には、オブジェクト ライフサイクル管理（SetStorageClass）を使う。月1回アクセスなら Nearline（最小30日）が合う。\n💡 判断軸: 月1回＝Nearline（30日）、四半期1回＝Coldline（90日）、年1回＝Archive（365日）。日数固定の移行＝ライフサイクルポリシー、アクセス予測不能＝Autoclass。",
+    "id": "P109",
+    "code": "P-109",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 60,
+    "question_id": "110",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM・カスタムロール",
+    "multi_select": 1,
+    "question": "会社は、組織レベルのカスタム IAM ロールを使用している別会社を買収しました。そのロールのタイトル、説明、権限セットを含むロール定義を、自社の Google Cloud 組織に再作成する必要があります。ロールをプリンシパルに割り当てる IAM ポリシー バインディングは別途移行します。カスタムロール定義のコピーを自動化したいと考えています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud iam roles copy --source=ROLE_ID --source-organization=OLD_ORG_ID --destination=ROLE_ID --dest-organization=NEW_ORG_ID を実行する。"
+      },
+      {
+        "label": "B",
+        "text": "Google Cloud コンソールを使用して、移行先の組織にカスタムロールを手動で作成し、すべての権限を再入力する。"
+      },
+      {
+        "label": "C",
+        "text": "移行元組織の IAM 許可ポリシーを移行先へコピーすれば、カスタムロール定義も作成されると想定する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Resource Manager API を使用して、カスタムロール定義を組織間でコピーする。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "gcloud iam roles copy コマンドは、既存のロールを基にカスタムロールを作成します。組織レベルのカスタムロールでは、--source、--source-organization、--destination、--dest-organization を指定します。このコマンドはロール定義をコピーしますが、IAM 許可ポリシーのバインディングをコピーしたり、プリンシパルにロールを付与したりすることはありません。\n\n・B (コンソールで手動作成): この方法でもロール定義を再作成できますが、手作業となり専用のコピー コマンドを使用する場合より誤りが発生しやすくなります。また、自動化するという要件を満たしません。\n・C (IAM 許可ポリシーをコピー): 許可ポリシーには、プリンシパルとロール名を関連付けるバインディングが含まれますが、カスタムロールの権限定義そのものは含まれず、ロール定義を作成することもありません。カスタムロールが存在するようになった後、ポリシー バインディングは別途処理する必要があります。\n・D (Cloud Resource Manager API を使用): Cloud Resource Manager API は、プロジェクトやフォルダなどのリソースを管理するために使用します。カスタムロール定義は IAM リソースであり、Resource Manager API を使用して組織間でコピーすることはできません。",
+    "business_tip": "【正解: gcloud iam roles copy --source=ROLE_ID --source-organization=OLD_ORG_ID --destination=ROLE_ID --dest-organization=NEW_ORG_ID を実行する。】\n👉 ポイント: カスタム IAM ロールの定義（権限セット等）を組織やプロジェクト間でコピー・自動化する場合は `gcloud iam roles copy` コマンドを使う。\n💡 判断軸: 許可ポリシー（バインディング）は「誰にどのロールを付けたか」でありロール定義そのものは含まない。ロール定義の複製＝`gcloud iam roles copy`。",
+    "id": "P110",
+    "code": "P-110",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 61,
+    "question_id": "111",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Run functions / Eventarc",
+    "multi_select": 1,
+    "question": "組織では、Cloud Vision API を使用して画像ファイルを処理し、自動的にタグ付けしたいと考えています。画像ファイルは Cloud Storage バケットにアップロードされます。新しい画像がバケットにアップロードされるたびに Vision API を呼び出す、フルマネージドのサーバーレス ソリューションを構築する必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Storage イベントによってトリガーされ、ファイルの URI を Vision API に送信する App Engine スタンダード環境を作成する。"
+      },
+      {
+        "label": "B",
+        "text": "Kubernetes ジョブを実行して新しい画像を監視し、新しいファイルごとに Vision API を呼び出す。"
+      },
+      {
+        "label": "C",
+        "text": "Compute Engine インスタンス上で cron ジョブを使用して Python スクリプトを実行し、バケット内に新しい画像があるかを確認して Vision API を呼び出す。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Storage の object-finalized イベントを受信する Eventarc トリガーを使用して、イベントドリブン Cloud Run function を作成する。アップロードされたオブジェクトの URI を Vision API に送信する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】Cloud Run functionsを使用すると、イベントに応じてコードを実行するフルマネージドのサーバーレス構成を実現できます。Eventarc は、アップロードによってオブジェクトが正常に作成または上書きされるたびに、Cloud Storage の object-finalized イベントを関数へルーティングできます。その後、関数はアップロードされたオブジェクトの Cloud Storage URI を使用して Vision API を呼び出せます。サーバー管理やポーリングは必要ありません。\n【A】App Engine は HTTP リクエストを処理でき、イベント処理にも利用できますが、App Engine 自体を Cloud Storage イベントの直接の送信先にすることはできません。イベント ルーティングおよびリクエスト処理のコンポーネントを追加する必要があり、イベントドリブン Cloud Run Function を使用するよりも複雑になります。\n【B】Kubernetes は、コンテナ化されたアプリケーションを大規模に管理する用途に適していますが、このタスクに Kubernetes を使用すると、不必要な複雑さとオーバーヘッドが生じます。\n【C】この方法では、Compute Engine インスタンスを管理し、新しい画像を定期的に確認する cron ジョブを設定する必要があります。サーバーレスではなく、Compute Engine インスタンスの継続的な保守と監視も必要になるため、Cloud Run Function を使用する方法より非効率で複雑です。",
+    "business_tip": "【正解: Cloud Storage の object-finalized イベントを受信する Eventarc トリガーを使用して、イベントドリブン Cloud Run function を作成する。アップロードされたオブジェクトの URI を Vision API に送信する。】\n👉 ポイント: Cloud Storageへの画像アップロードを契機にAPIを呼ぶサーバーレス構成は、Eventarc（object-finalized イベント）＋ Cloud Run functions が定石。\n💡 判断軸: 「ファイル追加を自動検知」「フルマネージド・サーバーレス」＝ Eventarc + Cloud Run functions（定期ポーリングやVM・GKE管理は過剰）。",
+    "id": "P111",
+    "code": "P-111",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 62,
+    "question_id": "112",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud SQL / IAM認証・Auth Proxy",
+    "multi_select": 1,
+    "question": "あなたは、機密データを保存するためのリレーショナルデータベースを必要とするビジネスアプリケーションをCompute Engine上にデプロイすることを任されています。データベース接続は、SSL/TLS証明書の大規模な管理を必要とせずに、IAMを使用して暗号化および認証する必要があります。\nどうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Bigtable データベースをデプロイし、SSL/TLS クライアント証明書を構成して、データベース ユーザーとパスワードを認証に使用する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud SQLデータベースをデプロイし、IAMデータベース認証を有効にし、Cloud SQL Auth Proxyを使用してCompute Engineから接続する。"
+      },
+      {
+        "label": "C",
+        "text": "Bigtable データベースをデプロイし、IAM ロールを認証に使用して、暗号化用に SSL/TLS クライアント証明書を構成する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud SQLデータベースをデプロイし、データベースユーザーとパスワードを構成し、SSL/TLSを使用して直接接続する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】Cloud SQLは、MySQL、PostgreSQL、SQL Serverをサポートするフルマネージドのリレーショナルデータベースサービスです。IAMデータベース認証を有効にすることで、IAMロールとポリシーを使用してデータベースアクセスを管理することができ、認証を簡素化し、セキュリティを強化します。Cloud SQL Auth Proxyが接続の暗号化と認証を処理するため、SSL/TLS証明書の大規模な管理が不要になります。このアプローチにより、管理オーバーヘッドを最小限に抑えながら、データベースへのセキュアで認証された接続が保証されます。\n【A】Bigtable はワイドカラム型の NoSQL データベースであり、リレーショナル データベースではありません。Bigtable は GoogleSQL クエリをサポートしますが、リレーショナル結合や複数行トランザクションは提供しないため、このシナリオで Cloud SQL を置き換えるものではありません。\n【C】Bigtable はリレーショナル データベースではありません。IAM で Bigtable へのアクセスを制御できますが、この選択肢では、アプリケーションに必要なリレーショナルデータベースを提供できません。\n【D】このオプションではSSL/TLSを使用して安全な接続が提供されますが、SSL/TLS証明書とデータベースユーザー認証情報を手動で管理する必要があります。",
+    "business_tip": "【正解: Cloud SQLデータベースをデプロイし、IAMデータベース認証を有効にし、Cloud SQL Auth Proxyを使用してCompute Engineから接続する。】\n👉 ポイント: リレーショナルDBにはCloud SQLを使い、IAMデータベース認証とCloud SQL Auth Proxyを組み合わせれば、SSL/TLS証明書を手動管理せずに暗号化・IAM認証できる。\n💡 判断軸: リレーショナルDB＝Cloud SQL（BigtableはNoSQLのため対象外）。証明書管理不要の暗号化・IAM認証＝Cloud SQL Auth Proxy。",
+    "id": "P112",
+    "code": "P-112",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 63,
+    "question_id": "113",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Audit Logs / 構成変更アラート",
+    "multi_select": 1,
+    "question": "あなたのチームはGoogle Cloud環境のセキュリティを維持する必要があります。最近、VPCネットワーク構成に不正な変更がありました。さらなるインシデントを防ぐために、VPCネットワーク構成への変更を監視し、アラートを受け取る必要があります。\nどうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Google Cloud VPCネットワークロギングを有効にし、挿入、更新、削除イベントのアラートを設定する。"
+      },
+      {
+        "label": "B",
+        "text": "Compute EngineインスタンスにSplunkをインストールする。VPCネットワーク構成の変更についてフィルタリングされたCloud Audit LogsをPub/Subに転送するためのログシンクを作成する。Pub/Subトピックをターゲットにして、メッセージをSplunkインスタンスにプッシュし、ログをリアルタイムで分析する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Loggingフィルタを使用して、VPCネットワーク構成の変更に関するログベースの指標を作成する。変化を監視し、適切なアラートを設定する。"
+      },
+      {
+        "label": "D",
+        "text": "VPCネットワーク構成の変更についてフィルタリングされたCloud Audit LogsをCloud Storageに転送するためのログシンクを作成する。BigQueryを使用して、ストレージバケット内のログイベントを定期的に分析する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nCloud Loggingでは、VPCネットワーク構成の変更など、特定のイベントを監視するために使用できるログベースのメトリクスを作成できます。ログベースのメトリクスを設定することで、VPC構成に関連する挿入、更新、または削除イベントが発生するたびに通知するアラートを作成できます。このアプローチは効率的であり、Google Cloudの組み込みの監視およびアラート機能を活用することで、不正な変更があった場合に迅速に通知されるようにします。\n\n【各選択肢の説明】\n・A（不正解）：VPCネットワークでロギングをオンにすることは良い方法ですが、Google Cloudには「VPCネットワークロギング」という特定の機能はありません。代わりに、変更を追跡するにはCloud Audit Logsを使用する必要があります。また、VPCネットワークのロギングで直接アラートを設定することはできません。Cloud Loggingのログベースの指標を使用する必要があります。\n・B（不正解）：このオプションでは、外部のロギングおよびモニタリングソリューション（Splunk）を設定する必要があり、不要な複雑さが加わります。リアルタイムのログ分析にSplunkを使用することもできますが、Google Cloudのネイティブツール（Cloud LoggingとCloud Monitoring）との連携の方が簡単で、この目的に統合されています。\n・C（正解）：Cloud Loggingフィルタで構成変更イベントのログベース指標を作成し、アラートを設定するネイティブ構成が最もシンプルかつ即時性に優れています。\n・D（不正解）：このアプローチには追加の手順と定期的な分析が含まれ、リアルタイムのアラートが提供されない可能性があります。Cloud Loggingでログベースの指標とアラートを使用する場合と比べて、複雑で効率が低くなります。",
+    "business_tip": "【正解: Cloud Loggingフィルタを使用して、VPCネットワーク構成の変更に関するログベースの指標を作成する。変化を監視し、適切なアラートを設定する。】\n👉 ポイント: リソース設定の変更検知と即時通知は、Google Cloud標準のCloud Loggingフィルタ＋ログベース指標＋アラートで完結させる。\n💡 判断軸: 構成変更の監視・通知＝Cloud Audit Logs（Admin Activity）をCloud Loggingで指標化してアラート。Splunkの自前構築やGCS＋BigQueryの定期バッチは過剰・遅延する。",
+    "id": "P113",
+    "code": "P-113",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 64,
+    "question_id": "114",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "リソース階層 / プロジェクト分離",
+    "multi_select": 1,
+    "question": "あなたの会社には、HR Portalという名前で、hr-portalというIDを持つGoogle Cloudプロジェクトがあります。HR PortalはHRチームによって使用されます。財務チームに対しても、リソースを独立して編成して同様の環境を作成する必要があります。どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "財務チーム用のID: finance-portal を使用して別のプロジェクトを作成し、そこにリソースをデプロイする。"
+      },
+      {
+        "label": "B",
+        "text": "Finance Portalという名前の新しいプロジェクトを作成し、ID: hr-portal を使用します。Editor 基本ロールを財務チームに付与する。"
+      },
+      {
+        "label": "C",
+        "text": "Finance Portalという名前の新しいプロジェクトを作成し、ID: hr-portal を使用します。財務チームにProject Browserロールを付与する。"
+      },
+      {
+        "label": "D",
+        "text": "hr-portalにリーエンによるプロジェクトの保護を適用し、財務チームにProject Editorロールを付与する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】財務チーム用の新しいプロジェクト（finance-portal のような適切な ID）を作成することで、財務チームのリソースが人事チームのリソースから完全に分離されます。Google Cloudの各プロジェクトは、独自のリソース、権限、設定を持つ分離された環境として機能し、リソースを独立して整理するのに理想的です。\n【B】プロジェクトIDはGoogle Cloud全体で一意である必要があるため、別のプロジェクトでID: hr-portalを再利用することはできません。また、Editor基本ロールを付与しても独立した環境は作成されません。\n【C】プロジェクトIDは一意である必要があり、再利用できません。また、Project Browserロールではプロジェクトメタデータの表示のみが許可され、リソースのデプロイと管理に必要な権限は提供されません。\n【D】リーエンによるプロジェクトの保護を適用すると、プロジェクトが誤って削除されることはなくなりますが、リソースを個別に整理するのには役立ちません。財務チームにHR PortalプロジェクトのProject Editorロールを付与しても、別の環境は作成されず、潜在的な競合や分離の欠如につながる可能性があります。",
+    "business_tip": "【正解: 財務チーム用のID: finance-portal を使用して別のプロジェクトを作成し、そこにリソースをデプロイする。】\n👉 ポイント: Google Cloudはプロジェクト単位でリソース・権限・課金を分離する。プロジェクトIDはGoogle Cloud全体で一意なため、既存プロジェクトのIDは再利用できない。\n💡 判断軸: 部署やチームごとの独立環境＝新しいIDで別プロジェクトを作成（リーエンは誤削除防止用であり分離には使わない）。",
+    "id": "P114",
+    "code": "P-114",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 65,
+    "question_id": "115",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE / ノードプール構成",
+    "multi_select": 1,
+    "question": "あなたの会社には、Google Kubernetes Engine（GKE）上にデプロイする必要があるアプリケーションがあります。このアプリケーションは、ダウンタイムを許容できるステートレスサービスと、高可用性を維持する必要があるステートフルサービスの両方で構成されています。あなたは、ステートフルサービスの高可用性を確保しながら、コストを最適化するためにGKEクラスタを構成する必要があります。どうすればよいでしょうか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Spot VMノードプールと標準VMノードプールの両方を含むGKEクラスタを作成する。ステートフルサービスをSpot VMノードプールにデプロイし、ステートレスサービスを標準VMノードプールにデプロイする。"
+      },
+      {
+        "label": "B",
+        "text": "Spot VMノードプールと標準VMノードプールの両方を含むGKEクラスタを作成する。ステートフルサービスを標準VMノードプールにデプロイし、ステートレスサービスをSpot VMノードプールにデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "Spot VMを使用して、単一ノードプールを持つGKEクラスタを作成する。ステートフルサービスに preemptible:false というラベルを付ける。"
+      },
+      {
+        "label": "D",
+        "text": "Spot VMを使用して、単一ノードプールを持つGKEクラスタを作成する。ステートレスサービスに preemptible:true というラベルを付ける。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nSpot VMノードプールと標準VMノードプールの両方を備えたGKEクラスタを作成することで、ステートフルサービスの高可用性を確保しながらコストを最適化できます。ステートフルなサービスは、信頼性が高く一貫性のあるコンピュート・リソースを必要としますが、これは標準的なVMによって提供されるのが最適です。一方、ステートレス・サービスは中断に耐えることができるため、コスト効率が高くプリエンプトされる可能性があるSpot VMに適しています。この構成により、ステートフル・サービスは高い可用性を維持し、ステートレス・サービスはコスト削減の恩恵を受けることができます。\n\n【各選択肢の説明】\n・A（不正解）：Spot VMはいつでもプリエンプトされる可能性があり、ステートフルサービスのダウンタイムやデータ損失につながる可能性があります。このオプションでは、ステートフルサービスの高可用性は保証されません。\n・B（正解）：標準VMノードプールにステートフルサービスを、Spot VMノードプールにステートレスサービスを配置することで、可用性とコストの両立を図れます。\n・C（不正解）：Spot VMを使用したインスタンスに preemptible:false としてラベル付けしてもプリエンプトを防ぐことはできません。このオプションでは、ステートフルサービスの高可用性は保証されません。\n・D（不正解）：Spot VMを使用して単一のノードプールでGKEクラスタを作成し、preemptible:trueとラベル付けしても、ステートフルサービスの高可用性のニーズには対応できません。Spot VMのみを使用すると、ステートフルサービスを含むすべてのサービスがプリエンプトされるリスクがあり、ダウンタイムやデータ損失につながる可能性があります。",
+    "business_tip": "【正解: Spot VMノードプールと標準VMノードプールの両方を含むGKEクラスタを作成する。ステートフルサービスを標準VMノードプールにデプロイし、ステートレスサービスをSpot VMノードプールにデプロイする。】\n👉 ポイント: 1つのGKEクラスタ内に標準VMとSpot VMのノードプールを混在させ、ワークロードの耐障害性に応じて配置先を分ける。\n💡 判断軸: 高可用性・ステートフル＝標準VMノードプール。中断許容・ステートレス＝Spot VMノードプール（ラベル付けだけではプリエンプションは防げない）。",
+    "id": "P115",
+    "code": "P-115",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 66,
+    "question_id": "116",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Pricing Calculator / コスト見積もり",
+    "multi_select": 1,
+    "question": "あなたの会社では、データベースにPostgreSQLを使用するデータ分析アプリケーションをオンプレミスで実行しています。このアプリケーションをGoogle Cloudに移行し、Google CloudインスタンスとCloud SQL for PostgreSQLでアプリケーションを実行した場合の総コストを見積もる必要があります。あなたは何をすべきでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Google Cloud上でアーキテクチャを複製し、負荷テストを実行し、請求情報を確認して、通常の負荷に基づいてコストを調整する。"
+      },
+      {
+        "label": "B",
+        "text": "Google Cloud上でアーキテクチャを複製し、負荷テストを実行し、通常の負荷に基づいてコストを決定するようにCloud Monitoringを構成する。"
+      },
+      {
+        "label": "C",
+        "text": "Google Cloud Pricing Calculatorを使用して、必要なすべてのリソースのコストを見積もる。オンプレミスサーバーに同様のインスタンスを使用し、Cloud SQL for PostgreSQLと現在の設定を比較する。"
+      },
+      {
+        "label": "D",
+        "text": "さまざまなリソースの組み合わせを含むGoogleスプレッドシートを作成し、現在のGoogle Cloud料金をインポートし、数式を使用してコストを計算する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nGoogle Cloud Pricing Calculatorは、様々なGoogle Cloudリソースの運用コストを見積もるために特別に設計されたツールです。このツールを使って、仮想マシン・インスタンスやCloud SQL for PostgreSQLなど、必要なリソースの仕様を入力すると、詳細なコストの見積もりが表示されます。このアプローチでは、見積もりコストを現在のオンプレミス設定と比較することで、十分な情報に基づいた意思決定を行うことができます。\n\n【各選択肢の説明】\n・A（不正解）：Google Cloudで負荷テストを実行すると、パフォーマンスとコストに関する洞察が得られる可能性がありますが、初期コストの見積もりには実用的なアプローチではありません。この方法では、見積もりを行う前に設定と潜在的なコストの発生が必要であり、初期計画には効率的ではありません。\n・B（不正解）：このアプローチではアーキテクチャの設定と負荷テストの実行が必要であり、時間とコストがかかる可能性があります。Cloud Monitoringは使用状況とパフォーマンスの追跡に役立ちますが、初期コストの見積もりには適していません。この方法ではコスト見積もりの前に実際のデプロイが必要であり、計画目的には適していません。\n・C（正解）：Google Cloud Pricing Calculatorを使い、必要なリソース仕様を入力して見積もり額とオンプレミス構成を比較するのが最も正確かつ効率的です。\n・D（不正解）：スプレッドシートを手動で作成してコストを計算すると、エラーや非効率が発生しやすくなります。ある程度の洞察が得られるかもしれませんが、Google Cloud料金計算ツールが提供する包括的で正確なコスト見積もり機能は備えていません。また、この方法は、この目的のために設計された専用ツールを使用する場合に比べて効率的ではありません。",
+    "business_tip": "【正解: Google Cloud Pricing Calculatorを使用して、必要なすべてのリソースのコストを見積もる。オンプレミスサーバーに同様のインスタンスを使用し、Cloud SQL for PostgreSQLと現在の設定を比較する。】\n👉 ポイント: 移行前の総コスト試算は、実環境を作らずに公式の Google Cloud Pricing Calculator にスペックを入力して算出する。\n💡 判断軸: 構築前のコスト見積もり＝Pricing Calculator。実機複製や負荷テストは時間・費用の無駄で、スプレッドシート手計算は誤りやすい。",
+    "id": "P116",
+    "code": "P-116",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 67,
+    "question_id": "117",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Compute Engine / MIG オートスケーリング",
+    "multi_select": 1,
+    "question": "予測できないトラフィックの急増が発生するステートレスAPIサービスをデプロイする必要があります。サービスは仮想マシン上で実行し、トラフィックの負荷に基づいて自動的にスケーリングする必要があります。このサービスを導入する最善の方法は以下のどれでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "同時実行設定を使用してCloud Runにサービスをデプロイする。"
+      },
+      {
+        "label": "B",
+        "text": "自動スケーリングを有効にしたマネージドインスタンスグループにサービスをデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "クラスターの自動スケーリングを使用してサービスをGoogle Kubernetes Engine (GKE) にデプロイする。"
+      },
+      {
+        "label": "D",
+        "text": "自動スケーリングを使用してCloud Run functionsにサービスをデプロイする。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】マネージドインスタンスグループを使用すると、負荷に基づいて仮想マシンインスタンスを自動的に追加または削除できるため、必要に応じてサービスをスケールアップまたはスケールダウンして、さまざまなレベルのトラフィックを効率的に処理できます。\n【A】Cloud Runはステートレスサービスに適していますが、仮想マシン上での実行という要件を満たしていません。\n【C】GKEはオートスケーリングを提供しますが、このシナリオでは単純なステートレスAPIサービスに対して過剰な複雑さを導入する可能性があります。\n【D】Cloud Run functions はイベント駆動型サービスに適していますが、仮想マシン上で実行するという要件を満たしていません。",
+    "business_tip": "【正解: 自動スケーリングを有効にしたマネージドインスタンスグループにサービスをデプロイする。】\n👉 ポイント: 「仮想マシン（VM）上で実行」かつ「負荷に応じて自動スケール」という条件では、Compute Engine のマネージドインスタンスグループ（MIG）に自動スケーリングを設定する。\n💡 判断軸: VM実行の要件がある＝Compute Engine（MIG）。Cloud RunやCloud Run functionsはVM要件を満たさず、単純なAPIにGKEは過剰。",
+    "id": "P117",
+    "code": "P-117",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 68,
+    "question_id": "118",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン",
+    "scenario_tag": "BigQuery",
+    "multi_select": 1,
+    "question": "あなたの会社は、社内向けの参照用データセットを BigQuery で公開しています。すべての従業員が northwind.example の Cloud Identity ドメインで管理されるアカウントを持っており、全員がデータセットを読み取れるようにする必要があります。外部の Google アカウントや匿名ユーザーにアクセス権を付与してはなりません。従業員には、自分の分析用プロジェクトでクエリジョブを実行する権限が既にあります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "データセットに対する roles/bigquery.dataViewer を allAuthenticatedUsers に付与する。"
+      },
+      {
+        "label": "B",
+        "text": "データセットに対する roles/bigquery.dataEditor を domain:northwind.example に付与する。"
+      },
+      {
+        "label": "C",
+        "text": "データセットに対する roles/bigquery.dataViewer を allUsers に付与する。"
+      },
+      {
+        "label": "D",
+        "text": "データセットに対する roles/bigquery.dataViewer を domain:northwind.example に付与する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "正解は D。\n・D（正解）: domain:northwind.example はその Cloud Identity ドメインに属するユーザーを対象とするプリンシパル指定。対象データセットに roles/bigquery.dataViewer を付与すれば、社外へ公開せずにデータの読み取りを許可できる（クエリジョブの実行権限は各従業員の分析用プロジェクトに既に備わっている）。\n・A（不正解）: allAuthenticatedUsers は社内ドメインに限定されず外部の認証済みユーザーも対象になるため、社内限定の要件を満たさない。\n・B（不正解）: roles/bigquery.dataEditor はデータの変更も許可するロールであり、読み取りだけが必要な従業員に対して権限が過剰。\n・C（不正解）: allUsers は匿名を含む全員を対象とする指定であり、ドメイン限定の共有にならない。",
+    "business_tip": "【正解: データセットに対する roles/bigquery.dataViewer を domain:northwind.example に付与する。】\n👉 ポイント: 社内ドメイン全員に読み取りアクセスを許可する際は、プリンシパルに `domain:<ドメイン名>` を指定し、データセット単位で `roles/bigquery.dataViewer` を付与する。\n💡 判断軸: 社内全員のみ許可＝`domain:...`（`allAuthenticatedUsers` は社外Googleアカウントも含むためNG）。",
+    "id": "P118",
+    "code": "P-118",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 69,
+    "question_id": "119",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "組織・フォルダー・ログシンク",
+    "multi_select": 2,
+    "question": "あなたの会社には、複数の部門があり、それぞれが独自のGoogle Cloudプロジェクトのセットを管理しています。部門ごとに異なる厳格なデータ保持ポリシーがあります。データ保存とアクセスポリシーは一元的に適用されなければならず、Project Ownerロールを持つユーザーが上書きすることはできません。各部門は、Project Ownerロールを持つユーザーをプロジェクトに割り当てています。データ保存とアクセスに関するポリシーを一元的に管理するには、どうすれば良いでしょうか？(2つ選択してください)",
+    "choices": [
+      {
+        "label": "A",
+        "text": "プロジェクトを部門ごとのフォルダーに整理する。"
+      },
+      {
+        "label": "B",
+        "text": "部門名を含むプロジェクトには標準の命名規則を使用する。"
+      },
+      {
+        "label": "C",
+        "text": "組織に組織ポリシーを構成し、プロジェクトにログシンクを構成する。"
+      },
+      {
+        "label": "D",
+        "text": "プロジェクトで組織ポリシーとログシンクの両方を構成する。"
+      },
+      {
+        "label": "E",
+        "text": "組織に組織ポリシーを構成し、フォルダーにログシンクを構成する。"
+      }
+    ],
+    "answer": [
+      "A",
+      "E"
+    ],
+    "explanation": "プロジェクトを部門ごとのフォルダーの下に整理し、組織レベルで組織ポリシーを設定、フォルダーレベルでログシンクを構成することで、Project Owner による上書きを防ぎつつ部門ごとの要件に対応した一元管理ができます。\n\n・A (部門ごとのフォルダーに整理): リソースの構造化と効率的な管理に役立ちます。フォルダーを使用してより高いレベルでポリシーと権限を適用でき、フォルダー内のすべてのプロジェクトが設定を継承します。部門固有のポリシー管理も簡素化され、部門内のすべてのプロジェクトに一貫したポリシーが適用されます。\n・E (組織に組織ポリシー＋フォルダーにログシンク): 組織レベルで組織ポリシーを設定することで、ポリシーが一元的に実施され、Project Owner ロールを持つユーザーによって上書きされなくなります。フォルダーレベルでログシンクを設定することで、各部門固有のログをキャプチャして管理し、データ保存ポリシーの遵守を保証できます。\n・B (標準の命名規則): プロジェクトの整理と識別には役立ちますが、データ保持やアクセスポリシーは適用されず、Project Owner による上書きを防ぐ制御は提供されません。\n・C (プロジェクトにログシンク): プロジェクトレベルでログシンクを構成すると、複数プロジェクトにわたってデータ保持ポリシーを適用するための集中管理ができず、不整合が生じて一元管理が難しくなります。\n・D (プロジェクトで両方を構成): プロジェクトレベルで構成すると集中管理が提供されず、管理オーバーヘッドとポリシー不整合のリスクが増加します。",
+    "business_tip": "【正解: プロジェクトを部門ごとのフォルダーに整理する。 / 組織に組織ポリシーを構成し、フォルダーにログシンクを構成する。】\n👉 ポイント: 組織ポリシーを上位（組織・フォルダー）で設定すれば Project Owner でも上書きできない。部門別のログ保持ルールは、部門別フォルダーに集約してログシンクを設定する。\n💡 判断軸: 部門単位の管理・継承＝フォルダー。Project Owner による改変防止＝組織（またはフォルダー）レベルの組織ポリシー＆ログシンク。",
+    "id": "P119",
+    "code": "P-119",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 70,
+    "question_id": "120",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage",
+    "multi_select": 2,
+    "question": "あなたの会社では、オンプレミスのファイルのバックアップを Cloud Storage に保存する必要があります。バックアップジョブは、同じオブジェクト名を繰り返し使用して書き込みを行います。要件は次のとおりです。\n\n- すべてのオブジェクトバージョンを、少なくとも3年間は削除から保護する。\n- バージョンがその保持期間を満たした後、5つ以上の新しいバージョンが存在する場合に、その非現行バージョンを削除する。\n- 180日を超えたオブジェクトバージョンを Archive Storage クラスに変更する。\n\n運用負荷を最小限に抑えて、これらの要件を適用する必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "バケットに3年間の保持ポリシーだけを設定する。"
+      },
+      {
+        "label": "B",
+        "text": "Object Versioning を有効にし、3年間のバケット保持ポリシーを設定してロックする。さらに、isLive を false、numNewerVersions を 5 に設定したライフサイクルの Delete ルールを追加する。"
+      },
+      {
+        "label": "C",
+        "text": "ファイルをデュアルリージョンのストレージバケットに保存する。"
+      },
+      {
+        "label": "D",
+        "text": "オブジェクトの経過日数が180日に達したときに Archive に変更する SetStorageClass アクションを使用して、Object Lifecycle Management ルールを構成する。"
+      },
+      {
+        "label": "E",
+        "text": "Cloud Scheduler から Cloud Run function を呼び出し、メタデータに基づいてファイルを移動または削除するように構成する。"
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "正解は B と D。\n・B（正解）: Object Versioning を有効にして3年間のバケット保持ポリシーを設定・ロックすることで、置き換えられたデータもバージョンとして保持し、すべてのバージョンを3年間削除から保護できる。さらに isLive を false、numNewerVersions を 5 にしたライフサイクルの Delete ルールを追加することで、保持期間を満たした後に5つ以上の新しいバージョンが存在する非現行バージョンを自動削除できる。\n・D（正解）: 経過日数が180日に達したときに Archive に変更する SetStorageClass アクションを使った Object Lifecycle Management ルールを構成することで、追加の運用負荷なくストレージクラスを自動変更できる。\n・A（不正解）: 保持ポリシーだけでは、置き換えられたデータをバージョンとして保持すること、条件を満たした非現行バージョンを削除すること、またはストレージクラスを変更することはできない。\n・C（不正解）: デュアルリージョンバケットに保存すると高可用性と冗長性は得られるが、バージョンの保持、削除、ストレージクラスの移行は適用されない。\n・E（不正解）: Cloud Scheduler と Cloud Run function でも目的の結果は得られるが、組み込みのライフサイクル管理ルールを使う場合より構成と保守の運用負荷が高くなる。",
+    "business_tip": "【正解: Object Versioning を有効にし、3年間のバケット保持ポリシーを設定してロックする。さらに、isLive を false、numNewerVersions を 5 に設定したライフサイクルの Delete ルールを追加する。 / オブジェクトの経過日数が180日に達したときに Archive に変更する SetStorageClass アクションを使用して、Object Lifecycle Management ルールを構成する。】\n👉 ポイント: 同名ファイルの上書きから過去世代を守るには Object Versioning＋ロック済みバケット保持ポリシーを使い、世代削除とストレージクラス移行は Object Lifecycle Management で自動化する。\n💡 判断軸: 自動削除・クラス移行＝組み込みライフサイクルルール（Cloud Scheduler＋関数は保守負荷増）。削除保護＝保持ポリシーのロック。",
+    "id": "P120",
+    "code": "P-120",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 71,
+    "question_id": "121",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Run / トラフィック分割",
+    "multi_select": 1,
+    "question": "あなたのチームは、事業運営に不可欠な既存のサービスの新機能を開発しています。サービスはCloud Runで実行しています。この新機能のデプロイに関連するリスクを最小限に抑えるため、新リビジョンを徐々に展開し、完全に切り替える前にそのパフォーマンスを監視したいと考えています。どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "新しいリビジョンを展開し、すべてのトラフィックを直ちにそのリビジョンに送信する。問題が検出された場合はロールバックする。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Monitoringを使用して新しいリビジョンのアラートを設定し、問題が検出された場合はトラフィックを手動で調整する。"
+      },
+      {
+        "label": "C",
+        "text": "現在のリビジョンと新しいリビジョンの間でトラフィックを分割することにより、新しいリビジョンを段階的にロールアウトし、必要に応じて監視およびロールバックできるようにする。"
+      },
+      {
+        "label": "D",
+        "text": "新しいリビジョンを別のCloud Runサービスにデプロイし、ユーザーに新しいサービスに切り替えるように依頼する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "この方法は、Cloud Runのトラフィック管理機能に完全に合致しています。新リビジョンへのトラフィックを徐々に増加させることで、新機能の制御されたロールアウトができます。トラフィックのサブセットで新リビジョンのパフォーマンスを監視し、問題が検出された場合は簡単にロールバックできるため、リスクを最小限に抑えられます。\n\n・A（不正解）: この方法は、段階的なテストとモニタリングができないリスクがあります。問題が発生すると、すべてのユーザーに直ちに影響が及び、ビジネスオペレーションに大きな混乱が生じる可能性があります。\n・B（不正解）: このオプションではCloud Runの組み込みトラフィック管理機能が使われません。手動によるトラフィック調整は、自動トラフィック分割に比べて時間がかかり、エラーが発生しやすくなります。\n・D（不正解）: この方法では、手動による切り替えが必要になるためユーザーエクスペリエンスが損なわれ、Cloud Runのトラフィック管理機能が使われません。同じアプリケーションに対して複数のサービスを作成することで管理が複雑になります。",
+    "business_tip": "【正解: 現在のリビジョンと新しいリビジョンの間でトラフィックを分割することにより、新しいリビジョンを段階的にロールアウトし、必要に応じて監視およびロールバックできるようにする。】\n👉 ポイント: Cloud Runの組み込み機能であるリビジョン間のトラフィック分割（カナリアリリース）を使うと、一部のトラフィックだけ新リビジョンへ流して挙動を確認し、問題があれば即座に戻せる。\n💡 判断軸: Cloud Runの段階的展開・リスク低減＝リビジョン間のトラフィック分割（別サービス作成や一斉切り替えは避ける）。",
+    "id": "P121",
+    "code": "P-121",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 72,
+    "question_id": "122",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Asset Inventory",
+    "multi_select": 2,
+    "question": "セキュリティレビューのため、セキュリティ担当者が組織内のプロジェクトを横断して、外部 IP アドレスを持つ Compute Engine VM を一覧にする必要があります。組織では Cloud Asset Inventory の SQL クエリ機能を既に利用でき、クエリ実行用プロジェクトで API の有効化と利用権限の設定も完了していますが、担当者にはまだ組織のアセットを参照する権限がありません。最小特権の原則に従い、各プロジェクトの Compute Engine API を呼び出すスクリプトを保守する代わりに、一元化されたマネージドのインベントリを利用したいと考えています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "VM の外部 IP アドレスを制限する組織ポリシーを有効にし、それを既存の割り当ての一覧として使用する。"
+      },
+      {
+        "label": "B",
+        "text": "組織に対する roles/cloudasset.viewer をセキュリティ担当者に付与する。"
+      },
+      {
+        "label": "C",
+        "text": "1つのプロジェクトで予約済み静的アドレスを一覧表示し、それを組織内の外部アドレスを持つ全 VM の一覧として扱う。"
+      },
+      {
+        "label": "D",
+        "text": "組織をスコープとして Cloud Asset Inventory で Compute Engine インスタンスのアセットをクエリし、ネットワークインターフェースの外部アドレスのフィールドを調べる。"
+      },
+      {
+        "label": "E",
+        "text": "組織に対する roles/compute.securityAdmin をセキュリティ担当者に付与する。"
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "正解は B と D。\n・B（正解）: Cloud Asset Viewer（roles/cloudasset.viewer）を組織に対して付与すると、配下のプロジェクトを含むアセットメタデータを読み取り専用で検索・クエリできる。リソースやセキュリティ設定を変更する権限を含まないため、最小特権の原則に沿っている。\n・D（正解）: Cloud Asset Inventory の SQL クエリで組織を範囲として Compute Engine インスタンスのアセット（compute.googleapis.com/Instance）を対象にし、ネットワークインターフェースの外部アドレス（networkInterfaces[].accessConfigs[].natIP や外部 IPv6 フィールド）を調べることで、プロジェクトごとの収集スクリプトを保守せずに一覧を作成できる。\n・A（不正解）: 外部 IP アドレスを制限する組織ポリシーを有効にしても、既存の割り当て一覧を取得する手段にはならない。\n・C（不正解）: 1つのプロジェクトの予約済み静的アドレスだけでは、他のプロジェクトやエフェメラル外部アドレスを持つ VM を把握できない。\n・E（不正解）: roles/compute.securityAdmin はファイアウォールルールや SSL 証明書などの変更権限を含むため読み取りのみのレビューには過剰であり、Cloud Asset Inventory でアセットをクエリする権限も含まれない。",
+    "business_tip": "【正解: 組織に対する roles/cloudasset.viewer をセキュリティ担当者に付与する。 / 組織をスコープとして Cloud Asset Inventory で Compute Engine インスタンスのアセットをクエリし、ネットワークインターフェースの外部アドレスのフィールドを調べる。】\n👉 ポイント: 組織全体のVM設定を一括調査する場合は Cloud Asset Inventory を組織スコープでクエリし、閲覧者には読み取り専用の roles/cloudasset.viewer を組織に付与する。\n💡 判断軸: 組織横断のリソース棚卸し＝Cloud Asset Inventory＋最小特権（roles/cloudasset.viewer）。",
+    "id": "P122",
+    "code": "P-122",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 73,
+    "question_id": "123",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "サービスアカウント・GCE",
+    "multi_select": 1,
+    "question": "プロジェクトには複数の Compute Engineインスタンスが含まれており、それぞれがさまざまな Google Cloud APIとやり取りする必要がある異なるサービスを実行しています。これらのインスタンスに異なるサービスアカウントを割り当てることで、これらのインスタンスの権限を管理したいと考えています。どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "各インスタンスの作成中に、必要な APIアクセスを持つ適切なサービスアカウントを割り当てる。"
+      },
+      {
+        "label": "B",
+        "text": "インスタンスの作成時に、適切なサービスアカウントの名前をインスタンスメタデータとして追加する。"
+      },
+      {
+        "label": "C",
+        "text": "インスタンスの作成後にgcloud compute instances updateコマンドを実行して、各インスタンスのサービスアカウントを設定する。"
+      },
+      {
+        "label": "D",
+        "text": "インスタンスの作成後に、サービスアカウント名を含むようにインスタンスのメタデータを変更する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "インスタンス作成時に適切なサービスアカウントを割り当てることは、Compute Engine インスタンスのパーミッションを管理する最も簡単で安全な方法です。インスタンスが実行を開始した瞬間から正しいパーミッションを持つことを保証でき、最小特権の原則に合致して、インスタンス固有の要件に基づき必要なパーミッションのみを各インスタンスに付与できます。\n\n・B (作成時にメタデータとして追加): インスタンスメタデータを使用してサービスアカウントを割り当てることはできません。メタデータは追加情報を渡すことはできますが、インスタンスが実行される権限や ID には影響しません。\n・C (作成後に update コマンド): 作成後にサービスアカウントを更新することは可能ですが、効率が悪く設定ミスのリスクが伴います。インスタンスを停止して再起動する必要があり、ダウンタイムが発生する可能性があります。さらに、更新が適用されるまで誤った権限で実行される可能性があります。\n・D (作成後にメタデータを変更): 作成後にメタデータを変更してサービスアカウント名を含めても、必要な権限がインスタンスに直接割り当てられるわけではありません。",
+    "business_tip": "【正解: 各インスタンスの作成中に、必要な APIアクセスを持つ適切なサービスアカウントを割り当てる。】\n👉 ポイント: VM にサービスアカウントを紐づけるなら、作成時に最小特権の専用サービスアカウントを指定するのが安全。作成後の変更は VM の停止・再起動が必要になる。\n💡 判断軸: VM の API 権限分離＝作成時に専用サービスアカウントを設定（メタデータでは権限は付与できない）。",
+    "id": "P123",
+    "code": "P-123",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 74,
+    "question_id": "124",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "組織のポリシー / ロケーション制約",
+    "multi_select": 1,
+    "question": "ある組織では、リソースロケーション制約がサポートする新規リソースを、すべてオーストラリア国内に配置したいと考えています。ポリシーは、リージョンとゾーンのロケーションを含む Google のオーストラリアのロケーショングループ全体を対象とし、今後その地理的グループに追加されるロケーションにも対応する必要があります。個々のゾーンの一覧を管理することは避けたいと考えています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "リソースロケーション制約で、australia-southeast1-a だけを許可する。"
+      },
+      {
+        "label": "B",
+        "text": "gcp.resourceLocations 制約の許可値に、in:australia-locations を追加する。"
+      },
+      {
+        "label": "C",
+        "text": "すべてのロケーションを許可し、country という名前のプロジェクトラベルに Australia という値を設定する。"
+      },
+      {
+        "label": "D",
+        "text": "リソースロケーション制約の拒否値に、in:australia-locations を追加する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "gcp.resourceLocations の許可値に in:australia-locations を指定すると、Googleが管理するオーストラリアのロケーショングループ全体を対象にできます。グループに含まれるリージョンやゾーンを個別に列挙する必要がなく、今後そのグループに追加されるロケーションも対象になります。制約が対応する新規リソースの配置先を制御するものであり、既存リソースを自動で移動する機能ではありません。\n\n・A（不正解）: 1つのゾーンだけを許可する設定では、オーストラリアのほかのリージョンやゾーンを含められません。今後追加されるロケーションへの対応も必要になります。\n・C（不正解）: プロジェクトラベルは分類用のメタデータです。Australiaという値を付けても、リソースの配置先をオーストラリアへ強制できません。\n・D（不正解）: 拒否値に追加すると、オーストラリアのロケーションを禁止する設定になります。要件とは逆です。",
+    "business_tip": "【正解: gcp.resourceLocations 制約の許可値に、in:australia-locations を追加する。】\n👉 ポイント: 組織のポリシー（constraints/gcp.resourceLocations）の許可値に in:<グループ名> を指定すると、Google管理の地理的グループ全体を一括指定でき、将来の新規リージョン/ゾーンにも自動追従する。\n💡 判断軸: 特定国・地域への配置強制＝ gcp.resourceLocations の許可値に in:<地域>-locations（ラベルでは制御できない）。",
+    "id": "P124",
+    "code": "P-124",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 75,
+    "question_id": "125",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Memorystore for Redis / 初期準備",
+    "multi_select": 1,
+    "question": "グローバルに分散されたアプリケーションのキャッシュ層をデプロイするために使用される新しいプロジェクトを作成しました。キャッシュ層には Memorystore for Redisを使用します。あなたはGoogle CloudコンソールでMemorystore for Redisインスタンスを作成したいと考えています。インスタンスの作成の準備として最初のステップを実行したいと考えています。あなたは何をするべきでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アカウントに Redis管理者の IAMロールを付与する。"
+      },
+      {
+        "label": "B",
+        "text": "プライベートサービスアクセス接続を使用するようにMemorystore for Redisインスタンスを構成する。"
+      },
+      {
+        "label": "C",
+        "text": "必要なリージョンにサブネットを持つ新しいVPCネットワークを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "Memorystore for Redis APIを有効にする。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nMemorystore for Redis インスタンスを作成する準備の最初のステップとして、Memorystore for Redis API を有効にすることが最も適切です。APIの有効化は、Google Cloudのサービスを使用するための最初のステップです。\n\n【各選択肢の説明】\n・A（不正解）：このステップはMemorystore for Redis インスタンスを作成する準備の最初のステップではありません。このロールは、初期セットアッププロセスではなく、Redisインスタンスとその構成の管理に関連しています。\n・B（不正解）：プライベートサービスアクセス接続の設定は、インスタンス作成時またはその後に行う設定であり、最初のステップではありません。\n・C（不正解）：VPCネットワークの作成は必要になる可能性がありますが、既存のネットワークを使用できる場合もあるため、必ずしも最初のステップではありません。\n・D（正解）：新しいプロジェクトでMemorystore for Redisを利用する最初の準備ステップは、対象APIの有効化です。",
+    "business_tip": "【正解: Memorystore for Redis APIを有効にする。】\n👉 ポイント: 新しいプロジェクトでGoogle Cloudのマネージドサービスを使い始める際、まず最初に行うのは対象サービスのAPI有効化。\n💡 判断軸: 新規プロジェクトでの最初の準備＝対象サービスのAPI有効化。IAMロール付与やVPC・プライベートサービスアクセス設定はその後の手順。",
+    "id": "P125",
+    "code": "P-125",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 76,
+    "question_id": "126",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "組織ポリシー",
+    "multi_select": 1,
+    "question": "あなたが管理するGoogle Cloud環境の一部のプロジェクトに、組織の Google Workspace ドメインに属さないメールアドレスを持つ外部ユーザーが存在していることがわかりました。今後は、ドメインの電子メール アドレスを持つユーザーのみがプロジェクトにアクセスできるようにしたいと考えています。手動による介入を最小限にしてポリシーを適用するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Schedulerタスクを作成して、プロジェクトから外部ユーザーを定期的に削除する。"
+      },
+      {
+        "label": "B",
+        "text": "カスタムスクリプトを作成して、定期的にアクセスを確認し、ドメインの電子メールアドレスに一致しないユーザーを削除する。"
+      },
+      {
+        "label": "C",
+        "text": "組織ポリシーの制約を設定してドメイン内のユーザーへのアクセスを制限し、既存の外部ユーザーを削除するスクリプトを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Identityを使用してドメイン制限を適用し、各プロジェクトのアクセス制御を手動で監査および更新する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "正解は C。\n・C（正解）: 予防と修復の両面に対処できる。組織のポリシー制約を設定することでドメイン内のユーザーのみが今後プロジェクトにアクセスできるようになり、既存の外部ユーザーを削除するスクリプトを作成することで現在の状態をクリーンアップできる。\n・A（不正解）: 外部ユーザーの削除には役立つが、削除後に新しい外部ユーザーが追加されるのを防げず、今後はドメインユーザーだけがアクセスできるようにする要件に対処できない。\n・B（不正解）: 外部ユーザーの削除には役立つが、スクリプトの確認・更新に継続的なメンテナンスと手動介入が必要で、追加の安全策なしでは再発を防げない。\n・D（不正解）: Cloud IdentityはユーザーIDの管理とポリシー適用に役立つが、各プロジェクトのアクセス制御を手動で監査・更新するのは非効率でスケーラブルではなく、新しい外部ユーザーのアクセスも防げない。",
+    "business_tip": "【正解: 組織ポリシーの制約を設定してドメイン内のユーザーへのアクセスを制限し、既存の外部ユーザーを削除するスクリプトを作成する。】\n👉 ポイント: 組織ポリシーのドメイン制限は「新規追加のブロック」には効くが既存の外部ユーザーは消えないため、スクリプト等で既存分を削除する。\n💡 判断軸: 外部アカウントの継続的ブロック＝組織ポリシー制約（予防）＋既存外部ユーザーのクリーンアップ（修復）。",
+    "id": "P126",
+    "code": "P-126",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 77,
+    "question_id": "127",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Cloud Logging / ログベース指標 & アラート",
+    "multi_select": 1,
+    "question": "組織ではマルチリージョンのクラウド展開が行われています。最近、ネットワークタイムアウトに関連する特定のエラーが１つのリージョンで急増していることが明らかになりました。このエラーは、サービスアカウントのファイアウォールルールの構成に問題があることが原因であると考えられます。ファイアウォールルールを修正した後、エラーが再発した場合に確実に通知されるようにしたいと考えています。どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "ログを BigQueryにエクスポートし、エラーを監視する Looker Studioダッシュボードを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "ネットワーク管理者にサービスアカウントへのアクセスを許可する。"
+      },
+      {
+        "label": "C",
+        "text": "ネットワークタイムアウトエラーのログをフィルタリングし、ログを定期的に監視する。"
+      },
+      {
+        "label": "D",
+        "text": "ネットワークタイムアウトエラー用のカスタムログベースのメトリックを作成し、アラートポリシーで使用する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nカスタムログベースのメトリックを作成すると、ネットワークタイムアウトエラーなど、特定のタイプのログエントリを追跡できます。アラートポリシーでこのメトリックを使用することにより、エラーが再発した場合に自動通知を設定し、タイムリーな認識と対応を確保することができます。このアプローチは、Google Cloudの監視とアラート機能を活用して、プロアクティブなエラー検出を提供します。\n\n【各選択肢の説明】\n・A（不正解）：ログをBigQueryにエクスポートし、Looker Studioのダッシュボードを作成することで、エラーを可視化し分析することができますが、リアルタイムの通知はできません。この方法では手動で監視する必要があり、エラーが再び発生したときに自動的にアラートをトリガーすることはできません。\n・B（不正解）：サービスアカウントにネットワーク管理者のアクセス権を付与しても、エラーの監視と通知の必要性には対処できません。このオプションは、ネットワークタイムアウトエラーの検出や警告とは無関係です。\n・C（不正解）：定期的にログをフィルタリングして監視することは、問題を特定するのに役立ちますが、自動化されたアラートの効率性と即時性に欠ける手動プロセスです。この方法は、カスタムメトリクスに基づいて自動アラートを設定するのに比べ、非効率となります。\n・D（正解）：特定のエラーログからカスタムログベースのメトリックを作成し、アラートポリシーで自動通知を設定するのが最適です。",
+    "business_tip": "【正解: ネットワークタイムアウトエラー用のカスタムログベースのメトリックを作成し、アラートポリシーで使用する。】\n👉 ポイント: 特定エラーの再発を自動通知するには、ログベースのメトリクスで数値化し、Cloud Monitoringのアラートポリシーに紐づける。\n💡 判断軸: 特定ログ発生時の自動通知＝「ログベース指標（Log-based metric）＋ アラートポリシー」。目視確認やBIダッシュボード（Looker Studio）は自動通知にならない。",
+    "id": "P127",
+    "code": "P-127",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 78,
+    "question_id": "128",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Marketplace / Cassandra",
+    "multi_select": 1,
+    "question": "あなたのチームは、書き込みスループットの高い分散型NoSQLデータベースを使用するアプリケーションを開発しています。チームはCassandraが最適なデータベースシステムであると特定しました。アプリケーションを最小限の労力でクラウドにデプロイするにはどうすれば良いでしょうか？以下から最適なものを選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Bigtableクラスタを作成し、HBase APIを使用する。"
+      },
+      {
+        "label": "B",
+        "text": "Google Cloud MarketplaceからCassandraをデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "Cassandraインストールパッケージをダウンロードし、Compute Engineインスタンス上で実行する。"
+      },
+      {
+        "label": "D",
+        "text": "Google Kubernetes Engine（GKE）で Cassandraクラスターをセットアップする。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nGoogle Cloud Marketplaceは、Google Cloudで利用できる様々なソリューションを簡単にデプロイできるサービスです。Cassandraもその一つとして提供されており、GUIからCassandraクラスタをクラウド上に構築することができます。\n\n【各選択肢の説明】\n・A（不正解）：Cloud Bigtableは、大量のデータを低レイテンシで処理できるNoSQLデータベースですが、Cassandraとは異なるデータベースシステムです。また、HBase APIを使用することは、Cassandraの機能やAPIを活用することを意味しません。\n・B（正解）：Google Cloud MarketplaceからCassandraをデプロイすることで、最小限の労力でGUI上からクラスタを構築できます。\n・C（不正解）：Compute Engineインスタンス上でCassandraを実行するには、インスタンスの作成やOSの設定、Cassandraのインストールなどを手動で行う必要があります。このアプローチでは、最小限の労力でクラウドにデプロイするという要件を満たしていません。\n・D（不正解）：Google Kubernetes Engine（GKE）上でCassandraクラスタをセットアップすると、コントロールと柔軟性が高まりますが、Google Cloud Marketplaceを利用する場合と比較して、高度な知識や設定が必要になります。",
+    "business_tip": "【正解: Google Cloud MarketplaceからCassandraをデプロイする。】\n👉 ポイント: 特定のOSS（Cassandraなど）を最小限の労力で素早く構築したい場合は、Google Cloud Marketplaceの構築済みテンプレートを使う。\n💡 判断軸: 指定OSSの最短・省力デプロイ＝Cloud Marketplace。VMへの手動インストールやGKE上の自前クラスタ構築は運用・設定負荷が高い。",
+    "id": "P128",
+    "code": "P-128",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 79,
+    "question_id": "129",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "gcloud CLI / 初期設定",
+    "multi_select": 2,
+    "question": "あなたはワークステーションにGoogle Cloud CLIをインストールし、会社のGoogle Cloudプロジェクトを操作できる様に設定する必要があります。特定のプロジェクトで利用可能なCloud Storageバケットを列挙する為には、事前にどのコマンドを実行するべきでしょうか？(2つ選んでください)",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud auth loginコマンドを実行し、プロンプトに従って認証する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud config set compute/region $my_regionコマンドを実行してデフォルトのリージョンを設定する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud config set project $my_projectコマンドを実行してデフォルトプロジェクトを設定する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud services enable storage.googleapis.comコマンドを実行して、Cloud Storage APIを有効にする。"
+      },
+      {
+        "label": "E",
+        "text": "gcloud config set storage/bucket $my_bucketコマンドを実行して、デフォルトのバケットを設定する。"
+      }
+    ],
+    "answer": [
+      "A",
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nA. gcloud auth loginコマンドを実行し、プロンプトに従って認証する。\nこのコマンドは、CLIセッションをGoogle Cloudで認証するために不可欠であり、CLIがGoogle Cloudリソースと対話するために必要な権限を持っていることを確認します。\nC. gcloud config set project $my_projectコマンドを実行してデフォルトプロジェクトを設定する。\nデフォルトプロジェクトを設定することは、Google Cloud CLIにデフォルトで対話するプロジェクトを指示するために必要です。\n\n【各選択肢の説明】\n・A（正解）：CLIでGoogle Cloudリソースを操作するための認証手順として必須です。\n・B（不正解）：デフォルトのリージョンを設定することは、Compute Engineを含む操作には便利ですが、Cloud Storageバケットのリストには必要ありません。このコマンドは、Compute Engineリソースのリージョンを設定しますが、Cloud Storageの操作には直接影響しません。\n・C（正解）：特定のプロジェクトを対象に操作を行うためのデフォルトプロジェクト設定として必須です。\n・D（不正解）：Cloud Storage APIを有効にすることは、Cloud Storageにプログラムでアクセスするために必要です。しかし、Cloud Storage APIは通常、デフォルトで有効になっています。\n・E（不正解）：デフォルトのバケットを設定することで、特定のバケットとやりとりするコマンドを簡略化することができます。しかしながら、プロジェクトで利用可能なすべてのクラウドストレージバケットを列挙するためには、このステップは必須ではありません。",
+    "business_tip": "【正解: gcloud auth loginコマンドを実行し、プロンプトに従って認証する。 / gcloud config set project $my_projectコマンドを実行してデフォルトプロジェクトを設定する。】\n👉 ポイント: gcloud CLIを新規導入した後は、まずアカウント認証（auth login）と対象プロジェクトの指定（config set project）の2つを行う。\n💡 判断軸: CLI初期セットアップの必須2手＝「誰が（auth login）」「どこに（config set project）」。Cloud Storage APIは標準で有効、リージョンや特定バケットの指定は列挙に不要。",
+    "id": "P129",
+    "code": "P-129",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 80,
+    "question_id": "130",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage・ライフサイクル",
+    "multi_select": 1,
+    "question": "あなたのチームは毎日バックアップファイルを Standard Storage クラスの Cloud Storage にアップロードします。これらのバックアップは90日間使用されますが、90日を経過した後は不要になります。不要になったバックアップファイルを自動的に削除して、ストレージコストを削減するにはどうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Storage で Autoclass を有効にし、Coldline Storage クラスを終端ストレージ クラスとして設定する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Storage バケットにオブジェクトのライフサイクル管理ルールを設定して、90日以上経過したオブジェクトを削除する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Storage バケットに90日間の保持ポリシーを作成し、保持ポリシーのロックを使用してポリシーを適用する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Storage バケットで Object Versioning を有効にし、90日後に非現行バージョンを削除するようにライフサイクルルールを構成する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "オブジェクトのライフサイクル管理ルールを設定することで、オブジェクトの経過日数など特定の条件を満たしたオブジェクトを自動的に削除することができます。この場合、90日以上前のオブジェクトを削除するルールを設定することで、不要なデータを削除してストレージ コストを削減できます。\n\n・A (Autoclass): Autoclass は、オブジェクトの経過日数ではなく、アクセスパターンに基づいてストレージクラス間でオブジェクトを自動的に移動するために使用されます（削除は行いません）。\n・C (90日間の保持ポリシーとロック): 保持ポリシーはオブジェクトの削除を防ぐものであり、ストレージ コストを削減するという目的は達成できません。\n・D (Object Versioning): オブジェクトのバージョン管理は、同じオブジェクトの複数のバージョンを保持するために使用されるため、このシナリオには関係ありません。",
+    "business_tip": "【正解: Cloud Storage バケットにオブジェクトのライフサイクル管理ルールを設定して、90日以上経過したオブジェクトを削除する。】\n👉 ポイント: 一定日数経過後にファイルを自動削除してコストを削りたいときは、オブジェクトのライフサイクル管理（Delete アクション＋Age 条件）を使う。\n💡 判断軸: 保持ポリシー（Retention Policy）＝「消させない」ための保護機能。自動削除＝ライフサイクル管理ルールの Delete アクション。",
+    "id": "P130",
+    "code": "P-130",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 81,
+    "question_id": "131",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE / Config Connector",
+    "multi_select": 1,
+    "question": "アプリケーションチームは、レビュー済みの Kubernetes マニフェストを適用して GKE へのデプロイを管理しています。今後は Cloud Storage バケットなど、サポートされている Google Cloud リソースも同じワークフローで宣言し、実際の状態が望ましい状態に継続的に調整されるようにしたいと考えています。引き続き Kubernetes の API とツールを使用するには、どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Config Connector をインストールして構成し、その Kubernetes カスタムリソースを使って Google Cloud リソースを定義する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud の作成コマンドをシェルスクリプトに記述し、Kubernetes へのデプロイ後に毎回1度実行する。"
+      },
+      {
+        "label": "C",
+        "text": "Terraform の構成を作成し、通常の Kubernetes マニフェストを適用すれば、それらも自動で実行されると想定する。"
+      },
+      {
+        "label": "D",
+        "text": "Google Cloud コンソールでリソースを手動作成する手順を、各リリースのチェックリストに追加する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "正解は A。\n・A（正解）: Config Connector は Google Cloud リソースを Kubernetes のカスタムリソースとして管理するアドオン。認証・権限を設定すれば Cloud Storage バケットなどをマニフェストで定義でき、コントローラが望ましい状態と実際の状態を継続的に照合・調整するため、Kubernetes API とツールを使う既存ワークフローに組み込める。\n・B（不正解）: gcloud スクリプトを1回実行するだけでは、その後の状態のずれを継続的に検知・調整できず、Kubernetes の宣言的なリソース管理にもならない。\n・C（不正解）: Terraform 構成は通常の Kubernetes マニフェストを適用しただけでは実行されず、Terraform を実行する別の処理が必要になる。\n・D（不正解）: コンソールでの手動作成では、Kubernetes API を使って望ましい状態を宣言し継続的に調整する要件を満たさない。",
+    "business_tip": "【正解: Config Connector をインストールして構成し、その Kubernetes カスタムリソースを使って Google Cloud リソースを定義する。】\n👉 ポイント: Kubernetes（kubectl / マニフェスト）の仕組みのまま GCP リソースを宣言的に管理・ドリフト修復したい場合は Config Connector を使う。\n💡 判断軸: Kubernetes API で GCP リソース管理＋継続的状態調整＝Config Connector。",
+    "id": "P131",
+    "code": "P-131",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 82,
+    "question_id": "132",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE / 高可用性",
+    "multi_select": 2,
+    "question": "あなたは、Google Kubernetes Engine（GKE）Standard に本番環境の Web アプリケーションをデプロイする責任者です。アプリケーションはステートレスであり、1つのゾーンで障害が発生した場合でもサービスを継続できる高可用性構成が必要です。\nGoogle が推奨する方法に従う場合、どの手順を実行すべきでしょうか？（2つ選択してください）",
+    "choices": [
+      {
+        "label": "A",
+        "text": "DockerイメージをCloud Storageにアップロードする。"
+      },
+      {
+        "label": "B",
+        "text": "複数のゾーンにコントロールプレーンとノードを配置する Regional GKE クラスタを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "アプリケーションを1レプリカのみ持つ Kubernetes Deployment としてデプロイする。"
+      },
+      {
+        "label": "D",
+        "text": "Kubernetes Deployment で複数の Pod レプリカを実行し、Topology Spread Constraints を使用して Pod を複数のゾーンに分散する。"
+      },
+      {
+        "label": "E",
+        "text": "アプリケーションを Kubernetes Job としてデプロイする。"
+      }
+    ],
+    "answer": [
+      "B",
+      "D"
+    ],
+    "explanation": "B. 複数のゾーンにコントロールプレーンとノードを配置する Regional GKE クラスタを作成する。Regional GKE クラスタでは、コントロールプレーンがリージョン内の複数ゾーンに複製されます。デフォルトではノードも複数ゾーンに分散されるため、単一ゾーン障害に対するクラスタとワークロードの可用性を高めることができます。Google は本番ワークロードに Regional クラスタを推奨しています。\nD. Kubernetes Deployment で複数の Pod レプリカを実行し、Topology Spread Constraints を使用して Pod を複数のゾーンに分散する。複数の Pod レプリカを異なるゾーンへ分散すると、1つのゾーンが停止しても別のゾーンのレプリカがリクエストを処理できます。Topology Spread Constraints では topology.kubernetes.io/zone などを指定できます。\n\n・A（不正解）: Cloud Storage は汎用オブジェクトストレージであり、コンテナイメージの管理には Artifact Registry が適しています。ただし、コンテナイメージの保存場所自体は、単一ゾーン障害に対するアプリケーションの高可用性を確保するものではありません。\n・C（不正解）: Deployment を使用していてもレプリカが1つだけの場合、その Pod または配置先ゾーンが利用不能になるとサービスが中断する可能性があります。高可用性には複数の Pod レプリカを用意する必要があります。\n・E（不正解）: Kubernetes Job は完了まで実行するバッチ処理向けのリソースです。継続的にリクエストを処理する Web アプリケーションの高可用性を管理する用途には Deployment が適しています。",
+    "business_tip": "【正解: 複数のゾーンにコントロールプレーンとノードを配置する Regional GKE クラスタを作成する。 / Kubernetes Deployment で複数の Pod レプリカを実行し、Topology Spread Constraints を使用して Pod を複数のゾーンに分散する。】\n👉 ポイント: インフラ層（コントロールプレーンとノード）をRegionalクラスタで複数ゾーン化し、ワークロード層（Pod）も複数レプリカ＋Topology Spread Constraintsで各ゾーンに分散配置する。\n💡 判断軸: GKEの単一ゾーン障害対策＝Regionalクラスタ ＋ 複数レプリカ＆ゾーン分散（Topology Spread Constraints）。",
+    "id": "P132",
+    "code": "P-132",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 83,
+    "question_id": "133",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Terraform / state 分離",
+    "multi_select": 1,
+    "question": "2つのアプリケーションチームが、Terraform コード用の Git リポジトリを共有しています。現在は、terraform apply を1回実行すると、両方のアプリケーションのリソースについて状態の更新と実行計画の作成が行われます。一方のアプリケーションを変更する際に、もう一方の実行計画を作成しなくても済むように、デプロイと state のライフサイクルを独立させる必要があります。構成をどのように変更すればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アプリケーションごとに子モジュールを作成するが、両方のモジュールを同じルート構成と state に含める。"
+      },
+      {
+        "label": "B",
+        "text": "すべてのリソースをリソースタイプ別にまとめ、すべてのアプリケーションを同じルート構成から管理する。"
+      },
+      {
+        "label": "C",
+        "text": "アプリケーションごとのリソースを、同じルートディレクトリ内の別々の .tf ファイルに記述し、1つの state を共有し続ける。"
+      },
+      {
+        "label": "D",
+        "text": "アプリケーションごとに、ルート構成のディレクトリと state を分ける。適切な箇所では子モジュールを再利用する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "Terraformでは、1つのルート構成から呼び出した子モジュールも、同じ構成の計画・適用の対象になります。アプリケーションごとにルートディレクトリとstateの保存先を分ければ、片方の構成だけで terraform plan や terraform apply を実行できます。共通のコードは子モジュールとして再利用しつつ、リソースの状態とデプロイの単位を分離します。\n\n・A（不正解）: 子モジュールに分けても、同じルート構成とstateから管理していれば、両方のアプリケーションが同じ計画・適用の対象になります。\n・B（不正解）: リソースタイプごとの整理はコードの構成を変えるだけで、アプリケーションごとのstateやデプロイを独立させません。\n・C（不正解）: 同じディレクトリ内の .tf ファイルは、まとめて1つのモジュールとして扱われます。ファイル名を分けるだけでは実行単位は分かれません。",
+    "business_tip": "【正解: アプリケーションごとに、ルート構成のディレクトリと state を分ける。適切な箇所では子モジュールを再利用する。】\n👉 ポイント: Terraformは「ルートディレクトリ＝1つの実行計画（plan/apply）とstateの単位」。同じディレクトリで .tf ファイルを分けたり子モジュールを呼んだりしてもstateは分離されないため、ルート構成のディレクトリとstate自体をアプリごとに分割する。\n💡 判断軸: Terraformのデプロイ・state独立化＝ルートディレクトリとstateを分離（共通コードは子モジュールで再利用）。",
+    "id": "P133",
+    "code": "P-133",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 84,
+    "question_id": "134",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "gcloud / API有効化",
+    "multi_select": 1,
+    "question": "新しく作成したプロジェクトで、最初の GKE クラスタを構築しています。gcloud のクラスタ作成コマンドが失敗し、container.googleapis.com がプロジェクトで使用されたことがないか、無効になっているというメッセージが表示されました。あなたのアカウントには、クラスタの作成と API の有効化に必要な権限が既にあります。メッセージに示された失敗原因を解消するには、どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "クラスタ作成コマンドに --enable-autoprovisioning フラグを追加する。"
+      },
+      {
+        "label": "B",
+        "text": "自分のアカウントに Owner ロールを付与し、サービスを有効化せずにコマンドを再実行する。"
+      },
+      {
+        "label": "C",
+        "text": "対象プロジェクトに対して gcloud services enable container.googleapis.com を実行し、クラスタの作成を再試行する。"
+      },
+      {
+        "label": "D",
+        "text": "クラスタを作成する前に、Workload Identity Federation for GKE を無効にする。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "エラーメッセージは、対象プロジェクトで Google Kubernetes Engine API（container.googleapis.com）が有効になっていないことを示しています。gcloud services enable container.googleapis.com --project=PROJECT_ID で対象プロジェクトの API を有効にし、完了後にクラスタ作成を再試行します。必要な権限は既にあるため、ロールの追加ではなく API の有効化が必要です。\n\n・A（不正解）: --enable-autoprovisioning はノードの自動プロビジョニングに関する設定です。プロジェクトで GKE API が無効になっている原因は解消しません。\n・B（不正解）: 既に必要な権限があるため、Owner を追加しても API が無効という状態は変わりません。必要以上に広い権限の付与にもなります。\n・D（不正解）: Workload Identity Federation for GKE はワークロードの認証に関する機能です。GKE API の有効・無効とは別の設定です。",
+    "business_tip": "【正解: 対象プロジェクトに対して gcloud services enable container.googleapis.com を実行し、クラスタの作成を再試行する。】\n👉 ポイント: 新規プロジェクトでは各種サービスのAPIが初期状態で無効になっている。権限不足ではなくAPI未有効化のエラーが出たら、gcloud services enable で対象APIを有効化する。\n💡 判断軸: 「APIが未使用または無効」エラー＝ gcloud services enable <API名>（権限追加やOwner付与では解決しない）。",
+    "id": "P134",
+    "code": "P-134",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 85,
+    "question_id": "135",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM / Service Account",
+    "multi_select": 1,
+    "question": "特定のPub/Subトピックとセキュアに通信する必要がある新しいCompute Engineインスタンスがあります。他のCompute Engineインスタンスはすでにデフォルトの設定で実行されています。他のインスタンスに影響を与えることなく、この新しいインスタンスだけがPub/Subトピックにアクセスできるようにする必要があります。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "新しいサービスアカウントを作成し、このサービスアカウントを新しいインスタンスに割り当てます。サービスアカウントにPub/Subトピックに対するアクセス許可を付与する。"
+      },
+      {
+        "label": "B",
+        "text": "新しいサービスアカウントを作成し、このサービスアカウントを新しいインスタンスに割り当てる。新しいインスタンスのメタデータと一致するメタデータをPub/Subトピックに追加する。"
+      },
+      {
+        "label": "C",
+        "text": "デフォルトのCompute Engineサービスアカウントを使用してインスタンスを作成する。新しいインスタンスのメタデータと一致するメタデータをPub/Subトピックに追加する。"
+      },
+      {
+        "label": "D",
+        "text": "デフォルトのCompute Engineサービスアカウントを使用してインスタンスを作成する。サービスアカウントにPub/Subトピックに対するアクセス許可を付与する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "正解は A。\n・A（正解）: 新しいサービスアカウントを作成して新しいインスタンスに割り当てることでそのインスタンスに一意のIDを提供し、そのサービスアカウントにPub/Subトピックへの権限を付与することで、デフォルト構成で実行されている他のインスタンスに影響を与えずに排他的なアクセスを保証できる。\n・B（不正解）: Pub/Subトピックにメタデータを追加してもアクセス許可は制御されない。アクセス制御はメタデータの一致ではなくIAMロールおよびポリシーで管理される。\n・C（不正解）: デフォルトのCompute Engineサービスアカウントを使うと、そのアカウントを使用するすべてのインスタンスにアクセスが許可され、メタデータの一致でもアクセス制御は提供されない。\n・D（不正解）: デフォルトのCompute Engineサービスアカウントに権限を付与すると、同アカウントを使用するすべてのインスタンスがPub/Subトピックにアクセスできるようになり、新しいインスタンスのみに制限する要件を満たせない。",
+    "business_tip": "【正解: 新しいサービスアカウントを作成し、このサービスアカウントを新しいインスタンスに割り当てます。サービスアカウントにPub/Subトピックに対するアクセス許可を付与する。】\n👉 ポイント: 特定のVMだけにGCPリソースへのアクセス権を与えたい場合は、デフォルトのサービスアカウントを使わず専用のサービスアカウントを作成して割り当てる。\n💡 判断軸: VM単位の権限分離＝専用サービスアカウント＋IAMロール付与（デフォルトSAへの付与は全VMに波及するためNG）。",
+    "id": "P135",
+    "code": "P-135",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 86,
+    "question_id": "136",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE",
+    "multi_select": 2,
+    "question": "あなたのチームは、Google Kubernetes Engine (GKE) に新しいマイクロサービスアプリケーションをデプロイします。アプリケーションはビジネス運営にとって重要であり、信頼性と高可用性を優先します。運用上のオーバーヘッドを最小限に抑えるために、Googleが推奨するプラクティスに従う必要があります。どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "リージョンGKE Standardクラスタを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "ゾーンGKE Standardクラスタを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "GKE Autopilotクラスタを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "クラスタをStableリリースチャンネルに登録する。"
+      },
+      {
+        "label": "E",
+        "text": "クラスタをRapidリリースチャンネルに登録する。"
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "正解は C と D。\n・C（正解）: GKE Autopilot は高可用性と最小限の運用オーバーヘッドに最適化されたフルマネージド Kubernetes サービスであり、スケーリング、パッチ適用、メンテナンスなど基盤インフラの管理を自動化して高い信頼性で本番ワークロードを実行できる。\n・D（正解）: Stable リリースチャンネルでは十分にテスト済みの安定した Kubernetes バージョンが提供されるため、信頼性が優先される重要業務の本番環境に最適。\n・A（不正解）: リージョナル Standard クラスタは複数ゾーンにノードを分散して高可用性を提供するが、Standard クラスタはより多くの手動介入とメンテナンスが必要で、GKE Autopilot ほど運用オーバーヘッドを最小化できない。\n・B（不正解）: ゾーン型クラスタは単一ゾーンに限定されるため高可用性を提供せず、ゾーン障害時にクラスタ全体が影響を受ける可能性がある。\n・E（不正解）: Rapid リリースチャンネルは最新機能やアップデートが提供されるが、Stable ほど十分にテストされていない可能性があり不安定さを招くリスクがあるため、信頼性優先の重要アプリには推奨されない。",
+    "business_tip": "【正解: GKE Autopilotクラスタを作成する。 / クラスタをStableリリースチャンネルに登録する。】\n👉 ポイント: 運用オーバーヘッドを最小限にしつつ高可用性を得るには GKE Autopilot を選び、安定稼働が最優先の本番ワークロードは Stable リリースチャンネルに登録する。\n💡 判断軸: 運用負荷最小＋高可用性＝GKE Autopilot。本番の安定性重視＝Stable チャンネル。",
+    "id": "P136",
+    "code": "P-136",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 87,
+    "question_id": "137",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM / BigQuery 最小権限",
+    "multi_select": 1,
+    "question": "あなたは、社内のマーケティングチームのプロジェクトを管理しています。チームは、分析用のカスタム SQL クエリを実行するために、BigQuery に保存されている顧客との対話データへ読み取り専用でアクセスする必要があります。アクセス権はマーケティングチームの Google グループを使用して管理したいと考えています。\nマーケティングチームに必要最小限の権限を付与する最善の方法は、次のうちどれでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Scheduler を使用してバッチ Dataflow ジョブをスケジュールし、BigQuery からマーケティングチームの内部データウェアハウスにデータをコピーする。"
+      },
+      {
+        "label": "B",
+        "text": "マーケティングチーム用のサービスアカウントを作成し、マーケティングチームの各メンバーにサービスアカウントの秘密鍵を配布する。"
+      },
+      {
+        "label": "C",
+        "text": "関連する BigQuery テーブルをソースとして使用する Looker Studio ダッシュボードを作成し、マーケティングチームにダッシュボードへの読み取りアクセスを付与する。"
+      },
+      {
+        "label": "D",
+        "text": "マーケティングチームの Google グループに、対象データセットでは BigQuery Data Viewer ロールを、クエリジョブを実行するプロジェクトでは BigQuery Job User ロールを付与する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "BigQuery でカスタム SQL クエリを実行するには、データを読み取る権限とクエリジョブを作成する権限の両方が必要です。対象データセットに roles/bigquery.dataViewer を付与することでテーブルデータを読み取れるようになり、クエリを実行するプロジェクトに roles/bigquery.jobUser を付与することで bigquery.jobs.create 権限を取得できます。この2つを Google グループに付与することで、最小権限と効率的なユーザー管理を両立できます。\n\n・A（不正解）: 別のデータウェアハウスへデータをコピーする必要はありません。BigQuery の IAM を使用して必要な権限を直接付与する方が、構成が単純で管理コストも低くなります。\n・B（不正解）: サービスアカウントの秘密鍵を複数のユーザーに配布すると、認証情報の漏えいリスクと管理負荷が増加します。人間のユーザーへのアクセス権は Google グループと IAM ロールを使用して管理するのが適切です。\n・C（不正解）: Looker Studio はデータの可視化には適していますが、このシナリオではユーザー自身が任意のカスタム SQL クエリを BigQuery で実行する必要があります。",
+    "business_tip": "【正解: マーケティングチームの Google グループに、対象データセットでは BigQuery Data Viewer ロールを、クエリジョブを実行するプロジェクトでは BigQuery Job User ロールを付与する。】\n👉 ポイント: BigQueryで読み取り＋SQLクエリ実行を行う最小権限は「データセットに Data Viewer（読み取り）」と「実行プロジェクトに Job User（ジョブ作成）」の組み合わせ。人間ユーザーの権限管理はGoogleグループに付与する。\n💡 判断軸: BigQueryカスタムクエリ実行の最小権限＝データセットに BigQuery Data Viewer ＋ 実行プロジェクトに BigQuery Job User。",
+    "id": "P137",
+    "code": "P-137",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 88,
+    "question_id": "138",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "組織ポリシー / フォルダ階層",
+    "multi_select": 1,
+    "question": "中央のプラットフォームチームが、分析グループ向けに一時的なプロジェクトを用意します。分析グループには、それらのプロジェクトを全面的に管理する権限が必要です。一方、中央で管理するポリシーによって、制約がサポートするリージョンリソースの配置先を us-east1 に限定し、リソースで利用できるサービスを BigQuery と Cloud Storage に制限する必要があります。分析グループには、これらのポリシーを管理させてはなりません。すべてのプロジェクトで一貫した設定を使用するには、どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "プロジェクトを専用フォルダに配置し、リソースロケーション制約だけを適用する。用意した各プロジェクトに対する Owner ロールをグループに付与する。"
+      },
+      {
+        "label": "B",
+        "text": "プロジェクトを別々のフォルダに配置し、各プロジェクトに対する Owner ロールをグループに付与する。許可されたサービスとリージョンを自主的に選択するようメンバーに依頼する。"
+      },
+      {
+        "label": "C",
+        "text": "プロジェクトを専用フォルダに配置し、そのフォルダに両方の組織ポリシー制約を適用する。用意した各プロジェクトに対する Owner ロールをグループに付与する。"
+      },
+      {
+        "label": "D",
+        "text": "プロジェクトを専用フォルダに配置し、両方の制約を適用する。グループには BigQuery Data Viewer と Storage Object Viewer だけを付与する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】専用フォルダに組織ポリシーを設定すると、配下のプロジェクトへ共通の制約を適用できます。gcp.resourceLocations で対応するリソースの配置先を制限し、gcp.restrictServiceUsage で利用可能なリソースサービスをBigQueryとCloud Storageに絞ります。各プロジェクトのOwnerを分析グループに付与し、組織ポリシーの管理権限は中央チームで保持することで、制約の範囲内でプロジェクトを管理させられます。中央チームがフォルダの制約を管理し、分析グループが配下の各プロジェクトを管理します。\n【A】ロケーション制約だけでは利用するサービスを限定できません。BigQueryとCloud Storage以外のサービスを制限するポリシーも必要です。\n【B】自主的な運用ルールでは、許可されたリージョンとサービスの利用を技術的に強制できません。共通の制約も一元管理できません。\n【D】BigQuery Data ViewerとStorage Object Viewerは閲覧用の権限です。プロジェクトを全面的に管理する権限が必要という要件を満たしません。",
+    "business_tip": "【正解: プロジェクトを専用フォルダに配置し、そのフォルダに両方の組織ポリシー制約を適用する。用意した各プロジェクトに対する Owner ロールをグループに付与する。】\n👉 ポイント: 組織ポリシー（gcp.resourceLocations と gcp.restrictServiceUsage）を上位フォルダに適用すると配下プロジェクトへ強制継承される。プロジェクトのOwner権限をグループに渡しても、フォルダ以上のポリシーは変更できない。\n💡 判断軸: プロジェクト管理は任せつつリージョンや利用サービスを中央で縛りたい＝専用フォルダに組織ポリシーを設定＋プロジェクトOwnerを付与。",
+    "id": "P138",
+    "code": "P-138",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 89,
+    "question_id": "139",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "gcloud CLI / API有効化",
+    "multi_select": 1,
+    "question": "あなたのチームでは、ソースから HTTP Cloud Run function をデプロイし、処理結果を Cloud Storage に書き込むプロジェクトを開始します。ビルド、デプロイ、ロギング、結果の保存に必要な API だけを有効にしたいと考えています。\nどうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Google Cloud コンソールを開き、Cloud Shell で gcloud config configurations activate CONFIGURATION_NAME を実行して、必要なすべての API を有効にする。"
+      },
+      {
+        "label": "B",
+        "text": "Google Cloud コンソールを開き、API ダッシュボードからすべての Google Cloud API を有効にする。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com logging.googleapis.com storage.googleapis.com を実行する。"
+      },
+      {
+        "label": "D",
+        "text": "Google Cloud コンソールを開き、Cloud Shell で gcloud init --project を実行して、必要なすべての API を有効にする。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】ソースからデプロイする Cloud Run functions では、Cloud Build を使用してソースをビルドし、Artifact Registry にビルド済みイメージを保存して、Cloud Run にデプロイし、Cloud Logging にログを記録します。アプリケーションには Cloud Storage API も必要です。後で function にイベントトリガーを追加する場合は、Eventarc と関連するイベント プロバイダの API も有効にしてください。\n【A】gcloud config configurations activate コマンドは、指定した gcloud CLI 構成をアクティブにします。サービス API を有効にするものではありません。\n【B】API ダッシュボードからすべての Google Cloud API を有効にすると、プロジェクトで不要な API まで有効になり、潜在的なセキュリティ リスクが増加する可能性があります。\n【D】gcloud init --project コマンドは、特定のプロジェクト用に新しい gcloud 構成を初期化するためのものであり、API を有効にするコマンドではありません。",
+    "business_tip": "【正解: gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com run.googleapis.com logging.googleapis.com storage.googleapis.com を実行する。】\n👉 ポイント: APIの有効化には `gcloud services enable` を使う。ソースからの Cloud Run functions デプロイには、Cloud Run以外にCloud Build・Artifact Registry・Cloud LoggingのAPIも要る。\n💡 判断軸: 必要なAPIだけを有効化＝`gcloud services enable`（`gcloud init` や `config configurations activate` はCLI設定用。全API有効化は不要なリスクを増やすためNG）。",
+    "id": "P139",
+    "code": "P-139",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 90,
+    "question_id": "140",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Run",
+    "multi_select": 1,
+    "question": "あなたは、Google Cloud でホストされているサーバーレス API の更新版をデプロイする必要があります。管理負荷を最小限に抑えながら、少量のユーザートラフィックで新しいバージョンをテストし、パフォーマンスを監視する必要があります。\nどうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "更新した API を Cloud Run にデプロイし、少量のトラフィックを新しいバージョンにルーティングするようにトラフィック分割を構成する。"
+      },
+      {
+        "label": "B",
+        "text": "Helm を使用して Google Kubernetes Engine に更新した API をデプロイし、トラフィックルートを手動で調整する。"
+      },
+      {
+        "label": "C",
+        "text": "Google Kubernetes Engine にデプロイし、Istio を使用してトラフィックを分割する。"
+      },
+      {
+        "label": "D",
+        "text": "更新した API を別の名前の Cloud Run function としてデプロイし、呼び出し元を手動でその関数にルーティングする。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "正解は A。\n・A（正解）: Cloud Run はフルマネージドサービスのため管理負荷を最小限に抑えられ、トラフィック分割機能によって異なるリビジョンに対して指定した割合のトラフィックをルーティングし、少量のユーザートラフィックで新バージョンをテストしながらパフォーマンスを監視できる。\n・B（不正解）: Helm で GKE にデプロイすると Cloud Run より管理負荷が高くなり、GKE での手動ルート調整は複雑でトラフィック分割の追加構成も必要になる。\n・C（不正解）: GKE と Istio によるトラフィック分割も有効だが、管理負荷と複雑さが増すため、高度なトラフィック管理やオブザーバビリティが必要なシナリオ向けで本件には過剰。\n・D（不正解）: 別名の関数には独立したエンドポイントがあるため呼び出し元や追加プロキシで手動ルーティングする必要があり、単一サービスでリビジョンごとに割合指定する Cloud Run のトラフィック分割を利用できない。",
+    "business_tip": "【正解: 更新した API を Cloud Run にデプロイし、少量のトラフィックを新しいバージョンにルーティングするようにトラフィック分割を構成する。】\n👉 ポイント: サーバーレスで管理負荷を抑えつつカナリアリリース（一部トラフィックの流し込み）を行う場合は、Cloud Run のリビジョン別トラフィック分割を使う。\n💡 判断軸: 最小管理負荷＋段階的トラフィック移行＝Cloud Run トラフィック分割（GKE＋Istio は管理負荷増）。",
+    "id": "P140",
+    "code": "P-140",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 91,
+    "question_id": "141",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "Cloud Run / 内部ALB & サーバーレスNEG",
+    "multi_select": 1,
+    "question": "社内のプライベート VPC からのみアクセス可能な、ウェブ インターフェースを備えた社内ツールをデプロイする必要があります。このツールは頻繁に更新されるため、インフラストラクチャの管理を最小限に抑える必要があります。また、ツールをパブリック インターネットに公開してはいけません。\n以下から最適なデプロイ戦略を選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "App Engine にツールをデプロイし、ファイアウォール ルールを使用して内部 IP アドレスからのアクセスだけを許可する。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Run にツールをデプロイし、すべてのトラフィックからの上りを許可したうえで、すべてのリクエストに IAM 認証を要求する。"
+      },
+      {
+        "label": "C",
+        "text": "ツールを Cloud Run にデプロイし、上り（Ingress）を内部トラフィックのみに制限する。サーバーレス ネットワーク エンドポイント グループをリージョン内部 Application Load Balancer の背後に配置し、VPC 内に内部 IP アドレスを提供する。"
+      },
+      {
+        "label": "D",
+        "text": "プライベート IP アドレスを持つ Compute Engine インスタンスにツールをデプロイし、内部 Application Load Balancer を使用する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nCloud Run を使用すると、頻繁に更新されるコンテナ化アプリケーションに対するインフラストラクチャ管理を最小限に抑えられます。内部上り設定により、インターネットの上り経路からのリクエストは拒否され、内部 Application Load Balancer からのトラフィックは内部トラフィックとして認識されます。サーバーレス ネットワーク エンドポイント グループによってロードバランサと Cloud Run サービスを接続し、VPC クライアント向けの内部フロントエンド アドレスを提供できます。Private Google Access だけでは Cloud Run の上りを制限できません。これは、プライベート IP のみを持つリソースから、サポートされている Google API とサービスへアクセスできるようにする機能です。\n\n【各選択肢の説明】\n・A（不正解）：App Engine はスケーリングや更新を管理するマネージド サービスですが、アプリケーションのファイアウォール ルールで選択した送信元 IP 範囲を許可しても、プライベート VPC フロントエンドが提供されるわけではありません。サービスには引き続き外部エンドポイントを通じてアクセスするため、プライベート VPC の要件を満たす最適な方法ではありません。\n・B（不正解）：IAM 認証によってサービスを呼び出せる主体を制御できますが、すべての上りを許可した Cloud Run エンドポイントは引き続きパブリック インターネットから到達可能です。そのため、ネットワーク分離の要件を満たしません。\n・C（正解）：Cloud Run の上りを内部のみに制限し、サーバーレス NEG とリージョン内部 Application Load Balancer を組み合わせることで、管理負荷を抑えつつ完全なプライベート VPC アクセスを実現できます。\n・D（不正解）：この方法でも内部からのみアクセス可能な構成を実現できますが、Compute Engine インスタンスの設定と保守、内部 Application Load Balancer の構成など、インフラストラクチャ管理が必要になります。頻繁に更新されるアプリケーションには、より複雑で効率の低い構成です。",
+    "business_tip": "【正解: ツールを Cloud Run にデプロイし、上り（Ingress）を内部トラフィックのみに制限する。サーバーレス ネットワーク エンドポイント グループをリージョン内部 Application Load Balancer の背後に配置し、VPC 内に内部 IP アドレスを提供する。】\n👉 ポイント: 運用負荷を抑えつつ完全な閉域アクセスにするには、Cloud RunのIngressを「内部」に限定し、Serverless NEG経由で内部ALBに紐づける。\n💡 判断軸: サーバーレス×完全閉域アクセス＝Cloud Run（Ingress: 内部）+ Serverless NEG + 内部ALB。IAM認証やApp Engineファイアウォールだけでは外部エンドポイント自体は残る。",
+    "id": "P141",
+    "code": "P-141",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 92,
+    "question_id": "142",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Bigtable / 時系列IoTデータ",
+    "multi_select": 1,
+    "question": "あなたの会社は、土壌水分、温度、その他の環境データを監視するため、農地でIoTセンサーのネットワークを運用しています。このデータは継続的に送信され、リアルタイムな人工的な給水の意思決定に不可欠です。各センサーは大量のデータを生成するため、データを確実に保存し、イベントの発生時間に基づいて効率的に検索できるようにする必要があります。どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Spannerを使用して、時系列データに最適化されたスキーマでデータを保存する。"
+      },
+      {
+        "label": "B",
+        "text": "データをCloud Storageに保存し、1時間ごとに各センサーの新しいファイルを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "センサーIDとイベントタイムスタンプを組み合わせた行キーを使用して、データをBigtableに取り込む。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Firestoreを使用して、イベントのタイムスタンプをフィールドとして、各イベントをドキュメントとして保存する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "Cloud Bigtableは、大量の時系列データを低レイテンシで処理するために最適化された高性能NoSQLデータベースです。高い書き込みスループットと時系列データの効率的な検索のために最適化されています。センサーIDとイベントのタイムスタンプを組み合わせた行キーを使用することで、時間に基づいて効率的にクエリを実行できます。タイムスタンプ付きデータの連続ストリームを生成するIoTセンサーからのデータの保存と検索に最適な選択肢です。\n\n・A（不正解）: Cloud Spannerは、スケーラブルで一貫性の高いリレーショナルデータベースであり、時系列データを扱えますが、Bigtableに比べてセットアップと管理が複雑になります。高速な時系列データには最適化されておらず、この特定のユースケースではBigtableと同レベルのパフォーマンスが得られない可能性があります。\n・B（不正解）: Cloud Storageはスケーラブルなオブジェクトストレージサービスですが、時系列データの検索には最適化されていません。ファイルをオブジェクトとして扱い、Bigtableのようなデータベースと同レベルのインデックスやクエリ機能を提供しないため、時間に基づいた効率的なデータ検索は非効率となります。\n・D（不正解）: Cloud Firestoreは、リアルタイムの同期とクエリ用に設計されたNoSQLドキュメント・データベースです。時系列データを扱うことはできますが、Bigtableほど高い書き込みスループットと大規模な時系列データに最適化されていません。",
+    "business_tip": "【正解: センサーIDとイベントタイムスタンプを組み合わせた行キーを使用して、データをBigtableに取り込む。】\n👉 ポイント: 大量のIoTセンサーデータなど高スループットな書き込みと低レイテンシな時系列検索には Cloud Bigtable を使う。行キーを「センサーID＋タイムスタンプ」にすることで範囲検索と負荷分散ができる。\n💡 判断軸: IoT・時系列・超大規模高スループットNoSQL＝Cloud Bigtable。",
+    "id": "P142",
+    "code": "P-142",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 93,
+    "question_id": "143",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE / VPA & HPA",
+    "multi_select": 1,
+    "question": "組織では、長時間実行される同種のアプリケーションを GKE クラスタに移行しています。このアプリケーションの CPU とメモリのリクエスト値は不明で、トラフィックは時間とともに変化し、1秒あたりのリクエスト数を示す指標を公開しています。Pod のリソースを自動的に適正化し、レプリカ数をスケーリングする必要があります。Google が推奨する方法に従う場合、どうすればよいですか。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "ノード管理に Cluster Autoscaler を構成し、モニタリング データに基づいて Pod のリソースを手動で調整する。"
+      },
+      {
+        "label": "B",
+        "text": "Vertical Pod Autoscaler を構成して CPU およびメモリのリクエストと上限を調整し、1秒あたりのリクエスト数を示すカスタム指標を使用してレプリカをスケーリングするように、Horizontal Pod Autoscaler を構成する。"
+      },
+      {
+        "label": "C",
+        "text": "スケーリング用に Horizontal Pod Autoscaler を構成し、リソースの推奨値には Cloud Monitoring を使用する。"
+      },
+      {
+        "label": "D",
+        "text": "スケーリング用に Horizontal Pod Autoscaler を構成し、モニタリング データに基づいてリソースを手動で調整する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Vertical Pod Autoscaler（VPA）は、長時間実行される同種のワークロードの CPU とメモリのリソースを適正化できます。Horizontal Pod Autoscaler（HPA）は、レプリカ数をスケーリングすることでトラフィックの変化に迅速に対応できます。HPA と VPA の両方で CPU またはメモリを制御してはならないため、HPA ではアプリケーションのカスタム リクエスト レート指標を使用します。\n\n・A（不正解）: Cluster Autoscaler は、リソース需要に基づいてクラスタのノード数を管理するために役立ちますが、Pod のリソースを手動で調整する方法は非効率であり、推奨されません。特に使用パターンが変動する場合、作業負荷が高く、エラーも発生しやすくなります。\n・C（不正解）: Horizontal Pod Autoscaler は、特定の指標に基づいて Pod 数をスケーリングします。Cloud Monitoring は分析情報や推奨値を提供できますが、Vertical Pod Autoscaler のように Pod のリソース リクエストと上限を動的に調整することはできません。\n・D（不正解）: この方法には、VPA が提供するリソースの自動調整機能がありません。モニタリング データに基づいてリソースを手動で調整する方法は、自動化された仕組みと比べて効率が低く、迅速に対応できない可能性があります。",
+    "business_tip": "【正解: Vertical Pod Autoscaler を構成して CPU およびメモリのリクエストと上限を調整し、1秒あたりのリクエスト数を示すカスタム指標を使用してレプリカをスケーリングするように、Horizontal Pod Autoscaler を構成する。】\n👉 ポイント: リソース枠（CPU/メモリ）の適正化はVPA、トラフィック増減に応じたPod数の増減はHPAで分担する。両者が同じCPU/メモリ指標で競合しないよう、HPAには1秒あたりのリクエスト数（カスタム指標）を指定する。\n💡 判断軸: Podサイズ自動調整＝VPA、レプリカ数自動調整＝HPA。併用時はHPAにカスタム指標（RPS等）を使う。",
+    "id": "P143",
+    "code": "P-143",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 94,
+    "question_id": "144",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Run / コールドスタート",
+    "multi_select": 1,
+    "question": "あなたの管理する e コマース Web サイトは Cloud Run でホストされており、トランザクションに Cloud SQL を使用しています。通常時のトラフィックは少ないため、Cloud Run サービスはアイドル状態になるとインスタンス数がゼロまでスケールダウンします。しかし、販売イベントの開始時には短時間で大量のリクエストが発生します。\nモニタリングの結果、Cloud Run がゼロから新しいインスタンスを起動し、Cloud SQL への接続を初期化する間に、最初のリクエストのレイテンシが大幅に増加していることが分かりました。\n販売イベント開始時のレイテンシを低減するために、最も適切な対応はどれでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Runインスタンスのメモリ制限を増やす。"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Runインスタンスの最大数を減らす。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud RunインスタンスのCPU制限を減らす。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Runインスタンスの最小数を増やす。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】Cloud Run は、トラフィックがない場合にインスタンス数をゼロまでスケールダウンできます。コスト効率の面では有効ですが、その後にリクエストを受信すると、新しいコンテナインスタンスを起動し、アプリケーションや Cloud SQL への接続を初期化する必要があります。この処理によって最初のリクエストに追加のレイテンシが発生する場合があります。Cloud Run の最小インスタンス数を設定すると、指定した数のインスタンスを常に warm な状態で維持できます。そのため、販売イベントなど予測可能なトラフィック増加に備えて最小インスタンス数を増やすことで、コールドスタートを減らし、ユーザーが経験するレイテンシを改善できます。一方、最大インスタンス数はスケールアウトの上限を設定するためのもので、バックエンドサービスへの負荷や接続数を制御する目的で使用します。今回のように「ゼロから起動する際の遅延」を解決する要件では、最小インスタンス数を増やす方法が適切です。\n【A】メモリ制限を増やしても、インスタンスがゼロから起動する際のコールドスタートは防げません。今回のレイテンシの主因に対する直接的な解決策ではありません。\n【B】最大インスタンス数はスケールアウトの上限を制御する設定です。コールドスタートを減らすものではなく、設定値が低すぎるとトラフィック急増時の処理能力が不足する可能性があります。\n【C】CPU制限を減らしてもコールドスタートを防ぐことはできません。むしろアプリケーションやCloud SQL接続の初期化処理が遅くなる可能性があります。",
+    "business_tip": "【正解: Cloud Runインスタンスの最小数を増やす。】\n👉 ポイント: ゼロスケール状態からの起動遅延（コールドスタート）を抑えるには、最小インスタンス数（min-instances）を増やして常にウォーム状態のインスタンスを維持する。\n💡 判断軸: 「ゼロ起動時の初期レイテンシ改善」＝最小インスタンス数を増やす。「最大負荷やDB接続上限を抑える」＝最大インスタンス数を制限する。",
+    "id": "P144",
+    "code": "P-144",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 95,
+    "question_id": "145",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Cloud Spanner / Cloud Monitoring",
+    "multi_select": 1,
+    "question": "あなたは、マルチリージョンで稼働するアプリケーション用のCloud Spannerインスタンスを管理しています。CPU使用率がパフォーマンスに影響を与える可能性のあるレベルに近づいていることを検出するために、Cloud Monitoringアラートを設定する必要があります。Googleのベストプラクティスに従って、リージョンごとに優先度の高いCPU使用率のしきい値を設定するには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "高優先度のCPU使用率のリージョンあたりの最大値が、30%に達したときにアラートをトリガーする。"
+      },
+      {
+        "label": "B",
+        "text": "高優先度のCPU使用率のリージョンあたりの最大値が、45%に達したときにアラートをトリガーする。"
+      },
+      {
+        "label": "C",
+        "text": "高優先度のCPU使用率のリージョンあたりの最大値が、65%に達したときにアラートをトリガーする。"
+      },
+      {
+        "label": "D",
+        "text": "高優先度のCPU使用率のリージョンあたりの最大値が、80%に達したときにアラートをトリガーする。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】マルチリージョンインスタンスの場合、リージョンごとの優先度の高いCPU使用率が45%でアラートを作成することで、早期警告と誤報の回避のバランスが取れます。パフォーマンスに大きな影響が出る前に対策を講じる事ができる一方、通常の運用の変動時に不要なアラートがトリガーされません。\n【A (30%)】このしきい値は低すぎる可能性が高く、頻繁に誤報となるアラームが発生する可能性があります。30%では、インスタンスはまだ十分に能力の範囲内で動作しており、アラートが不必要な介入につながる可能性があります。\n【C (65%)】このしきい値は、インスタンスにより大きな負荷がかかっていることを示す値ですが、CPU使用率がこのレベルに達するまでに、アプリケーションはすでにパフォーマンスの低下を経験している可能性があります。プロアクティブな監視を行うには、より低い使用率に設定することをお勧めします。\n【D (80%)】このしきい値は、パフォーマンスの問題をタイムリーに効果的に検出するには高すぎます。CPU使用率がこのレベルに達するまでに、アプリケーションはすでに大幅なパフォーマンスの低下を経験している可能性があります。プロアクティブな監視と問題の早期検出のために、より低い使用率に設定することをお勧めします。",
+    "business_tip": "【正解: 高優先度のCPU使用率のリージョンあたりの最大値が、45%に達したときにアラートをトリガーする。】\n👉 ポイント: マルチリージョンCloud Spannerでは、高優先度CPU使用率45%をしきい値にするのがGoogle推奨の設定。30%は誤報が増え、65%や80%ではすでに性能低下が始まっている。\n💡 判断軸: Cloud Spannerマルチリージョンの高優先度CPUしきい値＝45%（リージョナルは65%）。早期検知と誤報回避のバランスで選ぶ。",
+    "id": "P145",
+    "code": "P-145",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 96,
+    "question_id": "146",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Asset Inventory / サービスアカウントキー",
+    "multi_select": 1,
+    "question": "あなたの会社は、新しいアプリケーションにキーを使用しない認証を導入しました。残っている従来の認証情報を廃止する前に、あるフォルダ配下のプロジェクトから、2026-01-01より前に作成されたサービスアカウントキーを見つける必要があります。最初に取得した一覧には、キーの作成日時ではなく、サービスアカウント自体の作成日時が含まれていました。どの Cloud Asset Inventory クエリを使用すればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud asset search-all-resources --scope=\"folders/FOLDER_ID\" --asset-types=\"iam.googleapis.com/ServiceAccountKey\" --query=\"createTime < 2026-01-01\" を実行する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud asset search-all-resources --scope=\"folders/FOLDER_ID\" --asset-types=\"iam.googleapis.com/ServiceAccountKey\" --query=\"createTime > 2026-01-01\" を実行する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud asset search-all-resources --scope=\"folders/FOLDER_ID\" --asset-types=\"apikeys.googleapis.com/Key\" --query=\"createTime < 2026-01-01\" を実行する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud asset search-all-resources --scope=\"folders/FOLDER_ID\" --asset-types=\"iam.googleapis.com/ServiceAccount\" --query=\"createTime < 2026-01-01\" を実行する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】キーの作成日時を調べるには、検索対象を iam.googleapis.com/ServiceAccountKey に指定する必要があります。--scope=\"folders/FOLDER_ID\" で対象フォルダ配下を検索し、createTime < 2026-01-01 で指定日より前に作成されたキーへ絞り込みます。Cloud Asset Inventoryの日付比較では、この日付はUTCの境界として扱われます。\n【B】> は指定日より後に作成されたものを検索する条件です。古いキーを探すために必要な < と逆になります。\n【C】apikeys.googleapis.com/Key はAPIキーのアセットタイプです。IAMサービスアカウントキーとは別のリソースです。\n【D】iam.googleapis.com/ServiceAccount を検索すると、サービスアカウント自体の作成日時を評価します。そのアカウントに属する個々のキーの作成日時は判定できません。",
+    "business_tip": "【正解: gcloud asset search-all-resources --scope=\"folders/FOLDER_ID\" --asset-types=\"iam.googleapis.com/ServiceAccountKey\" --query=\"createTime < 2026-01-01\" を実行する。】\n👉 ポイント: サービスアカウントの「キー」の作成日時を調べるには、`ServiceAccount` ではなく `iam.googleapis.com/ServiceAccountKey` を指定し、`createTime < 2026-01-01` で絞り込む。\n💡 判断軸: 対象アセット種別の区別（ServiceAccount vs ServiceAccountKey vs API Key）と、指定日より前を示す `<` の向きを見極める。",
+    "id": "P146",
+    "code": "P-146",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 97,
+    "question_id": "147",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "マネージドインスタンスグループ",
+    "multi_select": 1,
+    "question": "あなたは、Compute Engineにデータ処理アプリケーションをデプロイする必要があります。アプリケーションは、1日を通してさまざまなワークロードを処理します。高可用性と効率的なリソース利用を確保する必要があり、Googleが推奨するプラクティスに従って運用を自動化したいと考えています。どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "アプリケーションをマネージドインスタンスグループにデプロイし、CPU使用率に基づいてオートスケーリングを構成する。"
+      },
+      {
+        "label": "B",
+        "text": "アプリケーションを管理インスタンスグループにデプロイし、ワークロードに基づいてインスタンス数を手動で調整する。"
+      },
+      {
+        "label": "C",
+        "text": "複数のCompute Engineインスタンスにアプリケーションをデプロイし、ワークロードの多い時間帯に手動で高CPUインスタンスに切り替える。"
+      },
+      {
+        "label": "D",
+        "text": "複数のCompute Engineインスタンスにアプリケーションをデプロイし、ワークロードの多い時間帯に手動でスケールアップする。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "このアプローチは、Google Cloud のマネージドインスタンスグループ（MIG）の機能を活用するもので、作業負荷の変化に応じてインスタンス数を自動的に管理します。CPU使用率に基づく自動スケーリングにより、アプリケーションは需要の多い時間帯にスケールアウトし、需要の少ない時間帯にスケールインできるため、リソースの使用率が保たれ、高い可用性が維持されます。動的なワークロードを効率的かつ自動的に処理するために Google が推奨するプラクティスと一致しています。\n\n・B (管理インスタンスグループで手動調整): インスタンス数を手動で調整することは、自動化されたオートスケーリングに比べて効率が悪く、エラーが発生しやすくなります。常に監視し、手動で介入する必要があるため、ワークロードの変化への対応が遅れ、リソースの利用率が最適にならない可能性があります。\n・C (手動で高CPUインスタンスに切り替え): インスタンスタイプを手動で切り替えることは、動的なワークロードを処理するには現実的ではありません。インスタンスの停止と起動を伴うためダウンタイムが発生する可能性があり、MIG を使用した自動スケーリングと同じレベルの自動化と効率は得られません。\n・D (手動でスケールアップ): 手動でインスタンスをスケールアップするのは効率が悪く、常時監視と介入が必要です。さまざまなワークロードを効率的に処理するために必要な、自動化された応答性の高いスケーリングはできません。",
+    "business_tip": "【正解: アプリケーションをマネージドインスタンスグループにデプロイし、CPU使用率に基づいてオートスケーリングを構成する。】\n👉 ポイント: Compute Engine で変動負荷に対応しつつ高可用性と運用自動化を両立するなら、マネージドインスタンスグループ（MIG）＋オートスケーリングを使う。\n💡 判断軸: 手動スケールアップや手動台数調整＝運用負荷・ダウンタイム要因。GCEでの自動スケール＆自動修復＝MIG + オートスケーリング。",
+    "id": "P147",
+    "code": "P-147",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 98,
+    "question_id": "148",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Audit Logs / IAM",
+    "multi_select": 1,
+    "question": "組織のセキュリティ チームは、Cloud SQL データベースの操作に関連する潜在的なセキュリティインシデントを調査するために、プロジェクトのCloud Audit Logsへのアクセスをリクエストしましたが、データベースの作成と削除以外のログを表示することができません。詳細なデータベースアクセスログを表示するために必要な権限をセキュリティチームに付与するにはどうすればよいでしょうか?",
+    "choices": [
+      {
+        "label": "A",
+        "text": "セキュリティチームのメンバーにLogging管理者ロールを割り当てる。"
+      },
+      {
+        "label": "B",
+        "text": "クラウドSQLサービスのデータアクセスログを有効にし、セキュリティチームにプライベートログ閲覧者のロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "セキュリティチームにCloud SQL Adminロールを付与するようにCloud IAMを構成する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Logging APIを有効にし、セキュリティチームにログビューアロールを付与する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】データアクセスログは、デフォルトのアクティビティログには含まれない読み取りおよび書き込み操作を含む、リソース上で実行された操作に関する詳細な情報を提供します。セキュリティチームがこれらの詳細なログを表示できるようにするには、Cloud SQLサービスのデータアクセスログを有効にする必要があります。これらのログを表示するには、ログ内のプライベートデータにアクセスするために必要な権限を付与するプライベートログ閲覧者のロールが必要です。\n【A】Logging管理者ロールは、ユーザがロギング構成を管理することを許可しますが、このロールは、セキュリティ調査を目的とした詳細なデータベースアクセスログへのアクセスを目的としたものではありません。\n【C】Cloud SQL Adminロールによって、ユーザーはCloud SQLインスタンスを管理し、管理タスクを実行できる様になりますが、このロールは、セキュリティ調査を目的とした詳細なデータベースアクセスログへのアクセスを目的としたものではありません。\n【D】Cloud Logging APIを有効にし、ログビューアロールを付与することで、ユーザーはログを閲覧できるようになりますが、このロールにはデータアクセスログを閲覧する権限は含まれていません。ログ・ビューワの役割は、一般的に標準的なログを閲覧するためのものであり、詳細なアクセス・ログを閲覧するためのものではありません。",
+    "business_tip": "【正解: クラウドSQLサービスのデータアクセスログを有効にし、セキュリティチームにプライベートログ閲覧者のロールを付与する。】\n👉 ポイント: Cloud Audit Logsのデータアクセスログはデフォルト無効のため、まず対象サービスで有効にする。その上でデータアクセスログを読むには、ログ閲覧者（roles/logging.viewer）ではなくプライベートログ閲覧者（roles/logging.privateLogViewer）が必要。\n💡 判断軸: 通常の管理ログ以外の詳細アクセス調査＝「データアクセスログ有効化」＋「プライベートログ閲覧者ロール」。",
+    "id": "P148",
+    "code": "P-148",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 99,
+    "question_id": "149",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud SQL / DB選定",
+    "multi_select": 1,
+    "question": "あなたの会社には、出荷と在庫を追跡するための物流アプリケーションがあります。このアプリケーションは、いくつかの地方事務所の従業員のみが使用します。アプリケーションには、強力な一貫性、効率的なクエリ、および複数テーブルの更新に対するACID保証が必要です。アプリケーションの初期バージョンはMySQLに実装されており、コードの変更を最小限に抑えてクラウドにデプロイしたいと考えています。このアプリケーションにはどのデータベースが最適でしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Firestore"
+      },
+      {
+        "label": "B",
+        "text": "BigQuery"
+      },
+      {
+        "label": "C",
+        "text": "Bigtable"
+      },
+      {
+        "label": "D",
+        "text": "Cloud SQL"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nCloud SQLは、MySQLと互換性のあるフルマネージドのリレーショナルデータベースサービスです。強力な一貫性、効率的なクエリ、複数テーブルの更新に対するACID保証を提供し、最小限のコード変更で既存のMySQLベースのアプリケーションをクラウドにデプロイするには最適な選択肢となります。\n\n【各選択肢の説明】\n・A（不正解）：Firestoreは強力な一貫性とリアルタイム同期を提供するNoSQLドキュメント・データベースです。しかし、MySQLのようなリレーショナル・データベースのように、SQLクエリや複数テーブル・トランザクションのACID保証をネイティブにはサポートしていません。\n・B（不正解）：BigQueryは、大規模データ分析用に設計された完全管理型のデータウェアハウスです。BigQueryは、強力な一貫性とACID保証を必要とするトランザクション処理よりも、読み取りを多用する分析ワークロードに最適化されています。\n・C（不正解）：Bigtableは、大規模かつ低レイテンシのワークロード向けに設計されたフルマネージドNoSQLデータベースサービスです。特定の種類のクエリに対しては高い性能を発揮しますが、マルチテーブルトランザクションに対してはACID保証を提供しません。Bigtableは、広いカラムのデータストレージと高スループットの処理を必要とするアプリケーションに適しています。\n・D（正解）：既存のMySQLアプリを最小限のコード変更で移行でき、強い一貫性と複数テーブルのACID保証を満たすCloud SQLが最適です。",
+    "business_tip": "【正解: Cloud SQL】\n👉 ポイント: 既存のMySQLアプリを最小限のコード変更で移行し、複数テーブルのACIDトランザクションを維持するならCloud SQLを選ぶ。\n💡 判断軸: MySQL/PostgreSQL互換＋地域限定規模＋リレーショナルACID＝Cloud SQL。グローバル規模の超大規模RDBならCloud Spanner、分析ならBigQuery。",
+    "id": "P149",
+    "code": "P-149",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 100,
+    "question_id": "150",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン",
+    "scenario_tag": "Pub/Sub・Eventarc",
+    "multi_select": 1,
+    "question": "あなたは、数千人のユーザーからフィードバックを収集する、アプリケーションの顧客フィードバック機能を開発しています。フィードバックは不規則に届くため、取り込み処理と、スケーラブルな非同期処理を分離する必要があります。\nどうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "受信したフィードバックを CSV ファイルとして Cloud Storage に保存し、1日の終わりにバッチ処理する"
+      },
+      {
+        "label": "B",
+        "text": "各フィードバックイベントを Pub/Sub トピックにパブリッシュする。Pub/Sub イベントを受信して Cloud Run function を呼び出し、各メッセージを処理する Eventarc トリガーを構成する。"
+      },
+      {
+        "label": "C",
+        "text": "受信したフィードバックを Firestore に保存する。Cloud Scheduler を使用して Dataflow ジョブをトリガーし、フィードバックを定期的に処理する"
+      },
+      {
+        "label": "D",
+        "text": "受信したフィードバックを処理する専用の Compute Engine インスタンスを使用し、フィードバックをこのインスタンスに直接送信する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "Pub/Sub は、不規則に発生するイベントトラフィックに対応できる、スケーラブルな非同期メッセージングを提供します。メッセージがパブリッシュされると、Eventarc トリガーが Cloud Run function を呼び出します。処理後も保持する必要があるデータは、適切なデータベースまたは分析用ストアに書き込む必要があります（Pub/Sub は永続的な正式記録を保存するシステムではなく、メッセージングレイヤーです）。\n\n・A (GCS へ CSV 保存し1日の終わりにバッチ処理): バッチ処理であるため、フィードバックの処理に遅延が発生します。リアルタイムのフィードバック分析には適しておらず、大量のフィードバックを効率的に処理できない可能性もあります。\n・C (Firestore + Cloud Scheduler + Dataflow): Firestore はスケーラブルな NoSQL データベースですが、Cloud Scheduler と Dataflow を使用した定期処理では複雑さとレイテンシが増加します。この構成は、リアルタイムのフィードバック処理よりも定期的なバッチ処理に適しています。\n・D (専用 Compute Engine に直接送信): 専用の Compute Engine インスタンスを管理して保守する必要があるため、運用負荷が増加します。また、Pub/Sub と Cloud Run function を使用する場合と同等のスケーラビリティと柔軟性も得られません。",
+    "business_tip": "【正解: 各フィードバックイベントを Pub/Sub トピックにパブリッシュする。Pub/Sub イベントを受信して Cloud Run function を呼び出し、各メッセージを処理する Eventarc トリガーを構成する。】\n👉 ポイント: 不規則に届くイベントの取り込みと処理を疎結合（分離）し、スケーラブルに非同期処理するなら Pub/Sub ＋ Eventarc ＋ Cloud Run function が定番構成。\n💡 判断軸: 取り込みと非同期処理の分離＝Pub/Sub。イベント駆動の軽量処理＝Eventarc + Cloud Run function。",
+    "id": "P150",
+    "code": "P-150",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  }
+]
