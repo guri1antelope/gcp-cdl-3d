@@ -1,6 +1,1831 @@
 [
   {
     "q_num": 1,
+    "question_id": "001",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Compute Engine カスタムイメージ",
+    "multi_select": 2,
+    "question": "あなたのチームは、Compute Engine VMインスタンス上で実行されているアプリケーションを管理しています。大きなアップデートを翌月に控えており、その後にトラフィックが増加することが予想されています。\n現在のVMと同じOSおよびアプリケーション構成を持つVMを複数作成し、迅速にスケールアウトできるようにしたいと考えています。\n同じ構成のVMを迅速に複数作成するために必要な手順を、以下から2つ選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Shielded VMを有効にして、新しいVMを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "VMの起動スクリプトにアプリケーションのインストール処理を追加する。"
+      },
+      {
+        "label": "C",
+        "text": "既存VMのブートディスクからカスタムイメージを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "ブートディスクのスナップショットを作成し、そのスナップショットを各VMに直接割り当てる。"
+      },
+      {
+        "label": "E",
+        "text": "作成したカスタムイメージから必要な数のVMインスタンスを作成する。"
+      }
+    ],
+    "answer": [
+      "C",
+      "E"
+    ],
+    "explanation": "【全体的な説明】\n複数のVMを同じ構成で迅速に作成する場合、カスタムイメージを作成し、そのイメージからVMを作成する方法が適しています。\n\n【選択肢の解説】\n・A: Shielded VMはセキュリティ機能であり、VMの迅速な複製方法ではありません。\n・B: 起動時に毎回インストールする必要があり、カスタムイメージより起動完了まで時間がかかります。\n・C（正解）: 既存VMのブートディスクからOS・アプリ構成を含んだカスタムイメージを作成します。\n・D: スナップショットはディスクのバックアップ・複製に利用できますが、ここでは同一構成のVMを効率的に大量作成する方法としてカスタムイメージを利用する方が適切です。\n・E（正解）: 作成したカスタムイメージから必要な数のVMインスタンスを作成します。",
+    "business_tip": "【正解: C) 既存VMのブートディスクからカスタムイメージを作成する。 / E) 作成したカスタムイメージから必要な数のVMインスタンスを作成する。】\n👉 ポイント: 同一構成のVMを素早く複数作成するには、ブートディスクから「カスタムイメージ」を作成し、そのイメージからVMを作成します。\n💡 判断軸: ディスクのバックアップ＝スナップショット、複数VMの迅速な複製＝カスタムイメージ。起動スクリプトは毎回インストールに時間がかかります。",
+    "id": "P001",
+    "code": "P-001",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 2,
+    "question_id": "002",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage バケット再配置",
+    "multi_select": 1,
+    "question": "あなたはCloud Storageバケットを新しいリージョンに移動したいと考えています。バケット内にはデータが存在します。また、新しいリージョンと古いリージョンでのバケット名は同じである必要があります。どのように移動すれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud storage buckets update コマンドを使用して、既存のバケットのロケーション属性を新しいリージョンに変更する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud storage buckets relocate コマンドを使用して、既存のバケットを新しいリージョンに再配置する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud storage mv コマンドを使用して、バケット構成自体を新しいリージョンに移動する。"
+      },
+      {
+        "label": "D",
+        "text": "元のリージョンのバケット設定を編集してそのロケーションを変更し、更新を適用する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nCloud Storageでは、既存バケットを別のロケーションへ再配置するBucket Relocation機能を利用できます。\n推奨される流れは次のとおりです。\n・まず --dry-run を使用して再配置可能か確認する\n・問題がなければRelocationを開始する\n・必要に応じて最終同期を実行する\nたとえば、\ngcloud storage buckets relocate gs://my-bucket \\\n  --location=us-central1 \\\n  --dry-run\nのように事前検証できます。\n\n【選択肢の解説】\n・A: gcloud storage buckets update では既存バケットのロケーションを変更できません。\n・B（正解）: gcloud storage buckets relocate（Bucket Relocation 機能）を使用することで、バケット名を維持したまま既存のバケットとデータを新しいリージョンへ再配置できます。\n・C: gcloud storage mv はオブジェクトの移動やリネームを行うコマンドであり、バケット自体のロケーション移動はできません。\n・D: 作成済みバケットの設定画面やプロパティ編集だけで直接ロケーション属性を書き換えることはできません。",
+    "business_tip": "【正解: gcloud storage buckets relocate コマンドを使用して、既存のバケットを新しいリージョンに再配置する。】\n👉 ポイント: 既存の Cloud Storage バケットを同じバケット名のまま別リージョンへ移動するには Bucket Relocation（gcloud storage buckets relocate）を使う。実行前の --dry-run 検証も重要。\n💡 判断軸: バケットのリージョン移行（バケット名維持）＝buckets relocate。buckets update や設定編集ではロケーションは変更できない。",
+    "id": "P002",
+    "code": "P-002",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 3,
+    "question_id": "003",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Infrastructure Manager",
+    "multi_select": 1,
+    "question": "あなたが参加しているプロジェクトでは、Infrastructure Managerを使用して、Terraform 構成で定義された Google Cloud リソースをデプロイしています。あなたは Terraform 構成に大きな変更を加えました。変更をコミットする前に、定義されているリソースの依存関係が適切に解決され、どのリソースが作成・更新・削除される予定かを最も素早く確認する必要があります。\nどうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud infra-manager previews create コマンドを --local-source フラグとともに実行し、プレビュー結果または resource changes を確認する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud infra-manager deployments apply コマンドを --dry-run フラグとともに実行し、変更予定のリソースを確認する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud infra-manager deployments plan コマンドを実行し、変更予定のリソースを確認する。"
+      },
+      {
+        "label": "D",
+        "text": "同じ Terraform構成を使用して別のプロジェクトに実際にデプロイし、エラーが発生しないか確認する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nInfrastructure Manager では、Terraform 構成を実際にデプロイする前にpreviewを作成できます。\ngcloud infra-manager previews create コマンドを使用することで、Terraform 構成に対して terraform plan を実行し、どのリソースが作成、更新、削除される予定かを確認できます。\n\n【選択肢の解説】\n・A（正解）: gcloud infra-manager previews create に --local-source を指定してプレビューを作成し、変更予定（resource changes）を確認します。\n・B: gcloud infra-manager deployments apply コマンドでは、--dry-run フラグは有効なフラグではありません。\n・C: gcloud infra-manager deployments plan コマンドは有効なコマンドではありません。\n・D: 別プロジェクトに実際にデプロイすれば確認はできますが、リソースが作成されてしまう可能性があり、時間もコストもかかります。事前確認としては Infrastructure Manager の preview を使用する方が適切です。",
+    "business_tip": "【正解: gcloud infra-manager previews create コマンドを --local-source フラグとともに実行し、プレビュー結果または resource changes を確認する。】\n👉 ポイント: Google Cloud Infrastructure ManagerでTerraform変更を実デプロイ前にドライラン確認（terraform plan相当）するには `gcloud infra-manager previews create` を使う。\n💡 判断軸: Infrastructure Managerの事前差分確認＝`previews create`（ローカル変更なら `--local-source`）。`deployments plan` や `apply --dry-run` は存在しない。",
+    "id": "P003",
+    "code": "P-003",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 4,
+    "question_id": "004",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "プロジェクト管理 / gcloud CLI",
+    "multi_select": 1,
+    "question": "あなたが所属するチームでは複数のGoogle Cloudプロジェクトを管理しています。古いプロジェクトを終了するにはどうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Google Cloudコンソールの「お支払い」ページで削除対象のプロジェクトの課金を無効にする。"
+      },
+      {
+        "label": "B",
+        "text": "Google Cloudサポートにプロジェクトの削除リクエストを申請する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Shellを使用して、gcloud projects deleteコマンドにプロジェクト名を指定して実行する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Shellを使用して、gcloud projects deleteコマンドにプロジェクトIDを指定して実行する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nプロジェクトを終了するには、Google Cloudコンソールまたは Resource Manager API / gcloud projects delete を使用します（gcloud projects delete PROJECT_ID）。ここで指定するのはプロジェクト名ではなくプロジェクトIDです。なお、プロジェクトの削除は直ちに完全消去する操作ではなく、削除後一定期間は復元できます。\n\n【選択肢の解説】\n・A: この方法ではプロジェクトの課金を無効にできますが、プロジェクト自体の削除はできません。\n・B: 通常、Google Cloudサポートへ削除を依頼する必要はありません。\n・C: gcloud projects delete ではプロジェクト名ではなくプロジェクトIDを指定します。\n・D（正解）: Cloud Shellで gcloud projects delete コマンドにプロジェクトIDを指定して実行することでプロジェクトを終了できます。",
+    "business_tip": "【正解: Cloud Shellを使用して、gcloud projects deleteコマンドにプロジェクトIDを指定して実行する。】\n👉 ポイント: プロジェクトを削除するには gcloud projects delete に「プロジェクトID」を渡します。お支払いページで課金を無効にしただけではプロジェクト自体は消えません。\n💡 判断軸: 「プロジェクト削除」→ gcloud projects delete PROJECT_ID（プロジェクト名ではなくID指定）。",
+    "id": "P004",
+    "code": "P-004",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 5,
+    "question_id": "005",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Local SSD / ディスク性能",
+    "multi_select": 1,
+    "question": "あなたのチームが管理するCompute Engineインスタンスでは、アプリケーションの一時的なデータ処理にゾーンSSD永続ディスクを使用しています。\nモニタリングの結果、ディスク読み取り性能がボトルネックになっています。このデータは再生可能で、VMの停止や削除によって失われても問題ありません。\nディスクの読み取り性能を大幅に向上させるには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "VMのプロビジョニングモデルをSpotに変更する。"
+      },
+      {
+        "label": "B",
+        "text": "SSD永続ディスクをLocal SSDに置き換える。"
+      },
+      {
+        "label": "C",
+        "text": "SSD永続ディスクのサイズを小さくして、ディスク使用量を減らす。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Storage Standardにデータを移し、VMから読み取る。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nLocal SSDはVMをホストする物理サーバーに直接接続されるため、高いIOPSとスループット、低レイテンシを提供できます。ただしLocal SSDは永続ストレージではなく、VMの停止・終了・障害などでデータが失われる可能性があります。今回の問題ではデータが再生可能であるため、この特性を許容できます。\n\n【選択肢の解説】\n・A: Spot VMはコスト削減のための一時的なリソース割り当てモデルであり、ディスク性能の向上には寄与しません。\n・B（正解）: 物理ホスト直結のLocal SSDを使うことで、永続ディスクより高い読み取り性能を得られます。\n・C: SSD永続ディスクは容量に比例してIOPSやスループットが決まるため、サイズを小さくすると性能が下がります。\n・D: Cloud Storageはオブジェクトストレージであり、ブロックストレージ（ディスク）より遅延が大きくなります。",
+    "business_tip": "【正解: SSD永続ディスクをLocal SSDに置き換える。】\n👉 ポイント: Local SSDは物理サーバー直結で超高IOPS・低レイテンシを出せる一方、VM停止や障害でデータが消える揮発性ストレージです。\n💡 判断軸: 「一時データ・再生成可能」「ディスクI/Oを大幅に高速化」の2条件が揃ったらLocal SSDを選ぶ。",
+    "id": "P005",
+    "code": "P-005",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 6,
+    "question_id": "006",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Marketplace / Jenkins",
+    "multi_select": 1,
+    "question": "あなたは開発チームの一員としてGoogle Cloud上でWebアプリケーションを開発しています。チームでは継続的インテグレーション用のJenkinsを導入することになりました。\nできるだけ短時間でJenkinsを利用開始するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Compute Engine VMを作成し、Jenkinsを手動でインストールする。"
+      },
+      {
+        "label": "B",
+        "text": "GKEクラスタを作成し、Jenkinsコンテナをデプロイする。"
+      },
+      {
+        "label": "C",
+        "text": "インストールスクリプトを作成し、VMの起動スクリプトから実行する。"
+      },
+      {
+        "label": "D",
+        "text": "Google Cloud MarketplaceからJenkinsのパッケージを選択してデプロイする。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nGoogle Cloud Marketplaceでは、Jenkinsのようなソフトウェアを事前構成済みのパッケージとしてデプロイできます。Google Cloudの公式トレーニングでも、MarketplaceからBitnamiのJenkinsパッケージを選択して数分でJenkins環境を構築する演習が用意されています。「最短時間で利用開始する」という条件ではDが最も適切です。\n\n【選択肢の解説】\n・A: VM作成後に手動でJenkinsをインストールするため手間と時間がかかります。\n・B: GKEクラスタの構築やコンテナ設定が必要になり、すぐには利用開始できません。\n・C: 起動スクリプトを使う場合でもインストールスクリプトの作成と検証が必要になります。\n・D（正解）: 事前構成済みパッケージをそのままデプロイできるため最短で導入できます。",
+    "business_tip": "【正解: Google Cloud MarketplaceからJenkinsのパッケージを選択してデプロイする。】\n👉 ポイント: 既製OSSやミドルウェアを最短で立ち上げるなら、VMやGKEを一から組まずにCloud Marketplaceの事前構成済みパッケージを使う。\n💡 判断軸: 「できるだけ短時間で導入」「すぐ使い始める」と来たらCloud Marketplaceが最優先候補。",
+    "id": "P006",
+    "code": "P-006",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 7,
+    "question_id": "007",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "VPC ファイアウォール",
+    "multi_select": 2,
+    "question": "あなたは新しいGoogle Cloud上で新しいVPCネットワークを作成しました。新しいVPC内にアプリケーションをセットアップするため、ファイアウォールを設定しています。セキュリティリスクを低減する為、一部の必要なポートを除きトラフィックを許可する出力ポートを最小限に抑える必要があります。どうすれば良いでしょうか？適切な方法を以下から2つ選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "優先度に65534を設定し、全ての出力トラフィックをブロックするファイアウォールルールを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "優先度に100を設定し、必要な特定ポートの出力トラフィックを許可する別のファイアウォールルールを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "優先度に100を設定し、全ての出力トラフィックをブロックするファイアウォールルールを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "コンソールで暗黙の出力許可ファイアウォールルールを削除する。"
+      },
+      {
+        "label": "E",
+        "text": "優先度に65534を設定し、必要な特定ポートの出力トラフィックを許可する別のファイアウォールルールを作成する。"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nVPCファイアウォールルールの優先度は 0〜65535 で、数値が小さいほど優先度が高いです。VPCには、優先度65535の暗黙のIPv4 egress allowルールがあります。したがって、優先度100で必要なポートだけALLOW、優先度65534でその他すべてDENYとし、優先度65535の暗黙ルールより先に評価されるようにします。\n\n【選択肢の解説】\n・A（正解）: 優先度65534で全出力トラフィックをブロックすると、優先度65535の暗黙の出力許可ルールより先に遮断できます。\n・B（正解）: 優先度100（高い優先度）で必要な特定ポートの出力トラフィックを許可することで、優先度65534のブロックルールより先に許可されます。\n・C: 全ての出力トラフィックをブロックするルールを許可ルールよりも高い優先度で作成すると、すべての出力トラフィックがブロックされます。\n・D: 暗黙のファイアウォールルールはコンソールには表示されず、削除することも出来ません。\n・E: 必要な特定ポートの出力トラフィックを許可するルールと共に、それ以外、もしくは全ての出力トラフィックをブロックするルールが必要となりますが、他の選択肢には存在しません。",
+    "business_tip": "【正解: A) 優先度に65534を設定し、全ての出力トラフィックをブロックするファイアウォールルールを作成する。 / B) 優先度に100を設定し、必要な特定ポートの出力トラフィックを許可する別のファイアウォールルールを作成する。】\n👉 ポイント: VPCファイアウォールは優先度（0〜65535）の数値が小さいほど優先され、優先度65535に「暗黙の出力許可ルール」が存在します（削除不可）。\n💡 判断軸: 出力を絞る時は「小さい数値（例: 100）で必要ポートをALLOW」＋「65534で全出力をDENY」して暗黙ルール（65535）を上書きします。",
+    "id": "P007",
+    "code": "P-007",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 8,
+    "question_id": "008",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Terraform / IaC管理",
+    "multi_select": 1,
+    "question": "あなたのチームはTerraformとInfrastructure Managerを使用して、Google Cloud にデプロイされたインフラストラクチャを管理しています。 Google 推奨のベストプラクティスに従う場合、チーム内でInfrastructure as Codeの変更をどのように保存および共有すべきですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "変更を含むTerraform 構成ファイルをDatastoreに保存する。"
+      },
+      {
+        "label": "B",
+        "text": "変更を含むTerraform 構成ファイルをFilestoreに保存する。"
+      },
+      {
+        "label": "C",
+        "text": "変更を含むTerraform 構成ファイルを Cloud Storageバケットに保存する。"
+      },
+      {
+        "label": "D",
+        "text": "Terraform構成ファイルをGitHubなどのGitバージョン管理リポジトリに保存する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nTerraform構成ファイルはデプロイするインフラストラクチャを定義するコードです。Gitベースのバージョン管理システムに保存することで、チームでの共同作業、変更履歴の追跡、コードレビューができるようになります。\n\n【選択肢の解説】\n・A: DatastoreはNoSQLデータベースであり、IaCコードの保存やバージョニング向けではありません。\n・B: FilestoreはフルマネージドNFSファイルサーバーであり、構成ファイル向けの組み込みのバージョン管理やレビュー機能がありません。\n・C: Cloud Storageにファイルを置くことはできても、IaCの変更管理やレビューにはGitベースのバージョン管理リポジトリが推奨されます。\n・D（正解）: Gitリポジトリを使うことで変更履歴管理とプルリクエストによるレビューができます。",
+    "business_tip": "【正解: Terraform構成ファイルをGitHubなどのGitバージョン管理リポジトリに保存する。】\n👉 ポイント: TerraformなどのIaCコードはアプリケーションコードと同じくGitリポジトリで管理し、変更履歴とコードレビューを回すのが基本です。\n💡 判断軸: 「IaCの構成ファイルの保存・チーム共有」はGCSやNFSではなくGitバージョン管理一択（なおstateファイル保存ならGCSが定番）。",
+    "id": "P008",
+    "code": "P-008",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 9,
+    "question_id": "009",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Windows VM RDP 認証情報",
+    "multi_select": 1,
+    "question": "あなたはGoogleクラウド上のWindows VMインスタンスで実行されるアプリケーションを管理しています。リモートデスクトッププロトコル（RDP）を使用してインスタンスにログインする必要があります。認証情報を生成するには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud compute reset-windows-passwordコマンドを使用し、インスタンスの認証情報を取得する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud compute os-login addコマンドを使用し、--usernameと--passwordフラグを使用してログイン情報を設定する。"
+      },
+      {
+        "label": "C",
+        "text": "インスタンスに\"username\"および\"password\"カスタムメタデータを追加し、認証情報として使用する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud compute get-windows-loginコマンドを使用し、インスタンスのログイン情報を取得する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\ngcloud compute reset-windows-passwordコマンドを使用すると、Windows VMインスタンスの認証情報を生成できます。\n\n【選択肢の解説】\n・A（正解）: Windows VM インスタンスの RDP ログイン用パスワード/認証情報を生成・取得するには gcloud compute reset-windows-password コマンドを使用します。\n・B: gcloud compute os-login addコマンドは無効なコマンドです。\n・C: カスタムメタデータに設定した認証情報はRDPログインに使用できません。\n・D: gcloud compute get-windows-loginは無効なコマンドです。Windowsインスタンスの認証情報の生成には、gcloud compute reset-windows-passwordを使用します。",
+    "business_tip": "【正解: gcloud compute reset-windows-passwordコマンドを使用し、インスタンスの認証情報を取得する。】\n👉 ポイント: Compute Engine の Windows VM に RDP で初回ログインまたはパスワード再発行するときは gcloud compute reset-windows-password を使う。\n💡 判断軸: Windows VM のパスワード生成＝reset-windows-password。OS Login は Linux 向けであり、メタデータへの平文登録も不可。",
+    "id": "P009",
+    "code": "P-009",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 10,
+    "question_id": "010",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "Shared VPC",
+    "multi_select": 2,
+    "question": "あなたの企業では、ProjectAとProjectBという2つのGoogle Cloudプロジェクトを管理しています。両プロジェクトは同じGoogle Cloud組織に属しています。\nこれから両プロジェクトにCompute Engineインスタンスグループをデプロイします。両方のインスタンスグループから同じVPCネットワーク上のサブネットを利用し、プロジェクト間でプライベートIPによる通信を行いたいと考えています。\nネットワークを一元管理しながら、この構成を実現するにはどうすればよいでしょうか？\n2つ選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "ProjectCに新しいVPCを作成し、両プロジェクトをVPC Peeringで接続する。"
+      },
+      {
+        "label": "B",
+        "text": "ProjectB内に独自のVPCを作成し、そのVPCへ両方のインスタンスグループを配置する。"
+      },
+      {
+        "label": "C",
+        "text": "ProjectAをShared VPCのホストプロジェクトとして構成する。"
+      },
+      {
+        "label": "D",
+        "text": "両プロジェクトに同じCIDR範囲のVPCを作成して通信を許可する。"
+      },
+      {
+        "label": "E",
+        "text": "ProjectBをShared VPCのサービスプロジェクトとしてProjectAに接続する。"
+      }
+    ],
+    "answer": [
+      "C",
+      "E"
+    ],
+    "explanation": "【全体的な説明】\nGCP組織の共有VPCでは、ホストプロジェクトがVPCネットワークを所有し、サービスプロジェクトがその共有ネットワークのサブネットを利用します。これにより、複数プロジェクトのリソースを同じVPCネットワーク上に配置できます。\n\n【選択肢の解説】\n・A: 別の新しいVPCを作成する必要はありません。\n・B: ProjectA側のリソースも同じ共有VPCを利用する必要があります。\n・C（正解）: ProjectAをShared VPCのホストプロジェクトとして構成し、共有VPCネットワークを所有・管理させます。\n・D: 同一CIDRのVPCを作成しても、そのまま通信できるわけではありません。\n・E（正解）: ProjectBをShared VPCのサービスプロジェクトとしてホストプロジェクト（ProjectA）に接続することで、同一VPCのサブネットを共有してプライベートIP通信が可能になります。",
+    "business_tip": "【正解: ProjectAをShared VPCのホストプロジェクトとして構成する。 / ProjectBをShared VPCのサービスプロジェクトとしてProjectAに接続する。】\n👉 ポイント: 同一組織内でネットワークを一元管理し複数プロジェクトから同一VPC/サブネットを使う場合は、Shared VPC（ホストプロジェクト＋サービスプロジェクト）を構成する。\n💡 判断軸: 同一組織＋ネットワーク一元管理＋同一VPC共有＝Shared VPC。別組織や独立VPC同士の接続＝VPC Peering。",
+    "id": "P010",
+    "code": "P-010",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 11,
+    "question_id": "011",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Access Approval / GoogleグループIAM",
+    "multi_select": 1,
+    "question": "あなたの企業ではGoogle Cloud上でWebアプリケーションを実行しています。チームはGoogle Cloud Supportから送られるAccess Approvalリクエストを承認する必要があります。\n\nチームには複数のメンバーがおり、メンバーの追加・削除時にもIAM管理の手間を増やしたくありません。最小権限の原則とGoogleの推奨プラクティスに従ってアクセス権を付与するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "各ユーザーに roles/iam.roleAdmin を付与する。"
+      },
+      {
+        "label": "B",
+        "text": "各ユーザーに roles/accessapproval.approver を付与する。"
+      },
+      {
+        "label": "C",
+        "text": "チーム用Googleグループを作成し、roles/accessapproval.approver を付与する。"
+      },
+      {
+        "label": "D",
+        "text": "チーム用Googleグループを作成し、roles/iam.organizationRoleAdmin を付与する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nroles/accessapproval.approver はAccess Approvalリクエストを承認するための権限を提供します。\nまた、同じ業務を担当する複数ユーザーには、個々にIAMロールを付与するよりGoogleグループにロールを付与する方が、メンバー変更時の運用を簡素化できます。\n\n【選択肢の解説】\n・A: roles/iam.roleAdminロールは、プロジェクト内のすべてのカスタムロールへのアクセス権が付与されます。サポートチームからのアクセスリクエストを承認するには、roles/accessapproval.approverロールを使用します。\n・B: アクセス制御のベストプラクティスに従うには、IAMロールは個々のユーザーではなく、グループに付与します。\n・C（正解）: チーム用のGoogleグループに roles/accessapproval.approver を付与することで、最小権限とグループ単位のIAM管理（Google推奨プラクティス）の両方を満たせます。\n・D: roles/iam.organizationRoleAdminロールは、組織とその下のプロジェクト内のすべてのカスタムロールへの読み取り権限を付与します。サポートチームからのアクセスリクエストを承認するには、roles/accessapproval.approverロールを使用します。",
+    "business_tip": "【正解: チーム用Googleグループを作成し、roles/accessapproval.approver を付与する。】\n👉 ポイント: Access Approval リクエストの承認には roles/accessapproval.approver を使い、複数人の権限管理は個別ユーザーではなく Google グループに付与する。\n💡 判断軸: 複数メンバーの追加・削除の手間削減＝GoogleグループへIAM付与。サポートアクセス承認＝accessapproval.approver。",
+    "id": "P011",
+    "code": "P-011",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 12,
+    "question_id": "012",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM / Cloud Storage",
+    "multi_select": 1,
+    "question": "あなたのチームはGoogle Cloud上でアプリケーションを開発しています。新しいチームメンバーに、特定のCloud Storageバケット内のオブジェクトを一覧表示し、必要に応じて読み取る権限を付与する必要があります。\n最小権限の原則に従う場合、どのIAMロールを付与すべきでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Storage Object Viewer"
+      },
+      {
+        "label": "B",
+        "text": "Viewer"
+      },
+      {
+        "label": "C",
+        "text": "Storage Object Creator"
+      },
+      {
+        "label": "D",
+        "text": "Storage Object Admin"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nroles/storage.objectViewer は、Cloud Storageオブジェクトを読み取るための権限を提供し、バケット内のオブジェクト一覧表示にも使用できます。\n\n【選択肢の解説】\n・A（正解）: Storage Object Viewer（roles/storage.objectViewer）は、オブジェクトの一覧表示と読み取りに必要な最小限の権限を提供します。\n・B: Viewerはプロジェクト全体に広い権限を与えるため過剰です。\n・C: Storage Object Creatorは作成権限であり、読み取り要件を満たしません。\n・D: Storage Object AdminはCloud Storageオブジェクトの更新・削除まで含むため過剰な権限となります。",
+    "business_tip": "【正解: Storage Object Viewer】\n👉 ポイント: 特定のバケット内のオブジェクトを一覧表示・読み取りするだけなら、roles/storage.objectViewer で十分です。プロジェクト全体の Viewer や更新・削除できる Admin は権限が広すぎます。\n💡 判断軸: 「GCSの読み取り・一覧のみ＋最小権限」→ Storage Object Viewer。Creatorは書き込み用。",
+    "id": "P012",
+    "code": "P-012",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 13,
+    "question_id": "013",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "App Engine トラフィック分割",
+    "multi_select": 1,
+    "question": "App Engine Standard環境でWebアプリケーションを運用しています。新しいテストバージョンを、本番トラフィックの約1%に限定して公開したいと考えています。\n既存バージョンを大部分のユーザーに残したまま、運用負荷を増やさずにトラフィックを分割するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "別のApp Engineアプリケーションを作成し、ロードバランサで1%を転送する。"
+      },
+      {
+        "label": "B",
+        "text": "同じサービスに新バージョンをデプロイし、gcloud app services set-traffic --splits で99:1に分割する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud app services set-traffic の --weight オプションで99:1に分割する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud app services set-traffic --migrate を使用して新バージョンへ段階移行する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\n--splits は、App Engineサービス内の各バージョンに対するトラフィック比率を指定するためのオプションです。\nたとえば、gcloud app services set-traffic my-service --splits=v1=99,v2=1 のように設定できます。\nなお、--migrate は旧バージョンから新バージョンへ段階的に移行するための機能であり、固定した1%/99%の分割を設定する今回の要件とは異なります。\n\n【選択肢の解説】\n・A: 別のApp Engineアプリケーションを作成するのは不必要に複雑です。ロードバランサを使う必要はないので、過剰なリソースや管理負荷を増やすことになります。\n・B（正解）: 同一サービス内に新バージョンをデプロイし、gcloud app services set-traffic --splits で99:1のトラフィック分割を行います。\n・C: --weight オプションは存在しません。正しいオプションは --splits です。\n・D: --migrate オプションは、トラフィックを新バージョンに徐々に移行するためのものです。例えば、gcloud app services set-traffic default --migrate を使うと、新バージョンに全トラフィックを徐々に移行します。",
+    "business_tip": "【正解: 同じサービスに新バージョンをデプロイし、gcloud app services set-traffic --splits で99:1に分割する。】\n👉 ポイント: App Engineでカナリアテストなど任意の固定比率でトラフィック分割を行うには `gcloud app services set-traffic --splits=v1=0.99,v2=0.01`（または比率指定）を使う。\n💡 判断軸: 固定比率のトラフィック分割＝`--splits`。全トラフィックの段階的切り替え＝`--migrate`。`--weight` というフラグは存在しない。",
+    "id": "P013",
+    "code": "P-013",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 14,
+    "question_id": "014",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Compute Engine / 移行",
+    "multi_select": 1,
+    "question": "あなたはWindowsベースのレガシーアプリケーションをGoogleクラウドに移行します。以下のサービスの中から、Googleが推奨するベストプラクティスに基づき、移行先として推奨されるものを選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Run"
+      },
+      {
+        "label": "B",
+        "text": "App Engine"
+      },
+      {
+        "label": "C",
+        "text": "Compute Engine"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Run Functions"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nCompute Engineは、Windows、特定のOS・カーネル・ライセンス・ネットワーク要件など、他のマネージドサービスでは対応しにくいレガシーワークロードの移行先として適しています。\n\n【選択肢の解説】\n・A: Cloud Runの使用は、HTTP/s と WebSocket をサポートする、任意のプログラミング言語で作成したコンテナ化されたアプリケーションをデプロイする場合に推奨されます。\n・B: App Engineの使用は、ウェブベースのアプリケーション（HTTP/s）をコンテナ管理なしでサーバーレスプラットフォームにデプロイしてホスティングする場合に推奨されます。\n・C（正解）: WindowsベースのレガシーアプリケーションはOSや環境要件が特殊なことが多く、仮想マシン上でそのまま稼働できるCompute Engineが適しています。\n・D: Cloud Run functions（旧 Cloud Functions）は、Pub/SubやCloud Storageからのイベント・トリガーに応答して実行される単一の機能（関数）としてコードを構成する場合に推奨されます。",
+    "business_tip": "【正解: Compute Engine】\n👉 ポイント: Windowsアプリや特定OS・ライセンスに依存するレガシーシステムは、コンテナ化やサーバーレスではなく仮想マシン（Compute Engine）へそのまま移行するのが定石です。\n💡 判断軸: 「Windowsベース・レガシーアプリ移行」→ IaaSの Compute Engine。",
+    "id": "P014",
+    "code": "P-014",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 15,
+    "question_id": "015",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage メタデータ",
+    "multi_select": 1,
+    "question": "あなたのチームはCloud StorageでWebサイトをホストしています。Webサイトでバケット内にあるPDFファイルへのリンクを表示していますが、リンクをクリックするとブラウザが常にローカルマシンにファイルを保存するように要求します。PDFファイルをブラウザウィンドウに表示する為には、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "WebサイトでCloud CDNを有効化し、キャッシュモードをUSE_ORIGIN_HEADERSに設定する。"
+      },
+      {
+        "label": "B",
+        "text": "WebサイトでCloud CDNを有効化し、キャッシュモードをFORCE_CACHE_ALLに設定する。"
+      },
+      {
+        "label": "C",
+        "text": "PDFファイルのContent-Typeメタデータをapplication/pdfに設定する。"
+      },
+      {
+        "label": "D",
+        "text": "PDFファイルのContent-Typeメタデータをimage/pdfに設定する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\n正しいContent-Typeメタデータを設定することにより、ブラウザがクラウドストレージオブジェクトを適切にレンダリングできるようになります。本問では PDFオブジェクトをレンダリングするため、正しいContent-Typeであるapplication/pdfを設定します。\n\n【選択肢の解説】\n・A: PDFファイルのブラウザレンダリングのためにCDNは必要ありません。\n・B: PDFファイルのブラウザレンダリングのためにCDNは必要ありません。\n・C（正解）: 正しいContent-Typeメタデータ（application/pdf）を設定することで、ブラウザウィンドウ内にPDFを表示できます。\n・D: image/pdfはContent-Typeメタデータの有効な値として設定出来ません。",
+    "business_tip": "【正解: PDFファイルのContent-Typeメタデータをapplication/pdfに設定する。】\n👉 ポイント: Cloud Storage上のファイルをダウンロードではなくブラウザ上で表示（レンダリング）させるには、オブジェクトの Content-Type メタデータを正しく設定します。\n💡 判断軸: PDFの正しいMIMEタイプは application/pdf（image/pdfは誤り）。表示制御はCDNではなくオブジェクトメタデータで行います。",
+    "id": "P015",
+    "code": "P-015",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 16,
+    "question_id": "016",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Infrastructure Manager (Terraform)",
+    "multi_select": 1,
+    "question": "あなたのチームは現在、Infrastructure Managerでインフラストラクチャを管理しています。Terraform構成を編集した後、既存のInfrastructure Manager デプロイメントに変更を適用する必要があります。以下のうち、どのコマンドを実行すれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud infra-manager deployments lock my-deployment"
+      },
+      {
+        "label": "B",
+        "text": "gcloud infra-manager deployments apply my-deployment --local-source=."
+      },
+      {
+        "label": "C",
+        "text": "gcloud infra-manager deployments update --config new-config.yaml"
+      },
+      {
+        "label": "D",
+        "text": "terraform deployments update"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nInfrastructure Manager では、既存のデプロイメントに対して Terraform構成の変更を反映する場合は、deployments apply コマンドを使用します。\n\n【選択肢の解説】\n・A: lock はデプロイメントをロックし、他のユーザーやプロセスによる変更を防ぐためのコマンドです。Terraform の変更を適用する機能はありません。\n・B（正解）: gcloud infra-manager deployments apply を実行することで、既存のデプロイメントに対して編集した Terraform 構成の変更を適用できます。\n・C: gcloud infra-manager deployments update --config new-config.yamlコマンドは、無効なコマンドです。\n・D: terraform deployments updateコマンドは、無効なterraformコマンドです。",
+    "business_tip": "【正解: gcloud infra-manager deployments apply my-deployment --local-source=.】\n👉 ポイント: Google Cloud の Infrastructure Manager で Terraform 構成を新規作成または更新反映するときは、deployments apply コマンドを使う。\n💡 判断軸: 変更の適用＝apply、変更防止＝lock。update サブコマンドは存在しない。",
+    "id": "P016",
+    "code": "P-016",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 17,
+    "question_id": "017",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "OS Login (IAM SSH管理)",
+    "multi_select": 1,
+    "question": "あなたは複数のCompute Engine Linux VMを管理しています。チームメンバーには、Googleアカウントを使ってVMへ管理者権限でSSH接続できるようにする必要があります。\n\nさらに、誰がVMへアクセスしたかを監査でき、メンバーの追加・削除時の運用負荷を抑えたいと考えています。\n\nどの方法が最も適切でしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "共有SSH鍵を作成し、すべてのVMのメタデータへ登録する。"
+      },
+      {
+        "label": "B",
+        "text": "OS Loginを有効化し、チームのGoogleグループに roles/compute.osAdminLogin を付与する。"
+      },
+      {
+        "label": "C",
+        "text": "各VMに個別ユーザーを作成し、それぞれへSSH公開鍵を登録する。"
+      },
+      {
+        "label": "D",
+        "text": "各ユーザーのSSH公開鍵を各VMのインスタンスメタデータへ登録する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nOS LoginではIAMロールによってSSHログイン権限を管理できます。\n・roles/compute.osLogin : 通常ユーザーとしてログイン\n・roles/compute.osAdminLogin : 管理者としてログイン（sudo権限を含む）\nまた、OS Loginは監査ログと統合されており、OS Login APIの利用状況を監視できます。\n\n【選択肢の解説】\n・A: 共有SSH鍵を使う場合、鍵が漏洩すると全員のセキュリティが脅かされるリスクがあり、個人ごとのアクセスログが取れないため、監査が困難です。また、メンバーの追加・削除時には、鍵の更新が必要で、運用負荷が高まります。\n・B（正解）: OS Loginを有効化し、Googleグループに roles/compute.osAdminLogin を付与することで、Googleアカウント単位での監査ログ記録、管理者権限（sudo）でのSSH接続、グループ変更のみの低負荷運用を同時に満たせます。\n・C: 各VMに個別ユーザーを作成するのは手動で管理する必要があり、運用負荷が非常に高いです。また、メンバーの追加・削除時には、全VMに対してユーザーの登録・削除が必要になります。\n・D: 各ユーザーのSSH鍵を各VMのメタデータに登録するのも手動で管理する必要があり、運用負荷が高いです。メンバーの追加・削除時には、全VMのメタデータを更新しなければなりません。監査ログは取れますが、運用負荷が高いため、問題の要件を満たしません。",
+    "business_tip": "【正解: OS Loginを有効化し、チームのGoogleグループに roles/compute.osAdminLogin を付与する。】\n👉 ポイント: 複数VMへのSSHアクセスをGoogleアカウント単位で監査しつつ運用負荷を下げるには、OS Login＋Googleグループ＋IAMロールを使う。\n💡 判断軸: 管理者（sudo）でSSH＝roles/compute.osAdminLogin（通常は osLogin）。SSH鍵の手動配布や共有鍵は運用・監査両面でNG。",
+    "id": "P017",
+    "code": "P-017",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 18,
+    "question_id": "018",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "BigQuery IAM / Googleグループ",
+    "multi_select": 1,
+    "question": "あなたの企業では、BigQueryの監査ログをCloud Loggingから専用のBigQueryデータセットへエクスポートして保存しています。\n複数の第三者監査人に、このデータセット内の監査ログを読み取り専用で参照できるようにする必要があります。監査人は全員Googleアカウントを持っています。\nGoogleが推奨するIAMの運用方法に従ってアクセスを付与するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "各監査人に個別にカスタムロールを付与する。"
+      },
+      {
+        "label": "B",
+        "text": "監査人ごとに roles/bigquery.dataViewer を個別に付与する。"
+      },
+      {
+        "label": "C",
+        "text": "監査人用Googleグループに roles/logging.viewer と roles/bigquery.dataViewer を付与する。"
+      },
+      {
+        "label": "D",
+        "text": "監査人用Googleグループを作成し、そのグループに roles/bigquery.dataViewer を付与する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\n今回アクセスするのは、すでにBigQueryへエクスポートされた監査ログです。\nそのため、必要なのは対象BigQueryデータセットに対する roles/bigquery.dataViewer です。Google Cloudの監査ログをBigQueryへエクスポートした場合、エクスポート先へのアクセスは、その宛先のIAMによって制御されます。\nまた、複数の監査人には個別に権限を付けるのではなく、Googleグループへロールを付与する方が管理しやすい構成です。\n\n【選択肢の解説】\n・A: カスタムロールを作成するのは管理が複雑になります。また、個別付与は、メンバーの追加・削除時の運用負荷が高くなります。\n・B: roles/bigquery.dataViewer は、BigQueryデータセット内のテーブルを読み取る権限を付与する事前定義ロールです。しかし、個別付与は、メンバーの追加・削除時の運用負荷が高くなるため、Googleの推奨する運用方法では、グループを使って一括管理することが推奨されています。\n・C: roles/logging.viewer は、Cloud Loggingのログを読み取る権限を付与するロールです。ただし、本問題では監査ログはすでにBigQueryデータセットにエクスポートされているため、roles/logging.viewer は不要です。\n・D（正解）: 監査人用Googleグループを作成し、そのグループに最小権限かつ事前定義ロールである roles/bigquery.dataViewer を付与します。",
+    "business_tip": "【正解: 監査人用Googleグループを作成し、そのグループに roles/bigquery.dataViewer を付与する。】\n👉 ポイント: 複数ユーザーへの権限付与は個人単位ではなくGoogleグループ単位で行い、事前定義ロールから最小権限（エクスポート済みBigQueryデータセット閲覧なら `roles/bigquery.dataViewer` のみ）を選択する。\n💡 判断軸: 複数人へのIAM付与＝Googleグループ。エクスポート先の参照＝エクスポート先サービスの閲覧ロールのみ（Logging側のロールは不要）。",
+    "id": "P018",
+    "code": "P-018",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 19,
+    "question_id": "019",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "MIG / ローリングアップデート",
+    "multi_select": 1,
+    "question": "あなたの企業では、ゾーンマネージドインスタンスグループ（MIG）を使用してWebアプリケーションを実行しています。\n新しいインスタンステンプレートを段階的にロールアウトしたいと考えています。更新中も、サービスで利用可能なインスタンス数を減らしてはいけません。\n自動ローリングアップデートを使用する場合、どの設定が適切でしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "maxSurge=0、maxUnavailable=0"
+      },
+      {
+        "label": "B",
+        "text": "maxSurge=1、maxUnavailable=1"
+      },
+      {
+        "label": "C",
+        "text": "maxSurge=0、maxUnavailable=1"
+      },
+      {
+        "label": "D",
+        "text": "maxSurge=1、maxUnavailable=0"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nmaxUnavailable は、更新中に利用できなくなるインスタンス数の上限です。サービスの利用可能なインスタンス数を減らしたくないため、maxUnavailable = 0 とします。一方、古いインスタンスを削除する前に新しいインスタンスを作成する必要があるため、maxSurge = 1 とします。これにより、まず新しいVMを作成してから旧VMを置き換えるため、更新中の利用可能インスタンス数を維持できます。Google Cloudのローリングアップデートでも、maxSurge は追加作成するインスタンス数、maxUnavailable は利用不能にできるインスタンス数として定義されています。\n\n【選択肢の解説】\n・A: maxSurge=0（新しいインスタンスを追加しない）かつ maxUnavailable=0（古いインスタンスを削除しない）のため、新しいインスタンスを追加も削除もできず、更新が全く進みません。\n・B: maxSurge=1（新しいインスタンスを1台追加できる）、maxUnavailable=1（古いインスタンスを1台削除できる）のため、古いインスタンスを削除して新しいインスタンスを追加するまでの間などに利用可能なインスタンス数が1台減る可能性があります。\n・C: maxSurge=0（新しいインスタンスを追加しない）、maxUnavailable=1（古いインスタンスを1台削除できる）のため、新しいインスタンスを追加せずに古いインスタンスを削除し、更新中に利用可能なインスタンス数が1台減る可能性があります。\n・D（正解）: maxUnavailable=0 で利用可能インスタンス数を減らさずに維持しつつ、maxSurge=1 で先に新しいインスタンスを追加してから古いインスタンスを置き換えます。",
+    "business_tip": "【正解: maxSurge=1、maxUnavailable=0】\n👉 ポイント: 更新中に稼働台数を1台も減らしたくないなら maxUnavailable=0 にします。そのうえでロールアウトを進めるため、先に新VMを1台追加する maxSurge=1 を組み合わせます。\n💡 判断軸: 「無停止・台数維持でローリング更新」→ maxUnavailable=0（減少禁止）＋ maxSurge=1（先行追加）。",
+    "id": "P019",
+    "code": "P-019",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 20,
+    "question_id": "020",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Compute Engine / カスタムマシンタイプ",
+    "multi_select": 1,
+    "question": "あなたは2つのvCPUと4GBのメモリで構成されたVMインスタンスでアプリケーションを実行しています。直近のログファイルを確認すると、Out Of Memoryエラーが頻繁に記録されていました。あなたは問題を解決するため、インスタンスのメモリを8GBに増やしたいと考えています。どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "VMインスタンスを停止する。マシンタイプをカスタムに設定し、メモリを8GBまで増やす。インスタンスを再起動する。"
+      },
+      {
+        "label": "B",
+        "text": "VMインスタンスを停止する。マシンタイプをn1-standard-8に設定する。インスタンスを再起動する。"
+      },
+      {
+        "label": "C",
+        "text": "Googleが実行するライブマイグレーションを利用し、8GBのメモリを備えたインスタンスにアプリケーションを移動する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloudを使用してインスタンスにメタデータを追加する。キーをupgrade-memory、値を8GBに設定する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\n起動中のCompute Engineインスタンスを停止し、マシンタイプにカスタム（Custom machine type）を選ぶことで、vCPUコア数とメモリ容量を用途に合わせて個別に調整できます。\n\n【選択肢の解説】\n・A（正解）: VMを停止してからカスタムマシンタイプに変更し、メモリを8GBへ増やして再起動する手順が正しいです。\n・B: n1-standard-8は8 vCPU・30GBメモリを備えており、必要な8GBに対して過剰スペックになります。\n・C: ライブマイグレーションはホストメンテナンス時に稼働中VMを別ホストへ移す仕組みであり、メモリ増設には使えません。\n・D: インスタンスメタデータでマシンタイプやメモリ容量を変更するオプションはありません。",
+    "business_tip": "【正解: VMインスタンスを停止する。マシンタイプをカスタムに設定し、メモリを8GBまで増やす。インスタンスを再起動する。】\n👉 ポイント: 事前定義マシンタイプ（standard系）ではメモリだけ丁度よい容量に増やせない場合、VMを停止してカスタムマシンタイプを指定します。\n💡 判断軸: 「vCPUは据え置きでメモリだけ増やす」「過剰スペックを避ける」ならVM停止＋カスタムマシンタイプ。",
+    "id": "P020",
+    "code": "P-020",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 21,
+    "question_id": "021",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "VPC / サブネットIP範囲拡張",
+    "multi_select": 1,
+    "question": "既存のVPCサブネットは、プライマリIPv4範囲が 10.0.0.0/28 です。このサブネットには現在VMが配置されており、利用可能なIPアドレスがありません。\n新たに20台のVMを追加する必要があります。既存のVMと新しいVMは、追加のルートを設定せずに同じVPC内で相互通信できる必要があります。\nどのように対応すればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "サブネットを削除し、/27 の新しいサブネットとして再作成する。"
+      },
+      {
+        "label": "B",
+        "text": "サブネットを削除し、/29 の新しいサブネットとして再作成する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud compute networks subnets expand-ip-range を使用して、サブネットのプレフィックス長を小さくする。"
+      },
+      {
+        "label": "D",
+        "text": "新しいVPCを作成し、既存VPCとVPC Network Peeringを構成する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\n`expand-ip-range` コマンドを使うと、稼働中のリソースを止めずに既存サブネットのプライマリIP範囲を拡張できます（例: `/28`（16アドレス）を `/27`（32アドレス）へ拡張）。同じVPC・同じサブネット内に20台のVMを追加できるため、追加のルート設定なしで既存VMと相互通信できます。\n\n【選択肢の解説】\n・A: `/27` は32アドレス（うち30が使用可能）ですが、既存VMが配置されているサブネットは削除できません。\n・B: 既存VMがあるためサブネット削除ができないうえ、`/29` は8アドレス（うち6が使用可能）しかなく20台に足りません。\n・C（正解）: サブネットを削除せずにプレフィックス長を小さく（IP範囲を拡大）できます。\n・D: 別VPC＋Peeringでは「追加ルートなし・同一VPC内通信」の条件から外れ、運用も複雑になります。",
+    "business_tip": "【正解: gcloud compute networks subnets expand-ip-range を使用して、サブネットのプレフィックス長を小さくする。】\n👉 ポイント: VPCサブネットのIP枯渇時は、VMを消して作り直すのではなく `expand-ip-range` でインプレースにプレフィックス長を小さくしてIP範囲を広げます（縮小は不可）。\n💡 判断軸: 「サブネットのIP不足＋既存VM稼働中」を見たら `expand-ip-range`（プレフィックス長を小さくする）一択。",
+    "id": "P021",
+    "code": "P-021",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 22,
+    "question_id": "022",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage 署名付きURL",
+    "multi_select": 1,
+    "question": "あなたの企業は機密データを含むファイルをCloud Storageに保管しています。このファイルを外部のパートナー組織と共有する必要があります。\nパートナーにはGoogleアカウントがなく、ファイルには2時間だけアクセスできるようにしたいとします。\n最小限の手順で安全にファイルを共有するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Storageを静的Webサイトとして構成し、そのURLを共有する。"
+      },
+      {
+        "label": "B",
+        "text": "署名付きURLを生成し、有効期限を2時間に設定して共有する。"
+      },
+      {
+        "label": "C",
+        "text": "ファイルを公開し、ライフサイクルルールで2時間後に削除する。"
+      },
+      {
+        "label": "D",
+        "text": "ファイルを公開し、Cache-Control: max-age=7200 を設定する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\n署名付きURLを使用すると、特定のCloud Storageリソースに対して期限付きのアクセス権を付与できます。Googleアカウントを持たない相手にも利用させることができ、オブジェクト自体を公開する必要もありません。\n\n【選択肢の解説】\n・A: 静的Webサイトとして構成すると、ファイルは公開状態になります。機密データを公開するのはセキュリティリスクが高く、不適切です。また、アクセス期間を2時間に制限する手段がありません。\n・B（正解）: 署名付きURLを生成し、有効期限を2時間に設定して共有することで、Googleアカウントのない外部パートナーへ安全に時限アクセスを提供できます。\n・C: ファイルを公開すると、誰でもアクセスできる状態になります。機密データを公開するのはセキュリティリスクが高く、不適切です。\n・D: ファイルを公開すると、誰でもアクセスできる状態になります。Cache-Control: max-age=7200 は、ブラウザやCDNにファイルをキャッシュする期間を指示しますが、アクセス権を制限するものではありません。また、機密データを公開するのはセキュリティリスクが高く、不適切です。",
+    "business_tip": "【正解: 署名付きURLを生成し、有効期限を2時間に設定して共有する。】\n👉 ポイント: Googleアカウントを持たない外部ユーザーにCloud Storageの非公開オブジェクトを期間限定で共有するには、署名付きURL（Signed URL）を発行する。\n💡 判断軸: Googleアカウントなし＋機密データ＋期限付きアクセス＝署名付きURL。公開バケット化やCache-Controlではアクセス制御にならない。",
+    "id": "P022",
+    "code": "P-022",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 23,
+    "question_id": "023",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Spanner オートスケーリング",
+    "multi_select": 1,
+    "question": "あなたはCloud Spannerをデータベースとして使用するアプリケーションを管理しています。\nアプリケーションのトラフィックは時間帯によって変動します。ピーク時にはSpannerのコンピュート容量を増やし、負荷が低い時間帯には容量を減らしたいと考えています。\n運用上の負荷を最小限に抑えながら、ワークロードに応じてSpannerのコンピュート容量を自動的に調整するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Monitoringのアラートから管理者へ通知し、容量を手動で変更する。"
+      },
+      {
+        "label": "B",
+        "text": "SpannerのManaged autoscalingを有効にし、CPU使用率などのターゲットと最小・最大容量を設定する。"
+      },
+      {
+        "label": "C",
+        "text": "Compute EngineのManaged Instance GroupでSpannerのスケール処理を実行する。"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Monitoring、Pub/Sub、Cloud Run functionsを組み合わせて独自のオートスケーラーを構築する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nSpannerにはManaged autoscalingがあり、ワークロードに応じてコンピュート容量を自動的に増減できます。これにより、オーバープロビジョニングを避けながら、手動による容量変更の運用負荷を減らせます。Managed autoscalingでは、最小・最大のコンピュート容量やCPU使用率のターゲットなどを設定できます。従って、自作の監視・通知・スケーリング処理を実装するより、Spanner自身が提供するManaged autoscalingを利用するのが推奨アプローチです。\n\n【選択肢の解説】\n・A: 手動で容量を変更するのは運用負荷が高いです。自動化が求められているため、不適切です。\n・B（正解）: Spanner標準のManaged autoscalingを有効化し、ターゲット値と最小・最大容量を設定することで自動調整できます。\n・C: Compute EngineのManaged Instance Groupは、Compute Engine VMの自動スケーリング機能です。Spannerのコンピュート容量をスケーリングするための機能ではありません。\n・D: 独自のオートスケーラーを構築するのは複雑で、運用負荷が高いです。Spannerには、すでにManaged autoscaling機能が用意されているため、独自に構築する必要はありません。",
+    "business_tip": "【正解: SpannerのManaged autoscalingを有効にし、CPU使用率などのターゲットと最小・最大容量を設定する。】\n👉 ポイント: Cloud Spannerのコンピュート容量を自動調整するには、自作のPub/Sub＋Functions等ではなく、標準機能の Managed autoscaling を使います。\n💡 判断軸: まず標準のマネージド機能（Managed autoscaling）を選ぶのが原則。Monitoring＋Functionsでの自作は運用負荷が高く不正解です。",
+    "id": "P023",
+    "code": "P-023",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 24,
+    "question_id": "024",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "Pricing Calculator",
+    "multi_select": 1,
+    "question": "あなたはGoogleクラウド上で複数のプロダクトを使用しWebサービスを実行する計画を立てています。サービス実行にかかる月当たりの総費用の見積もりが必要です。最小限の手順で迅速に見積もりを取得するには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "各プロダクトの料金ページで費用を確認する。表計算ツールで各プロダクトの見積もり月額コストをまとめる。"
+      },
+      {
+        "label": "B",
+        "text": "使用する予定の各プロダクトの詳細をCloudカスタマーケアに送信し、月額コストの見積もりを依頼する。"
+      },
+      {
+        "label": "C",
+        "text": "ソリューションをGoogle Cloudにプロビジョンし、1週間稼働させる。Cloud Monitoringを使用し、得られた1週間分のリソース使用量から月額のコストを計算する。"
+      },
+      {
+        "label": "D",
+        "text": "ソリューションに使用する各プロダクトの詳細をまとめる。これらの詳細をGoogle Cloud Pricing Calculatorに入力し、見積もり月額費用を自動的に計算する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\n使用するGoogle Cloudプロダクトとその仕様をGoogle Cloud Pricing Calculator上で定義する事により、Googleクラウドソリューションの見積もりコストを取得できます。見積もりを保存して共有することもできます。\n\n【選択肢の解説】\n・A: Pricing Calculatorを使用する場合と比較して多くの手動プロセスを必要とします。計算ミスなどの人的エラーによるリスクを軽減する為にも、Pricing Calculatorの使用が推奨されます。\n・B: Cloud Billingに関する問題が発生した場合はCloudカスタマーケアのサポートが利用できますが、コスト見積もりに関してはPricing Calculatorが利用可能です。\n・C: Cloud Monitoringは月額コストの見積もりには使用されません。\n・D（正解）: Google Cloud Pricing Calculatorに各プロダクトの構成を入力することで、月額費用の見積もりを迅速かつ自動計算できます。",
+    "business_tip": "【正解: ソリューションに使用する各プロダクトの詳細をまとめる。これらの詳細をGoogle Cloud Pricing Calculatorに入力し、見積もり月額費用を自動的に計算する。】\n👉 ポイント: 導入前の構成・月額コスト試算には Google Cloud Pricing Calculator を使う。見積もりの保存やチーム共有も可能。\n💡 判断軸: 事前コスト見積もり＝Pricing Calculator。実利用後の監視＝Cloud Monitoring、請求トラブル＝Cloud Billingサポート。",
+    "id": "P024",
+    "code": "P-024",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 25,
+    "question_id": "025",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM ロール複製",
+    "multi_select": 1,
+    "question": "あなたのチームはGoogleクラウド上で開発用プロジェクトを管理しています。あなたは本番用プロジェクトを作成し、適切なIAMロールを設定しています。開発用プロジェクトで定義されているIAMロールを本番用プロジェクトに複製する必要があります。\n最小限の労力で実現するには、以下のどの手順を実行すべきでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud iam roles copyコマンドを使用する。--source-projectフラグに開発用プロジェクトのID、--dest-projectフラグに本番用プロジェクトのIDを指定する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud iam roles copyコマンドを使用する。--sourceフラグに開発用プロジェクトのID、--destinationフラグに本番用プロジェクトのIDを指定する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud projects roles copyコマンドを使用する。--source-projectフラグに開発用プロジェクトのID、--dest-projectフラグに本番用プロジェクトのIDを指定する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud projects roles copyコマンドを使用する。--sourceフラグに開発用プロジェクトのID、--destinationフラグに本番用プロジェクトのIDを指定する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\ngcloud iam roles copyコマンドを使用して、既存のロールを別のプロジェクトに複製することができます。たとえば、spanner.DBAdminという既存のロールをmy-project-1からmy-project-2のCustomSpannerDbAdminというロールに複製するには、次のコマンドを実行します。\ngcloud iam roles copy --source=roles/spanner.databaseAdmin --destination=CustomSpannerDbAdmin --source-project=my-project-1 --dest-project=my-project-2\n\n【選択肢の解説】\n・A（正解）: gcloud iam roles copyコマンドで --source-project と --dest-project にそれぞれ複製元・複製先のプロジェクトIDを指定します。\n・B: --sourceフラグおよび--destinationフラグには、それぞれ複製元と複製先のロールIDを指定します。\n・C: gcloud projects roles copyは無効なコマンドです。\n・D: gcloud projects roles copyは無効なコマンドです。",
+    "business_tip": "【正解: gcloud iam roles copyコマンドを使用する。--source-projectフラグに開発用プロジェクトのID、--dest-projectフラグに本番用プロジェクトのIDを指定する。】\n👉 ポイント: カスタムIAMロールのプロジェクト間複製は gcloud iam roles copy コマンドを使い、プロジェクト指定には --source-project と --dest-project を指定します。\n💡 判断軸: ロール操作コマンド＝gcloud iam roles。プロジェクトID＝--source-project / --dest-project、ロールID＝--source / --destination。",
+    "id": "P025",
+    "code": "P-025",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 26,
+    "question_id": "026",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM / Cloud Spanner",
+    "multi_select": 1,
+    "question": "あなたの管理するチームに新しく数人のクラウドエンジニアが加入します。新しいチームメンバーにCloud Spannerインスタンスのテーブル情報を表示および編集できるアクセスを提供する必要があります。運用上の効率を優先しつつ必要なアクセス権限を付与する方法を、以下から選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "チームメンバーの各ユーザーに roles/spanner.viewer ロールを付与する。"
+      },
+      {
+        "label": "B",
+        "text": "新しくGoogleグループを作成する。チームメンバーの各ユーザーをグループに関連付け、グループに roles/spanner.viewer ロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "チームメンバーの各ユーザーに roles/spanner.databaseUser ロールを付与する。"
+      },
+      {
+        "label": "D",
+        "text": "新しくGoogleグループを作成する。チームメンバーの各ユーザーをグループに関連付け、グループに roles/spanner.databaseUser ロールを付与する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\n事前定義されたロール roles/spanner.databaseUser には、Spannerデータベースへの読み取り・書き込みに必要な権限が含まれます。Googleグループを使用すると、個々のユーザーやサービスアカウントに1つずつアクセス制御を設定・変更する代わりに、グループ全体のアクセス制御を一度に管理できます。\n\n【選択肢の解説】\n・A: roles/spanner.viewer ロールを付与すると、Cloud Spannerでデータを表示する権限は与えられますが、テーブルを編集する権限がありません。\n・B: roles/spanner.viewer ロールでは、Cloud Spannerでテーブルを編集する権限がありません。\n・C: 個々のユーザーまたはサービスアカウントに対して1つずつアクセス制御を実行するより、グループに対してアクセス制御を実行する方が効率的かつ安全に管理できます。\n・D（正解）: Googleグループにまとめてロールを付与し、読み取り・書き込み権限を持つ roles/spanner.databaseUser を割り当てることで、必要な権限と運用効率の両方を満たせます。",
+    "business_tip": "【正解: 新しくGoogleグループを作成する。チームメンバーの各ユーザーをグループに関連付け、グループに roles/spanner.databaseUser ロールを付与する。】\n👉 ポイント: 複数人に同じ権限を配るなら、個人ごとではなくGoogleグループにロールを付けます。Spannerのテーブル編集も必要なので viewer ではなく databaseUser を選びます。\n💡 判断軸: 「運用効率＋複数人」→ Googleグループ単位でIAM付与。「表示＋編集」→ databaseUser。",
+    "id": "P026",
+    "code": "P-026",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 27,
+    "question_id": "027",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Compute Engine 削除保護",
+    "multi_select": 1,
+    "question": "あなたは一台のCompute Engineインスタンスを使用して、Webアプリケーションを実行しています。アプリケーションの開発は複数のチームで分担されており、インスタンスはチーム間で共有されます。インスタンスが誤って削除されるのを防ぐためには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Confidential VMsサービスを有効にする。"
+      },
+      {
+        "label": "B",
+        "text": "マネージドインスタンスグループを作成し、削除保護を適用する。"
+      },
+      {
+        "label": "C",
+        "text": "Shielded VMインスタンスを使用する。"
+      },
+      {
+        "label": "D",
+        "text": "GCPコンソールでインスタンスを編集し、「削除からの保護の有効化」をオンにする。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\ndeletionProtectionフラグを設定することで、VM インスタンスが誤って削除される事態を防ぐことができます。Google Cloudコンソール上でdeletionProtectionフラグを設定するには、インスタンスの作成時、もしくは編集時に「削除からの保護の有効化」チェックボックスをオンにします。\n\n【選択肢の解説】\n・A: Confidential VMsサービスを有効にすると、使用中のデータとアプリケーションが非公開の状態で暗号化されますが、インスタンスを削除から保護する機能ではありません。\n・B: deletionProtectionフラグを使用した削除保護は、マネージド インスタンス グループに属する VM には適用できません。\n・C: Shielded VM は、ルートキットやブートキットによる攻撃を防御する一連のセキュリティ制御により強化された仮想マシンであり、偶発的なVMの削除を防ぐものではありません。\n・D（正解）: インスタンスの編集画面から「削除からの保護の有効化」（deletionProtection）をオンにすることで、誤削除を防止できます。",
+    "business_tip": "【正解: GCPコンソールでインスタンスを編集し、「削除からの保護の有効化」をオンにする。】\n👉 ポイント: Compute Engine VMの誤削除防止には deletionProtection（「削除からの保護の有効化」）フラグを有効にします。MIG配下のVMには適用できません。\n💡 判断軸: 誤削除防止＝deletionProtection。Confidential VMは使用中データの暗号化、Shielded VMはブート時の改ざん防止と目的が異なります。",
+    "id": "P027",
+    "code": "P-027",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 28,
+    "question_id": "028",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Cloud Run functions / Eventarc",
+    "multi_select": 1,
+    "question": "運用中のアプリケーションが使用するCloud Storageバケットでは、オブジェクトが頻繁に削除されます。\n新しいPythonコードを作成しました。このコードをオブジェクトが削除されたときに自動実行したいと考えています。\n追加のインフラ管理を最小限にするには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "App Engineでコードを実行し、Cloud Schedulerから定期的に処理する。"
+      },
+      {
+        "label": "B",
+        "text": "Dataflowジョブを作成し、バケットを定期的にスキャンする。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Run functionをデプロイし、Cloud StorageのObject Deleteイベントをトリガーにする。"
+      },
+      {
+        "label": "D",
+        "text": "GKEにコードをデプロイし、CronJobでバケットを定期的に確認する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nCloud Run functionsはイベント駆動で実行でき、Cloud StorageのObject Deleteイベントをトリガーとして指定できます（第2世代のイベント駆動型関数ではEventarcがトリガー処理を担います）。バケットを定期的にポーリングするより遅延がなく、サーバーレスでインフラ管理も最小限で済みます。\n\n【選択肢の解説】\n・A: Cloud Schedulerによる定期実行はポーリング方式のため、削除発生時にリアルタイムで実行できません。\n・B: バケットの定期スキャンにDataflowを使うのは過剰な構成であり、リアルタイム性もありません。\n・C（正解）: サーバーレスのイベント駆動実行で、インフラ管理を最小限に抑えつつ即座に処理できます。\n・D: GKEクラスタはインフラ管理の負荷が高く、CronJobによる定期確認ではリアルタイム性もありません。",
+    "business_tip": "【正解: Cloud Run functionをデプロイし、Cloud StorageのObject Deleteイベントをトリガーにする。】\n👉 ポイント: Cloud Storageの作成・削除・更新イベントを契機に小さなPythonコード等を自動実行したい場合、サーバーレスでイベント駆動できるCloud Run functions（第2世代＋Eventarc）が定番です。\n💡 判断軸: 「特定イベント発生時に即実行」「インフラ管理を最小限」＝定期ポーリング（Scheduler/CronJob）ではなくイベント駆動のCloud Run functions。",
+    "id": "P028",
+    "code": "P-028",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 29,
+    "question_id": "029",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "GKE / kubectl scale",
+    "multi_select": 1,
+    "question": "あなたはKubernetesクラスタにデプロイされたWebアプリケーションを管理しています。\nmy-replicaset という名前のReplicaSetのレプリカ数を5に変更する必要があります。\nどうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "kubectl scale --replicas=5 rs/my-replicaset を実行する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud containers rollout 5 my-replicaset を実行する。"
+      },
+      {
+        "label": "C",
+        "text": "gcloud containers scale rs/my-replicaset --count=5 を実行する。"
+      },
+      {
+        "label": "D",
+        "text": "kubectl rollout --replicas=5 rs/my-replicaset を実行する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nReplicaSetのレプリカ数を変更するには、kubectl scale コマンドを使用します。\nkubectl scale --replicas=5 rs/my-replicaset を実行することで、レプリカ数を5に設定できます。\n\n【選択肢の解説】\n・A（正解）: kubectl scale --replicas=5 rs/my-replicaset でReplicaSetのレプリカ数を5に変更できます。\n・B: gcloud containers コマンドは、Google Kubernetes Engine (GKE) クラスタを管理するためのコマンドです。また、rollout コマンドは、Deploymentのロールアウトを管理するためのもので、ReplicaSetのレプリカ数を変更するためのコマンドではありません。\n・C: gcloud containers scale コマンドは、GKEでノードプールのサイズを変更するためのもので、ReplicaSetのレプリカ数を変更するためのコマンドではありません。\n・D: kubectl rollout コマンドは、Deploymentのロールアウトを管理するためのもので、ReplicaSetのレプリカ数を変更するためのコマンドではありません。",
+    "business_tip": "【正解: kubectl scale --replicas=5 rs/my-replicaset を実行する。】\n👉 ポイント: Kubernetes内のPod/ReplicaSet/Deploymentのレプリカ数変更は `kubectl scale --replicas=<数> <リソース>` で行う。クラスタやノードプール操作の `gcloud container` とは役割が異なる。\n💡 判断軸: K8sリソース（Pod/ReplicaSet等）のスケール＝`kubectl scale`。GKEノードプールのサイズ変更＝`gcloud container clusters resize` 等。",
+    "id": "P029",
+    "code": "P-029",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 30,
+    "question_id": "030",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "VPC / 内部IP通信",
+    "multi_select": 1,
+    "question": "あなたの会社はGoogle Cloudとオンプレミスの両方でワークロードを実行しています。VPCはVPNを介して社内ネットワークに接続されています。\n新しいCompute Engine VMを作成します。このVMにはオンプレミスネットワークからアクセスできる必要がありますが、パブリックインターネットからは直接アクセスできないようにする必要があります。\nどうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "IP転送を無効にしてVMを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "外部IPアドレスを割り当てず、内部IPアドレスだけでVMを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "Private Google Accessを有効にする。"
+      },
+      {
+        "label": "D",
+        "text": "Shielded VMとしてVMを作成する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nCompute Engine VMに外部IPアドレスを割り当てなければ、そのVMにはパブリックなIPv4アドレスがありません。VPNなどを使用してオンプレミスネットワークとVPCを接続していれば、内部IPアドレスを使用してプライベート通信できます。\n\n【選択肢の解説】\n・A: IP転送を無効にしても、VMに外部IPアドレスが割り当てられている場合、パブリックインターネットからアクセス可能な状態のままです。IP転送の設定は、VMがパケットを転送できるかどうかを制御するだけで、外部アクセスを制限するものではありません。\n・B（正解）: 外部IPアドレスを割り当てずに内部IPアドレスだけでVMを作成することで、パブリックインターネットからの直接アクセスを防ぎつつ、VPN経由でオンプレミスからアクセスできます。\n・C: Private Google Accessは、VPC内のリソースがGoogleのAPIやサービスにアクセスするための機能です。VMへのアクセス制御には関係ありません。\n・D: Shielded VMは、セキュリティを強化したVMを作成するための機能です。パブリックインターネットからのアクセスを制限するものではありません。",
+    "business_tip": "【正解: 外部IPアドレスを割り当てず、内部IPアドレスだけでVMを作成する。】\n👉 ポイント: 外部IPを付けずにVMを作れば、インターネットからの直接アクセスを完全に防げます。オンプレミスとはVPN経由の内部IPで通信します。\n💡 判断軸: 「社内・オンプレミスからは接続可、インターネットからは遮断」→ 外部IPなしの内部IP専用VM。",
+    "id": "P030",
+    "code": "P-030",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 31,
+    "question_id": "031",
+    "category_id": "data",
+    "category_title": "データ分析・パイプライン",
+    "scenario_tag": "BigQuery --dry_run",
+    "multi_select": 1,
+    "question": "あなたはBigQueryでクエリを実行し、レポートを作成します。実行する予定のクエリは、数多くのレコードを取得する事が予測されます。あなたは実行前にクエリにかかる費用を確認する必要があります。なお、料金モデルにはオンデマンド料金が選択されています。どのように費用を確認すればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "実行前のクエリを保存し、公開設定でプロジェクトを選択する。エクスプローラーで保存されたクエリを選択し、表示される費用を確認する。"
+      },
+      {
+        "label": "B",
+        "text": "実行前のクエリから作成されたクエリプランを表示する。クエリプランに含まれる費用を確認する。"
+      },
+      {
+        "label": "C",
+        "text": "請求モデルを容量ベース (BigQuery Editions) 料金に切り替え、クエリを実行した後、クエリの完了後にオンデマンド料金に戻す。"
+      },
+      {
+        "label": "D",
+        "text": "bqコマンドラインツールで--dry_runフラグを使用してクエリを実行し、読み取られるバイト数を取得する。Pricing Calculatorで取得したバイト数を使用し、クエリの見積もり費用を取得する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nbqコマンドライン ツールでクエリを実行する場合、--dry_run フラグを使用すると、クエリで読み取られるバイト数を見積もることができます。ドライランは、クエリスロットを使用しないため、ドライランの実行に対しては課金されません。ドライランによって返された見積もりを料金計算ツールで使用すると、クエリの費用を計算できます。\n\n【選択肢の解説】\n・A: 保存されたクエリをエクスプローラーで選択しても費用は表示されません。\n・B: クエリプランには費用情報は表示されません。また、クエリプランは実行後のクエリの情報を表示します。\n・C: 容量ベース料金は予約済みスロットに対して課金されるため、オンデマンド料金の見積もりには利用できません。\n・D（正解）: bq query --dry_run でスキャン予定バイト数を無料で見積もり、その結果を Pricing Calculator に入力して費用を算出します。",
+    "business_tip": "【正解: bqコマンドラインツールで--dry_runフラグを使用してクエリを実行し、読み取られるバイト数を取得する。Pricing Calculatorで取得したバイト数を使用し、クエリの見積もり費用を取得する。】\n👉 ポイント: BigQueryのオンデマンド課金はスキャンデータ量で決まるため、実行前に `bq --dry_run`（課金ゼロ）で読み取りバイト数を確認し、Pricing Calculatorで費用を見積もる。\n💡 判断軸: 実行前のBigQueryクエリ費用見積もり＝`--dry_run` + Pricing Calculator。クエリプランは実行後の実行統計であり費用見積もりには使えない。",
+    "id": "P031",
+    "code": "P-031",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 32,
+    "question_id": "032",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "App Engine ロールバック",
+    "multi_select": 1,
+    "question": "あなたはApp Engineを利用してアプリケーションの新しいバージョンをデプロイしました。数時間後、デプロイしたバージョンに重大なバグが発見されました。最小限の手順でアプリケーションを以前のバージョンに戻すには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud app versions listコマンドを使用し、以前のバージョンを確認する。その後、gcloud app update --versionコマンドを実行して以前のバージョンに戻す。"
+      },
+      {
+        "label": "B",
+        "text": "GoogleクラウドコンソールでApp Engineのバージョンページを開き、トラフィックの100%を以前のバージョンにルーティングする。"
+      },
+      {
+        "label": "C",
+        "text": "以前のバージョンを別のアプリケーションとしてデプロイし、トラフィックの100%を新しくデプロイしたアプリケーションに再ルーティングする。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud app restoreコマンドを実行して以前のバージョンに戻す。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nGoogleクラウドコンソールのApp Engineのバージョンページには以前にデプロイしたバージョンが表示されます。任意のバージョンを選択しトラフィックを100%移行することで、選択したバージョンにロールバックすることが可能です。\n\n【選択肢の解説】\n・A: gcloud app updateコマンドは、App Engineアプリケーションの設定を更新するために使用します。\n・B（正解）: App Engine のバージョンページから以前のバージョンを選択し、トラフィックの100%を割り当てることで最小限の手順でロールバックできます。\n・C: App Engineの以前のバージョンはバージョンページで管理されています。そのため、別のアプリケーションとしてデプロイする必要はありません。\n・D: gcloud app restoreコマンドは無効なコマンドです。",
+    "business_tip": "【正解: GoogleクラウドコンソールでApp Engineのバージョンページを開き、トラフィックの100%を以前のバージョンにルーティングする。】\n👉 ポイント: App Engine はデプロイ済みバージョンがコンソール上に残るため、再デプロイなしでトラフィック配分を100%戻すだけでロールバックできる。\n💡 判断軸: ロールバック＝以前のバージョンへトラフィックを100%再ルーティング。gcloud app restore や --version 指定の update は存在しない。",
+    "id": "P032",
+    "code": "P-032",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 33,
+    "question_id": "033",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "App Engine / gcloud CLI",
+    "multi_select": 2,
+    "question": "あなたのチームはApp Engineアプリケーションを開発環境でテストしました。新しいGoogle Cloudプロジェクトを本番環境として使用し、同じアプリケーションをデプロイする必要があります。\n次のうち、適切な手順を2つ選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud projects copy を使用して開発プロジェクトを複製する。"
+      },
+      {
+        "label": "B",
+        "text": "gcloud app copy を使用してアプリケーションをコピーする。"
+      },
+      {
+        "label": "C",
+        "text": "--project に本番プロジェクトのIDを指定して gcloud app deploy を実行する。"
+      },
+      {
+        "label": "D",
+        "text": "gcloud projects create を使用して本番プロジェクトを作成する。"
+      },
+      {
+        "label": "E",
+        "text": "--project に本番プロジェクト名を指定して gcloud app deploy を実行する。"
+      }
+    ],
+    "answer": [
+      "C",
+      "D"
+    ],
+    "explanation": "【全体的な説明】\ngcloud projects create で新しいGoogle Cloudプロジェクトを作成し、gcloud app deploy --project=PROJECT_ID で対象プロジェクトへアプリケーションをデプロイします。--project にはプロジェクトIDを指定します。なお、App Engineアプリケーション自体がまだ作成されていない場合は、gcloud app create で App Engine application resourceを作成する必要があります。App Engineアプリは各プロジェクトにつき1つだけ作成でき、リージョンは作成後に変更できません。\n\n【選択肢の解説】\n・A: gcloud projects copy というコマンドは存在しません。Google Cloudにはプロジェクトを複製する機能はありません。\n・B: gcloud app copy というコマンドは存在しません。App Engineアプリケーションをコピーするための公式コマンドはありません。\n・C（正解）: --project に本番プロジェクトのIDを指定して gcloud app deploy を実行することで、対象の本番プロジェクトにアプリケーションをデプロイできます。\n・D（正解）: gcloud projects create を使用して、本番用の新しいGoogle Cloudプロジェクトを作成します。\n・E: --project オプションにはプロジェクト名ではなくプロジェクトIDを指定する必要があります。",
+    "business_tip": "【正解: --project に本番プロジェクトのIDを指定して gcloud app deploy を実行する。 / gcloud projects create を使用して本番プロジェクトを作成する。】\n👉 ポイント: プロジェクトやApp Engineアプリを丸ごとコピーするコマンドはありません。新しい本番プロジェクトを gcloud projects create で作り、プロジェクトIDを指定して再デプロイします。\n💡 判断軸: 「別プロジェクトへ展開」→ 新規作成＋ID指定で再デプロイ。--project に渡すのはプロジェクト名ではなくプロジェクトID。",
+    "id": "P033",
+    "code": "P-033",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 34,
+    "question_id": "034",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "App Engine / スケーリング設定",
+    "multi_select": 1,
+    "question": "あなたはApp EngineへのWebアプリケーションのデプロイを計画しています。アプリケーションはリクエスト負荷に応じてスケーリングする必要があります。また、アイドル状態で起動するインスタンスが少なくとも常に２つ存在していなければいけません。\nこれらの要件を実現するには、App Engineをどのように設定する必要がありますか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "max_idle_instancesを2に設定して、自動スケーリング設定を構成する。"
+      },
+      {
+        "label": "B",
+        "text": "min_idle_instancesを2に設定して、自動スケーリング設定を構成する。"
+      },
+      {
+        "label": "C",
+        "text": "max_instancesを2に設定して、基本スケーリング設定を構成する。"
+      },
+      {
+        "label": "D",
+        "text": "min_instancesを2に設定して、基本スケーリング設定を構成する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nApp Engineの自動スケーリング（automatic scaling）では、`target_cpu_utilization` などの設定に基づいてトラフィック処理に必要なインスタンス数を計算します。さらに `min_idle_instances` を設定すると、計算された稼働数に加えて指定数のアイドルインスタンスを常時待機させることができます（例: 負荷処理に5つ必要なとき `min_idle_instances: 2` なら計7つ起動）。\n\n【選択肢の解説】\n・A: `max_idle_instances` は保持できるアイドルインスタンスの「最大数」であり、「少なくとも常に2つ」という要件を満たしません。\n・B（正解）: 自動スケーリングで `min_idle_instances` を2に設定することで要件を満たせます。\n・C, D: 基本スケーリング（basic scaling）ではアイドル状態のインスタンスがシャットダウンされるため、常時アイドルインスタンスを維持する要件に合いません。",
+    "business_tip": "【正解: min_idle_instancesを2に設定して、自動スケーリング設定を構成する。】\n👉 ポイント: App Engineで負荷に応じた伸縮と常時待機のアイドルインスタンス確保を両立するには、自動スケーリング（automatic_scaling）で `min_idle_instances` を指定します。\n💡 判断軸: 「少なくとも常に○個のアイドルインスタンス」＝自動スケーリング＋ `min_idle_instances`（基本スケーリングはアイドル時停止するのでNG）。",
+    "id": "P034",
+    "code": "P-034",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 35,
+    "question_id": "035",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Secret Manager",
+    "multi_select": 1,
+    "question": "あなたは複数の外部APIにアクセスするCloud Run functionsのデプロイを計画しています。Googleの推奨するベストプラクティスに従い、APIキーを安全に管理・使用するには、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "APIキーを環境変数のキーペア値に追加する。"
+      },
+      {
+        "label": "B",
+        "text": "Secret Managerを使用してAPIキーを管理する。"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Run functionsにデプロイするパッケージにyaml形式のファイルを含める。ソースコード内で読み取れるようにYAMLファイル内にAPIキーを記述する。"
+      },
+      {
+        "label": "D",
+        "text": "暗号化したAPIキーをソースコード内に記述し、使用時に復号する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nSecret Manager は、API キー、パスワード、証明書、その他の機密データを保存するための安全で便利なストレージ システムです。Google Cloud で使用されるすべての秘密情報を一元的に管理、アクセス、監査できるようにする機能を提供します。\nSecret Managerを利用すると、\n・ソースコードにAPIキーを埋め込まない\n・ソース管理へ秘密情報をコミットしない\n・Secret Accessor IAMロールでアクセスを制御する\n・秘密情報のローテーションを管理しやすい\nというメリットがあります。\n\n【選択肢の解説】\n・A: 環境変数は関数の構成に使用できますが、データベースの認証情報やAPIキーなどの機密情報の格納には適しません。\n・B（正解）: Secret Managerを使用してAPIキーを一元管理し、IAMでアクセス制御するのがベストプラクティスです。\n・C: YAMLファイル、デプロイ スクリプト、ソース管理への重要な認証情報の保存は、漏洩防止の観点から推奨されていません。\n・D: ソースコード内に重要な認証情報をハードコーディングすることは推奨されていません。",
+    "business_tip": "【正解: Secret Managerを使用してAPIキーを管理する。】\n👉 ポイント: APIキー・パスワード・証明書などのシークレットはコードや設定ファイル、平文の環境変数に置かず、Secret Managerに格納してIAM（Secret Accessor）でアクセス制御する。\n💡 判断軸: 機密情報（APIキー/DB認証情報）の安全な管理＝Secret Manager。環境変数やYAML/コード内記載はNG。",
+    "id": "P035",
+    "code": "P-035",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 36,
+    "question_id": "036",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Storage IAM (Object Creator)",
+    "multi_select": 1,
+    "question": "Compute Engine VM が、処理の実行ごとに新しい証跡ファイルを生成します。これらのファイルを、一意のオブジェクト名で1つの Cloud Storage バケットにアップロードする必要があります。既存のオブジェクトの読み取り、上書き、削除は許可してはならず、ほかのバケットにもアクセスできないようにする必要があります。VM には、Google Cloud API 用の適切なアクセススコープが設定されています。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "専用のサービスアカウントを VM にアタッチし、証跡用バケットに対する roles/storage.objectAdmin を付与する。"
+      },
+      {
+        "label": "B",
+        "text": "専用のサービスアカウントを VM にアタッチし、証跡用バケットに対する roles/storage.objectViewer を付与する。"
+      },
+      {
+        "label": "C",
+        "text": "専用のサービスアカウントを VM にアタッチし、証跡用バケットに対する roles/storage.objectCreator を付与する。"
+      },
+      {
+        "label": "D",
+        "text": "専用のサービスアカウントを VM にアタッチし、プロジェクトに対する roles/storage.objectCreator を付与する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nStorage Object Creator（roles/storage.objectCreator）は、新しいオブジェクトの作成を許可し、既存オブジェクトの読み取り・削除・上書きは許可しません。専用サービスアカウントをVMにアタッチし、証跡用バケットにだけこのロールを付与します。一意のオブジェクト名を使うため、既存データの置き換えに必要な削除権限も不要です。問題文ではアクセススコープが適切に設定されているため、IAMのロールと付与範囲を選ぶことがポイントです。\n\n【選択肢の解説】\n・A: Storage Object Adminは既存オブジェクトの読み取りや削除なども許可します。新規アップロードだけを許可する要件に対して権限が過剰です。\n・B: Storage Object Viewerは読み取り用のロールで、新しい証跡ファイルをアップロードする権限がありません。\n・C（正解）: 専用サービスアカウントを VM にアタッチし、対象の証跡用バケットのみに roles/storage.objectCreator を付与することで、新規作成だけを許可し、既存オブジェクトの読み取り・上書き・削除や他バケットへのアクセスを防げます。\n・D: プロジェクト単位で付与すると、そのプロジェクト内のほかのバケットにも作成権限が及びます。証跡用の1バケットだけに限定する要件を満たしません。",
+    "business_tip": "【正解: 専用のサービスアカウントを VM にアタッチし、証跡用バケットに対する roles/storage.objectCreator を付与する。】\n👉 ポイント: 新規アップロードのみ許可し、読み取り・上書き・削除を禁止したい場合は roles/storage.objectCreator をバケット単位で付与する。\n💡 判断軸: 特定バケットのみ＝バケットレベルでIAM付与（プロジェクト単位はNG）。新規作成のみ＝objectCreator（Admin/ViewerはNG）。",
+    "id": "P036",
+    "code": "P-036",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 37,
+    "question_id": "037",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Monitoring / IAM",
+    "multi_select": 1,
+    "question": "あなたの企業ではCloud Monitoringを使用してアプリケーションを実行しているVMインスタンスをモニタリングしています。サポートチームはモニタリングデータに対する読み取り権限を必要としています。アクセス権限を付与するにはどうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "サポートチームを含むグループを作成し、モニタリング閲覧者（roles/monitoring.viewer）ロールを付与する。"
+      },
+      {
+        "label": "B",
+        "text": "サポートチームを含むグループを作成し、モニタリング読み取り（roles/monitoring.reader）ロールを付与する。"
+      },
+      {
+        "label": "C",
+        "text": "サポートチームを含むグループを作成し、テクニカルサポート閲覧者（roles/cloudsupport.techSupportViewer）ロールを付与する。"
+      },
+      {
+        "label": "D",
+        "text": "サポートチームを含むグループを作成し、サポートアカウント閲覧者（roles/cloudsupport.viewer）ロールを付与する。"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nモニタリング閲覧者（roles/monitoring.viewer）を使用すると、すべてのモニタリングデータや構成に関する情報を取得して一覧表示するための読み取り専用アクセス権を付与できます。\n\n【選択肢の解説】\n・A（正解）: Cloud Monitoringデータの読み取り専用アクセス権を付与する事前定義ロールは roles/monitoring.viewer です。\n・B: モニタリング読み取り（roles/monitoring.reader）ロールは存在しません。\n・C: テクニカル サポート閲覧者（roles/cloudsupport.techSupportViewer）ロールはモニタリングデータではなくテクニカルサポートケースに対する読み取り専用アクセス権を付与するロールです。\n・D: サポートアカウント閲覧者（roles/cloudsupport.viewer）ロールはモニタリングデータではなくサポートアカウントの詳細に対する読み取り専用アクセス権を付与するロールです。",
+    "business_tip": "【正解: サポートチームを含むグループを作成し、モニタリング閲覧者（roles/monitoring.viewer）ロールを付与する。】\n👉 ポイント: Cloud Monitoringの読み取り専用アクセス権を付与する事前定義ロールは roles/monitoring.viewer（モニタリング閲覧者）です。\n💡 判断軸: モニタリング閲覧権限は roles/monitoring.viewer。存在しないロール（reader）やサポートケース用ロール（cloudsupport）と区別します。",
+    "id": "P037",
+    "code": "P-037",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 38,
+    "question_id": "038",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage / 非構造化データ",
+    "multi_select": 1,
+    "question": "あなたの組織には、オンプレミスに保存された大量の非構造化データがあります。このデータを Google Cloud に移行し、Dataflowパイプラインで処理できるようにする予定です。このデータに最も適切な保存先はどこですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Storage"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Spanner"
+      },
+      {
+        "label": "C",
+        "text": "Cloud SQL"
+      },
+      {
+        "label": "D",
+        "text": "Filestore"
+      }
+    ],
+    "answer": [
+      "A"
+    ],
+    "explanation": "【全体的な説明】\nCloud StorageはGoogle Cloudで大量の非構造化データ（画像、動画、ログ、テキストファイルなど）を保存するための標準的なオブジェクトストレージです。Dataflowはバッチ・ストリーミング両方のパイプラインの入力ソースとしてCloud Storage上のファイルを直接読み取れます。\n\n【選択肢の解説】\n・A（正解）: 大量の非構造化データの保存とDataflow連携の両方に最適です。\n・B: Cloud Spannerはフルマネージドのリレーショナルデータベースであり、非構造化データの保存先には適しません。\n・C: Cloud SQLはリレーショナルデータベースサービスであり、非構造化データの保存先には適しません。\n・D: FilestoreはNFSファイルサーバー向けであり、大量の非構造化オブジェクトデータの標準的な保存先としてはCloud Storageが適しています。",
+    "business_tip": "【正解: Cloud Storage】\n👉 ポイント: 大量の非構造化データを低コスト・高耐久で保管し、Dataflowなどのデータ処理基盤へそのまま渡す標準保存先はCloud Storageです。\n💡 判断軸: 「大量の非構造化データ」「Dataflowの入力ソース」＝RDB（Cloud SQL/Spanner）やNFS（Filestore）ではなくCloud Storage。",
+    "id": "P038",
+    "code": "P-038",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 39,
+    "question_id": "039",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "静的内部 IP",
+    "multi_select": 1,
+    "question": "あなたのチームはオンプレミスのアプリケーションをGoogle Cloud上にデプロイする計画を立てています。ライセンスサーバーはCompute Engineで実行され、アプリケーションは10.128.3.14のIPアドレスを使用して、ライセンスサーバーへ接続するように構成されます。また、ライセンスサーバーを配置するサブネットには、 10.128.3.14 が含まれています。\n設定に変更を加えずに維持するためには、どうすれば良いでしょうか？最適な選択肢を以下から選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "10.128.3.14を外部静的アドレスとして予約し、ネットワーク サービスティアにプレミアムを選択してライセンスサーバーインスタンスに接続する。"
+      },
+      {
+        "label": "B",
+        "text": "10.128.3.14を外部静的アドレスとして予約し、ネットワーク サービスティアにスタンダードを選択してライセンスサーバーインスタンスに接続する。"
+      },
+      {
+        "label": "C",
+        "text": "10.128.3.14を静的内部IPアドレスとして予約し、ライセンスサーバーインスタンスのプライマリ内部IPとして設定する。"
+      },
+      {
+        "label": "D",
+        "text": "プライマリ内部IPにエフェメラル（自動）を設定し、ライセンスサーバーインスタンスを作成する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\n静的内部 IP アドレスを予約することで、VMインスタンスに必要な変更されない固定内部 IP アドレスを使用することができます。\n\n【選択肢の解説】\n・A: 10.128.3.14はプライベートIPアドレス範囲内にあるため、外部静的アドレスとして予約する必要はありません。またプレミアムティアはより優れたレイテンシやネットワークパフォーマンスを提供するネットワーク サービスティアです。\n・B: 10.128.3.14はプライベートIPアドレス範囲内にあるため、外部静的アドレスとして予約する必要はありません。また、ネットワーク サービスティアの選択は本問の要件には影響しません。\n・C（正解）: 10.128.3.14を静的内部IPアドレスとして予約し、ライセンスサーバーインスタンスのプライマリ内部IPとして設定することで、IPアドレスを固定できます。\n・D: 内部IPアドレスにエフェメラル（自動）を設定した場合、サブネットワークの範囲からアドレスが自動で割り当てられます。",
+    "business_tip": "【正解: 10.128.3.14を静的内部IPアドレスとして予約し、ライセンスサーバーインスタンスのプライマリ内部IPとして設定する。】\n👉 ポイント: 特定のプライベートIP（10.x.x.x等）をVMに固定割り当てしたい場合、該当サブネット内で静的内部IPアドレスを予約し、プライマリ内部IPに指定する。\n💡 判断軸: 10.0.0.0/8などのRFC1918プライベートアドレスを固定利用＝外部静的アドレスやエフェメラルではなく「静的内部IPアドレスの予約」。",
+    "id": "P039",
+    "code": "P-039",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 40,
+    "question_id": "040",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage ライフサイクル",
+    "multi_select": 1,
+    "question": "Cloud StorageバケットではObject Versioningが有効になっており、四半期ごとに作成されるレポートを保存しています。\nデフォルトのストレージクラスはStandardです。オブジェクトが新しいバージョンによって非現行になってから90日経過した時点で、非現行バージョンをColdlineへ移行したいと考えています。\n非現行バージョンのデータは四半期に1回程度アクセスされます。\n最も適切なライフサイクルルールはどれでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Archiveへ移行し、age=90 と numNewerVersions=0 を設定する。"
+      },
+      {
+        "label": "B",
+        "text": "Coldlineへ移行し、age=90 と numNewerVersions=0 を設定する。"
+      },
+      {
+        "label": "C",
+        "text": "Archiveへ移行し、daysSinceNoncurrentTime=90 と numNewerVersions=1 を設定する。"
+      },
+      {
+        "label": "D",
+        "text": "Coldlineへ移行し、daysSinceNoncurrentTime=90 と numNewerVersions=1 を設定する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nColdlineストレージクラスは、四半期に1回程度しか読み取りや変更を行わないデータの保存に適しています。daysSinceNoncurrentTime=90 は、非現行バージョンになってから90日経過した場合に適用される条件です。numNewerVersions=1 は、対象オブジェクトより新しいバージョンが少なくとも1つ存在することを条件とします。\n\n【選択肢の解説】\n・A: age はオブジェクトが作成されてからの日数を指定するため、非現行バージョンのライフサイクルルールには daysSinceNoncurrentTime を使う必要があります。numNewerVersions=0 は最新のバージョンではない場合に適用される条件ですが、非現行バージョンの移行には numNewerVersions=1 が適切です。また、Archiveはアクセス頻度が極めて低い場合に適しており、四半期に1回程度アクセスされる本要件にはColdlineの方が適切です。\n・B: age ではなく daysSinceNoncurrentTime を使用し、numNewerVersions=1 を設定する必要があります。\n・C: Archiveストレージクラスはアクセス頻度が極めて低い場合に適していますが、四半期に1回程度アクセスされるため、Coldlineの方が適切です。\n・D（正解）: 四半期に1回程度のアクセス頻度に適したColdlineへ、daysSinceNoncurrentTime=90 と numNewerVersions=1 の条件で移行します。",
+    "business_tip": "【正解: Coldlineへ移行し、daysSinceNoncurrentTime=90 と numNewerVersions=1 を設定する。】\n👉 ポイント: 四半期に1回のアクセス頻度にはColdlineが合います。非現行バージョンの経過日数は age ではなく daysSinceNoncurrentTime、非現行の判定は numNewerVersions=1 を使います。\n💡 判断軸: 「年4回（四半期1回）アクセス」→ Coldline。「非現行になってからN日」→ daysSinceNoncurrentTime と numNewerVersions=1。",
+    "id": "P040",
+    "code": "P-040",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 41,
+    "question_id": "041",
+    "category_id": "ops",
+    "category_title": "運用監視・コスト・CLI",
+    "scenario_tag": "gcloud CLI / 認証アカウント",
+    "multi_select": 1,
+    "question": "あなたは複数のアカウントを使用してGoogleクラウド上のプロジェクトを管理しています。現在アクティブなアカウントと、認証済みのアカウントの一覧を表示するにはどうすれば良いでしょうか？以下から適切なコマンドを選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud config configurations list account"
+      },
+      {
+        "label": "B",
+        "text": "gcloud config list account"
+      },
+      {
+        "label": "C",
+        "text": "gcloud auth list"
+      },
+      {
+        "label": "D",
+        "text": "gcloud info --account"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\n`gcloud auth list` は、`gcloud auth login` や `gcloud auth activate-service-account` などで取得した認証情報を一覧表示し、現在アクティブなアカウント（ACTIVE表示）も確認できます。\n\n【選択肢の解説】\n・A: `gcloud config configurations list account` は無効なコマンドです。\n・B: `gcloud config list account` はアカウント一覧ではなく、現在アクティブな設定のアカウント情報のみを表示します。\n・C（正解）: 認証済みアカウントの一覧とアクティブなアカウントを同時に表示できます。\n・D: `gcloud info` は現在のgcloud環境情報を表示するコマンドで、`--account` フラグは使用するアカウントを指定するために使います。",
+    "business_tip": "【正解: gcloud auth list】\n👉 ポイント: `gcloud auth list` は保存済みの認証アカウント一覧と、現在アクティブ（ACTIVE）なアカウントを一度に確認するコマンドです。\n💡 判断軸: 複数アカウントの切り替え・確認系は `gcloud auth`、設定プロファイル（projectやregionなど）の確認・切り替えは `gcloud config`。",
+    "id": "P041",
+    "code": "P-041",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 42,
+    "question_id": "042",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Compute Engine (gcloud)",
+    "multi_select": 1,
+    "question": "あなたの所属する企業では複数のVMインスタンスを使用してWebアプリケーションを実行しています。あなたはgcloudコマンドツールを使用してweb-app-1という名前のインスタンスを停止する必要があります。以下のうち、どのコマンドを実行すれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud compute stop web-app-1"
+      },
+      {
+        "label": "B",
+        "text": "gcloud compute instances stop web-app-1"
+      },
+      {
+        "label": "C",
+        "text": "gcloud compute instances halt web-app-1"
+      },
+      {
+        "label": "D",
+        "text": "gcloud compute instances --terminate web-app-1"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nVMインスタンスを停止するには、gcloud compute instances stopコマンドを使用し、停止する VMを1つ以上指定します。\n\n【選択肢の解説】\n・A: gcloud compute stopは無効なコマンドです。\n・B（正解）: VMインスタンスを停止する正しいコマンドは gcloud compute instances stop <インスタンス名> です。\n・C: gcloud compute instances haltは無効なコマンドです。\n・D: --terminateは有効なパラメータではありません。",
+    "business_tip": "【正解: gcloud compute instances stop web-app-1】\n👉 ポイント: Compute Engine の VM 操作は gcloud compute instances <サブコマンド> の階層になる（stop / start / delete / reset）。\n💡 判断軸: gcloud compute の直下に stop はなく、必ずリソース種別（instances）を挟む。halt や --terminate も存在しない。",
+    "id": "P042",
+    "code": "P-042",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 43,
+    "question_id": "043",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "VPC / サブネット設計",
+    "multi_select": 1,
+    "question": "あなたはGoogle Cloud上で開発用と本番用のVMインスタンス群を構成しています。本番用インスタンスは開発用とは別のサブネットに配置する必要があります。\n両方のサブネット間では、適切なIngressファイアウォールルールがすでに設定されており、VM同士が内部IPアドレスを使用して通信できることが要件です。\nネットワーク構成を最小限の労力で実現するには、どうすればよいでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "自動モードVPCを2つ作成し、Cloud VPNでVPC間を接続する。"
+      },
+      {
+        "label": "B",
+        "text": "カスタムモードVPCを2つ作成し、両方に同じCIDRブロックを設定する。"
+      },
+      {
+        "label": "C",
+        "text": "カスタムモードVPCを1つ作成し、異なるCIDR範囲を持つ2つのサブネットを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "2つのプロジェクトを作成し、Shared VPCを構成して両方のVMを配置する。"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nカスタムモードVPCを1つ作成し、その中に異なるCIDR範囲を持つ2つのサブネットを作成することで、開発用と本番用のサブネットを分離できます。同じVPC内にあるため、ファイアウォールルールを設定するだけで内部IPアドレスを使用して通信できます。\n\n【選択肢の解説】\n・A: 自動モードVPCを2つ作成すると、デフォルトで作成されるサブネットのIP範囲が重複する可能性があります。Cloud VPNでVPC間を接続するのは複雑で、運用負荷が高くなります。\n・B: 同じCIDRブロックを持つVPCを接続するとルーティングの衝突を引き起こすため不可能です。\n・C（正解）: 1つのカスタムモードVPC内に異なるCIDR範囲の2つのサブネットを作成すれば、最も少ない労力でサブネット分離と内部IP通信を両立できます。\n・D: Shared VPCを構成するのは複雑で、運用負荷が高くなります。",
+    "business_tip": "【正解: カスタムモードVPCを1つ作成し、異なるCIDR範囲を持つ2つのサブネットを作成する。】\n👉 ポイント: 同じVPC内なら別サブネット同士でもデフォルトで内部IP通信できるため、カスタムモードVPCを1つ作って2つのサブネットに分けるのが一番シンプルです。\n💡 判断軸: 「最小労力でサブネット分離＋内部IP通信」→ 1つのカスタムモードVPC＋異なるCIDRの2サブネット。",
+    "id": "P043",
+    "code": "P-043",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 44,
+    "question_id": "044",
+    "category_id": "compute",
+    "category_title": "Compute & コンテナ",
+    "scenario_tag": "Artifact Registry / コンテナ管理",
+    "multi_select": 1,
+    "question": "あなたのチームはGoogle Kubernetes Engineクラスタを管理しています。あなたはデプロイするアプリケーションに使用するDockerfileを作成しました。DockerfileからビルドしたコンテナイメージをGoogle Cloud上で管理・保管するサービスとして、最適なものを以下から選択してください。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud Storage"
+      },
+      {
+        "label": "B",
+        "text": "Artifact Registry"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Build"
+      },
+      {
+        "label": "D",
+        "text": "Cloud Code"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nKubernetes（GKE）にアプリケーションをデプロイするには、ビルドしたコンテナイメージをコンテナレジストリに保存する必要があります。Artifact Registry は Google Cloud におけるコンテナイメージや言語パッケージの標準的な保存・管理サービスです。イメージの保存・管理を行い、脆弱性スキャンなどGoogle Cloudの関連機能と統合できます。\n\n【選択肢の解説】\n・A: Cloud Storage は汎用的なオブジェクトストレージサービス（ファイル置き場）です。コンテナイメージの実体（レイヤーデータ）は最終的にストレージに保存されますが、Dockerクライアントからのプッシュ/プル操作やタグ管理を行うためのレジストリ機能は提供していません。\n・B（正解）: Artifact Registry は、Dockerfile からビルドしたコンテナイメージや各種パッケージを一元的に保存・管理できる Google Cloud の標準レジストリサービスです。\n・C: Cloud Build は、コンテナイメージのビルド、テスト、デプロイを自動化する CI/CD サービスです。イメージを作成することはできますが、作成されたイメージを長期的に保管・管理する場所（レジストリ）ではありません。\n・D: Cloud Code は、VS Code や IntelliJ などの IDE（統合開発環境）向けに提供されているプラグインツールです。開発者がローカル環境から Google Cloud アプリケーションを作成・デバッグするのを支援するものですが、イメージの保管場所ではありません。",
+    "business_tip": "【正解: Artifact Registry】\n👉 ポイント: コンテナイメージや言語パッケージの保管・管理には Artifact Registry を使う（Cloud Build はビルド担当、Cloud Code は IDE プラグイン）。\n💡 判断軸: 「ビルド・CI/CD」＝Cloud Build、「イメージの保管・レジストリ」＝Artifact Registry、「ローカルIDE支援」＝Cloud Code。",
+    "id": "P044",
+    "code": "P-044",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 45,
+    "question_id": "045",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage",
+    "multi_select": 2,
+    "question": "あなたのチームが管理しているアプリケーションのログを保存、およびアーカイブする必要があります。社内規定により、ログは指定した単一のリージョンに保存する必要があります。データは保存されてから30日後にアーカイブされ、四半期に一回アクセスされます。\n費用対効果の最も高い方法を下記から2つ選択して下さい。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "データの保存場所にRegionを選択してバケットを作成する。"
+      },
+      {
+        "label": "B",
+        "text": "データの保存場所にDual-regionを選択してバケットを作成する。"
+      },
+      {
+        "label": "C",
+        "text": "データの保存場所にMulti-regionを選択してバケットを作成する。"
+      },
+      {
+        "label": "D",
+        "text": "30日後にストレージクラスをNearlineに設定するオブジェクトライフサイクルルールを追加する。"
+      },
+      {
+        "label": "E",
+        "text": "30日後にストレージクラスをColdlineに設定するオブジェクトライフサイクルルールを追加する。"
+      }
+    ],
+    "answer": [
+      "A",
+      "E"
+    ],
+    "explanation": "【全体的な説明】\nバケット作成時、データの保存場所にRegionを指定することにより、オブジェクトデータの保存場所として単一のリージョンを指定できます。また、ColdlineストレージクラスはNearlineと比較して、四半期に一回程度アクセスするデータをより低コストで保存できます。\n\n【選択肢の解説】\n・A（正解）: 指定した単一のリージョンに保存する要件にはRegionを選択します。\n・B: データの保存場所にDual-regionを選択した場合、バケットの保存場所は東京と大阪など、リージョンの特定のペアとなります。本問の要件ではログは指定した単一のリージョンに保存する必要があります。\n・C: データの保存場所にMulti-regionを選択した場合、バケットの保存場所は米国などの、2つ以上の地理的な場所を含む広い地理的なエリアとなります。本問の要件ではログは指定した単一のリージョンに保存する必要があります。\n・D: 四半期に一回程度アクセスされるアーカイブの保存にNearlineストレージクラスを使用した場合、Coldlineより高コストとなります。\n・E（正解）: 四半期に一回程度アクセスするデータにはColdlineを設定するライフサイクルルールが低コストです。",
+    "business_tip": "【正解: A) データの保存場所にRegionを選択してバケットを作成する。 / E) 30日後にストレージクラスをColdlineに設定するオブジェクトライフサイクルルールを追加する。】\n👉 ポイント: 単一リージョン要件は「Region」、四半期に1回（90日ごと）アクセスするアーカイブには「Coldline」が合致します。\n💡 判断軸: 月1回アクセス＝Nearline（最低30日）、四半期に1回＝Coldline（最低90日）、年1回未満＝Archive（最低365日）。単一リージョン要件＝Region。",
+    "id": "P045",
+    "code": "P-045",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 46,
+    "question_id": "046",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM 閲覧者ロール (roles/viewer)",
+    "multi_select": 1,
+    "question": "あなたが所属する企業では、セキュリティ監査のため、第三者監査人にGoogle Cloudプロジェクトへのアクセスを提供する必要があります。監査人は、プロジェクト内のリソースの構成や状態を読み取り専用で確認できる必要があります。変更操作は許可しません。\n最小限の労力でアクセスを提供する為には、どうすれば良いでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "「プロジェクトブラウザ」ロールの権限を含めてカスタムロールを作成し、監査人アカウントに付与する。"
+      },
+      {
+        "label": "B",
+        "text": "「閲覧者」基本ロールの権限を含めてカスタムロールを作成し、監査人アカウントに付与する。"
+      },
+      {
+        "label": "C",
+        "text": "「プロジェクトブラウザ」ロールを監査人アカウントに付与する。"
+      },
+      {
+        "label": "D",
+        "text": "「閲覧者」ロールを監査人アカウントに付与する。"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\n「閲覧者」基本ロール（roles/viewer）を使用すると、プロジェクトの既存のリソースやデータの表示（変更は不可）など、状態に影響しない読み取り専用アクションに必要な権限を付与できます。\n\n【選択肢の解説】\n・A: プロジェクトブラウザ（参照者）ロールにはプロジェクトのリソースを表示する権限は含まれていません。また、本問において監査人が必要とする権限を付与する為には、カスタムロールを使用する必要はありません。\n・B: 選択肢Aと同様に、監査人が必要とする権限を付与する為には、カスタムロールを使用する必要はありません。\n・C: プロジェクトブラウザ（参照者）ロールはフォルダ、組織、許可ポリシーなど、プロジェクトの階層を参照するための読み取りアクセス権です。この役割には、プロジェクトのリソースを表示する権限は含まれていません。\n・D（正解）: 「閲覧者」ロール（roles/viewer）を付与することで、最小限の労力でプロジェクト内のリソース構成や状態に対する読み取り専用アクセスを提供できます。",
+    "business_tip": "【正解: 「閲覧者」ロールを監査人アカウントに付与する。】\n👉 ポイント: プロジェクト内のリソース構成や状態を読み取り専用で確認させたい場合は基本ロールの「閲覧者（roles/viewer）」を使う。「プロジェクトブラウザ（roles/browser）」は階層参照のみでリソース自体は読めない。\n💡 判断軸: 最小限の労力＝事前定義・基本ロールをそのまま使う（カスタムロールを作らない）。リソース閲覧＝Viewer、階層のみ＝Browser。",
+    "id": "P046",
+    "code": "P-046",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 47,
+    "question_id": "047",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "Cloud Identity / GCDS",
+    "multi_select": 1,
+    "question": "あなたの企業ではMicrosoft Active Directoryで多数のユーザーとグループを管理しています。\nこれらのユーザーとグループをGoogle Cloudで利用するため、Active DirectoryをCloud Identityのユーザー・グループ情報の信頼できるソースとして同期する必要があります。\n最適なツールはどれでしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "Cloud IDS"
+      },
+      {
+        "label": "B",
+        "text": "Cloud Domains"
+      },
+      {
+        "label": "C",
+        "text": "Cloud Interconnect"
+      },
+      {
+        "label": "D",
+        "text": "Google Cloud Directory Sync"
+      }
+    ],
+    "answer": [
+      "D"
+    ],
+    "explanation": "【全体的な説明】\nGoogle Cloud Directory Sync (GCDS) は、Microsoft Active DirectoryのユーザーとグループをCloud IdentityやGoogle Workspaceに同期するためのツールです。Active Directoryを信頼できるソースとして設定し、ユーザーとグループを自動的に同期できます。\n\n【選択肢の解説】\n・A: Cloud IDS (Intrusion Detection System) は、ネットワークトラフィックの監視や脅威検出を行うセキュリティツールです。ユーザーやグループの同期には関係ありません。\n・B: Cloud Domains はカスタムドメインの登録や管理を行うサービスであり、Active Directory の同期とは関係ありません。\n・C: Cloud Interconnect は、Google Cloudとオンプレミスネットワークを直接接続するためのネットワークサービスです。ユーザーやグループの同期には関係ありません。\n・D（正解）: Google Cloud Directory Sync (GCDS) により、Active Directoryを信頼できるソースとしてCloud Identityへ自動同期できます。",
+    "business_tip": "【正解: Google Cloud Directory Sync】\n👉 ポイント: Microsoft Active DirectoryのユーザーやグループをCloud Identity / Google Workspaceへ同期するには Google Cloud Directory Sync（GCDS）を使います。\n💡 判断軸: ADとCloud Identityの一方向同期（ADが信頼できるソース）＝GCDS。Cloud IDSは侵入検知、Cloud Domainsはドメイン管理。",
+    "id": "P047",
+    "code": "P-047",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 48,
+    "question_id": "048",
+    "category_id": "security",
+    "category_title": "IAM & セキュリティ・組織",
+    "scenario_tag": "IAM / gcloud CLI",
+    "multi_select": 1,
+    "question": "あなたはGoogleクラウドプロジェクトのアクセス制御を管理しています。プロジェクトのIAMユーザーと付与されたロールを確認する必要があります。以下から実行すべきコマンドを選択して下さい。なお、プロジェクトのIDはmy-project-idとします。",
+    "choices": [
+      {
+        "label": "A",
+        "text": "gcloud iam roles list --project=my-project-id"
+      },
+      {
+        "label": "B",
+        "text": "gcloud iam roles describe --project=my-project-id --all"
+      },
+      {
+        "label": "C",
+        "text": "gcloud projects get-iam-policy my-project-id"
+      },
+      {
+        "label": "D",
+        "text": "gcloud iam service-accounts list --project=my-project-id"
+      }
+    ],
+    "answer": [
+      "C"
+    ],
+    "explanation": "【全体的な説明】\nIAMのポリシーはロールバインディングリストで構成されており、誰がどの種類のアクセス権を持つかを定義するステートメントの集合です。gcloud projects get-iam-policy <プロジェクトID> コマンドを実行すると、プロジェクトのIAMポリシーが表示されます。\n\n【選択肢の解説】\n・A: gcloud iam roles list --project=<プロジェクトID> コマンドを実行すると、プロジェクト内のカスタムロールの情報が表示されます。\n・B: --all フラグは gcloud iam roles describe コマンドの有効なフラグではありません。\n・C（正解）: gcloud projects get-iam-policy my-project-id を実行することで、プロジェクトのIAMユーザー（プリンシパル）と付与されたロールの一覧を確認できます。\n・D: gcloud iam service-accounts list コマンドを実行するとサービスアカウントの情報は表示されますが、IAMポリシーの情報は表示されません。",
+    "business_tip": "【正解: gcloud projects get-iam-policy my-project-id】\n👉 ポイント: プロジェクトで「誰にどのロールが付いているか」を確認するには get-iam-policy を使います。iam roles list はカスタムロール定義の一覧、service-accounts list はSA一覧なので用途が違います。\n💡 判断軸: 「ユーザーと付与ロールの確認」→ gcloud projects get-iam-policy。",
+    "id": "P048",
+    "code": "P-048",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 49,
+    "question_id": "049",
+    "category_id": "storage",
+    "category_title": "ストレージ & DB",
+    "scenario_tag": "Cloud Storage ライフサイクル",
+    "multi_select": 1,
+    "question": "Cloud Storage バケットには、作成から90日間は頻繁に読み取られ、その後はほとんどアクセスされずに何年も保持される監査データのエクスポートが保存されています。現在、オブジェクトは Standard ストレージを使用しています。オブジェクトを削除せず、作成から90日経過した時点で、長期保存に適した最も低コストのストレージクラスへの移行対象となるようにする、マネージドの仕組みが必要です。どうすればよいですか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "age を90に設定した Delete ライフサイクルアクションを構成し、残されたオブジェクトのメタデータを利用する。"
+      },
+      {
+        "label": "B",
+        "text": "age を90に設定し、Archive を移行先とする SetStorageClass アクションを指定した、オブジェクトライフサイクル管理ルールを構成する。"
+      },
+      {
+        "label": "C",
+        "text": "Object Versioning を有効にし、非現行バージョンだけを90日後に移行する。"
+      },
+      {
+        "label": "D",
+        "text": "古いオブジェクトをすべてダウンロードして別のバケットにアップロードする独自スクリプトを、VM 上で毎日実行する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\nオブジェクトライフサイクル管理の age は、オブジェクト作成からの経過日数を条件にします。age: 90 と、Archive を指定した SetStorageClass を組み合わせれば、削除せずにストレージクラスを変更できます。長期間ほとんど読み取らないデータでは、保存料金の低いArchiveが候補になります。条件を満たしたオブジェクトは処理対象になりますが、ライフサイクル処理は非同期のため、作成から90日後の瞬間に移行が完了するとは限りません。また、費用を評価するときは取り出し料金や最低保存期間も考慮します。\n\n【選択肢の解説】\n・A: Delete はオブジェクトを削除するアクションです。監査データ本体を何年も保持する要件を満たしません。\n・B（正解）: age: 90 と SetStorageClass: Archive を設定したオブジェクトライフサイクル管理ルールにより、マネージドかつ最小コストで長期保存へ移行できます。\n・C: Object Versioningはオブジェクトの世代を保持する機能です。非現行バージョンだけを移行しても、現在使われているオブジェクトは対象になりません。\n・D: 独自スクリプトとVMの保守が必要になり、マネージドの仕組みで移行する要件に反します。ライフサイクル管理ならダウンロードと再アップロードも不要です。",
+    "business_tip": "【正解: age を90に設定し、Archive を移行先とする SetStorageClass アクションを指定した、オブジェクトライフサイクル管理ルールを構成する。】\n👉 ポイント: Cloud Storageのストレージクラス自動移行は、独自スクリプトではなく「オブジェクトライフサイクル管理」の SetStorageClass アクション（条件 age: 90）を使います。\n💡 判断軸: 何年もほぼアクセスしない長期保存＝Archiveクラス。マネージド移行＝ライフサイクル管理（SetStorageClass）。",
+    "id": "P049",
+    "code": "P-049",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 50,
+    "question_id": "050",
+    "category_id": "network",
+    "category_title": "ネットワーク",
+    "scenario_tag": "Cloud Load Balancing / SSL Proxy",
+    "multi_select": 1,
+    "question": "あなたが管理するアプリケーションは、HTTPSではない独自のTCPベースのTLSプロトコルをポート443で使用しています。\n世界各地のユーザーからの接続を受け付ける必要があり、TLSをGoogle Cloudのグローバルエッジで終端してユーザーからロードバランサまでのレイテンシを最小化したいと考えています。\nどのロードバランサが最も適切でしょうか？",
+    "choices": [
+      {
+        "label": "A",
+        "text": "TLS終端なしのグローバル外部プロキシNetwork Load Balancerを使用する。"
+      },
+      {
+        "label": "B",
+        "text": "SSL/TLS終端を持つグローバル外部プロキシNetwork Load Balancerを使用する。"
+      },
+      {
+        "label": "C",
+        "text": "リージョン内部Application Load Balancerを使用する。"
+      },
+      {
+        "label": "D",
+        "text": "内部パススルーNetwork Load Balancerを使用する。"
+      }
+    ],
+    "answer": [
+      "B"
+    ],
+    "explanation": "【全体的な説明】\n外部プロキシNetwork Load Balancer（旧SSL Proxy Load Balancer相当）は、インターネットからのTCP/SSLトラフィックを受け取り、ロードバランサ側でTLSを終端できます。グローバル構成では世界中のユーザーに近いGoogle CloudのエッジでTLSハンドシェイクを終端できるため、クライアントからロードバランサまでのレイテンシを抑えられます。\n\n【選択肢の解説】\n・A: TLS終端なし（TCP Proxy）の場合、TLS処理はバックエンドインスタンスで行われ、ユーザーとバックエンド間でTLSハンドシェイクが走るためレイテンシが増加します。\n・B（正解）: 非HTTP(S)の独自TCP+TLSプロトコルをグローバルエッジでTLS終端できるため最適です。\n・C: Application Load BalancerはHTTP(S)向けのL7ロードバランサであり、しかも内部用のため外部接続を受け付けられません。\n・D: 内部パススルーNetwork Load Balancerは内部用のためインターネットからの接続を受け付けられません。",
+    "business_tip": "【正解: SSL/TLS終端を持つグローバル外部プロキシNetwork Load Balancerを使用する。】\n👉 ポイント: HTTP(S)ではない独自TCP上のTLSトラフィックを世界中のユーザーから受け取り、エッジでTLS終端して遅延を下げるなら「SSL/TLS終端ありのグローバル外部プロキシNetwork Load Balancer（SSL Proxy）」を使います。\n💡 判断軸: 外部＋グローバル＋非HTTPのTCP/TLS＋エッジTLS終端＝SSL/TLS終端を持つグローバル外部プロキシNetwork Load Balancer。",
+    "id": "P050",
+    "code": "P-050",
+    "section_id": "practice",
+    "section_title": "実践対策"
+  },
+  {
+    "q_num": 51,
     "question_id": "051",
     "multi_select": 1,
     "question": "分析チームは、Avro 形式のトランザクションファイルの大規模なアーカイブを、オンプレミスのシステムから Cloud Storage に移行しています。ファイルは、transaction_date=2026-06-01/ のような Hive 形式のディレクトリ構成で保存されています。アナリストは、BigQuery が管理するストレージにデータのコピーを保持せずに、BigQuery でアーカイブをクエリし、学習用データセットを作成する必要があります。クエリでは通常、日付範囲を指定します。どうすればよいですか？",
@@ -36,7 +1861,7 @@
     "category_title": "データ分析・パイプライン"
   },
   {
-    "q_num": 2,
+    "q_num": 52,
     "question_id": "052",
     "multi_select": 1,
     "question": "新しいGoogle Cloudプロジェクトを作成し、Google Cloud CLIをインストールしました。あなたはそのプロジェクトのリソースを管理する権限を持っています。\n\ngcloud CLIを使用して新しいCompute Engineインスタンスを作成する前に、必要な設定を行う必要があります。\n\nどの手順が必要ですか？",
@@ -72,7 +1897,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 3,
+    "q_num": 53,
     "question_id": "053",
     "multi_select": 1,
     "question": "あなたのチームが開発するNode.js アプリケーションはDockerイメージとしてパッケージ化されています。\nこのアプリケーションをCloud Runにデプロイするには、どのようなプロセスが推奨されますか？",
@@ -108,7 +1933,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 4,
+    "q_num": 54,
     "question_id": "054",
     "multi_select": 1,
     "question": "会社では日次売上データを分析し、毎日レポートを生成したいと考えています。売上データは大規模であり、処理には数時間かかります。運用コストを最小化しながら効率的にレポートを生成するにはどうすればよいですか？",
@@ -144,7 +1969,7 @@
     "category_title": "データ分析・パイプライン"
   },
   {
-    "q_num": 5,
+    "q_num": 55,
     "question_id": "055",
     "multi_select": 1,
     "question": "Node.jsで実装されたWebアプリケーションと、Goで実装されたバックエンドAPIをオンプレミスで実行しています。また、Pythonで書かれたデータ処理ジョブを毎週実行しています。\nGoogle Cloudへ移行する際、開発者中心のチームでも運用しやすく、サーバー管理の負荷を最小限にしたいと考えています。\n最も適切な構成はどれですか？",
@@ -180,7 +2005,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 6,
+    "q_num": 56,
     "question_id": "056",
     "multi_select": 1,
     "question": "あなたはConfig Connectorを使用してデプロイしたCloud SQL インスタンスを管理しています。インスタンスを削除するには、どうすれば良いでしょうか？",
@@ -216,7 +2041,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 7,
+    "q_num": 57,
     "question_id": "057",
     "multi_select": 1,
     "question": "あなたはLooker Studioを使用して、BigQueryのテーブルを可視化しています。\nBigQueryのテーブルには最新のデータが正常に保存されていることを確認済みですが、Looker Studioのグラフには古いデータが表示されています。\nこの問題を解決するために、最初に確認すべき設定はどれですか？",
@@ -252,7 +2077,7 @@
     "category_title": "データ分析・パイプライン"
   },
   {
-    "q_num": 8,
+    "q_num": 58,
     "question_id": "058",
     "multi_select": 1,
     "question": "あなたは、対応する Compute Engine マシンタイプで SAP HANA を実行するためのストレージを選定しています。データベースには、単一のデータボリュームで約250,000 IOPS の性能が必要です。また、データは VM のメモリに依存せず、VM を停止して再び起動した後も保持される必要があります。どのストレージを選択すればよいですか？",
@@ -288,7 +2113,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 9,
+    "q_num": 59,
     "question_id": "059",
     "multi_select": 1,
     "question": "Cloud Run アプリケーションで使用しているサービスアカウントの管理を、新しい運用チームに引き継ぎます。あなたは、そのサービスアカウントを利用できるプリンシパルを変更する担当であり、サービスアカウント自体に設定された IAM ポリシーを変更する権限が必要です。プロジェクト全体の IAM ポリシーを変更する必要はありません。\n適用可能な最も狭い範囲で、どの事前定義ロールをリクエストすればよいですか？",
@@ -324,7 +2149,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 10,
+    "q_num": 60,
     "question_id": "060",
     "multi_select": 1,
     "question": "あなたは、Google Cloud 上で \"staging\" という名前の GKE クラスタを管理しています。\"staging\" を gcloud CLI コマンドのデフォルトクラスタとして設定するには、どのコマンドを使用すればよいでしょうか？",
@@ -360,7 +2185,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 11,
+    "q_num": 61,
     "question_id": "061",
     "multi_select": 1,
     "question": "Google Cloud上で金融アプリケーション向けのリアルタイム分析基盤を構築しています。アプリケーションから大量のイベントデータが継続的に生成されます。イベントには構造化データと非構造化データが含まれていますが、分析処理によって必要な項目を抽出し、最終的には構造化された分析データとして保存したいと考えています。\n高いスケーラビリティと耐障害性を実現するには、どの構成が最も適切ですか？",
@@ -396,7 +2221,7 @@
     "category_title": "データ分析・パイプライン"
   },
   {
-    "q_num": 12,
+    "q_num": 62,
     "question_id": "062",
     "multi_select": 1,
     "question": "成長中のスタートアップ企業でGoogle Cloudを管理しています。各エンジニアが自分で新しいプロジェクトを作成できるようにしたいと考えています。ただし、個人のクレジットカード情報を使って請求アカウントを作成させることは避けたいと考えています。\n最小限の権限でこの要件を満たすには、どうすればよいですか？",
@@ -432,7 +2257,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 13,
+    "q_num": 63,
     "question_id": "063",
     "multi_select": 1,
     "question": "外部のデザイン会社が、1つの Cloud Storage バケットから承認済みのメディアファイルをダウンロードし、一覧表示する必要があります。ファイルのアップロード、上書き、削除を許可してはならず、プロジェクト内のほかのバケットにもアクセスできないようにする必要があります。この会社は現在、あなたのプロジェクトで Google Cloud の権限を持っていません。どうすればよいですか？",
@@ -468,7 +2293,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 14,
+    "q_num": 64,
     "question_id": "064",
     "multi_select": 1,
     "question": "Cloud RunでWebサービスを実行しています。ピーク時間帯に急激なトラフィック増加が発生すると、レイテンシが悪化することがあります。調査したところ、新しいコンテナインスタンスの起動と初期化に時間がかかっていることが分かりました。\n初期リクエストのレイテンシを抑え、可用性にも配慮した構成にするには、どうすればよいですか？",
@@ -504,7 +2329,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 15,
+    "q_num": 65,
     "question_id": "065",
     "multi_select": 1,
     "question": "あなたは、IP範囲 192.168.1.0/24 のサブネットを使用しています。VMの追加によってIPアドレスが不足してきたため、既存のサブネットを拡張したいと考えています。\nどの変更が適切ですか？",
@@ -540,7 +2365,7 @@
     "category_title": "ネットワーク"
   },
   {
-    "q_num": 16,
+    "q_num": 66,
     "question_id": "066",
     "multi_select": 1,
     "question": "あなたの会社では、機密性の高い顧客データをGoogle Cloud Storageバケットに保存しています。Compute Engine VMインスタンスで実行中のアプリケーションだけがバケットにアクセスできるようにするには、どうすればよいでしょうか？",
@@ -576,7 +2401,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 17,
+    "q_num": 67,
     "question_id": "067",
     "multi_select": 1,
     "question": "内部 IPv4 アドレスだけを持つ Compute Engine VM で、公開ソフトウェアリポジトリからパッケージをダウンロードする必要があります。組織ポリシーにより、この VM への外部 IP アドレスの割り当ては禁止されています。VPC にはデフォルトインターネットゲートウェイへの必要なルートがあり、外向きの通信も許可されています。インターネットから一方的に開始される接続を受け付けずに、外向きの接続を可能にするマネージドのソリューションが必要です。どうすればよいですか？",
@@ -612,7 +2437,7 @@
     "category_title": "ネットワーク"
   },
   {
-    "q_num": 18,
+    "q_num": 68,
     "question_id": "068",
     "multi_select": 2,
     "question": "あなたの会社は、継続的に利用されるミッションクリティカルな財務アプリケーションを運用しています。アプリケーションのファイルは、オーストラリアのSydneyとMelbourneの両地域から利用されます。ファイルを両地域に冗長化し、頻繁なアクセスを前提として保存するには、どの構成を選択すべきですか？",
@@ -653,7 +2478,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 19,
+    "q_num": 69,
     "question_id": "069",
     "multi_select": 1,
     "question": "あなたの会社ではGoogle Cloud上でWebアプリケーションを運用しています。アプリケーションのリソースは複数のプロジェクトに分散しています。\n複数プロジェクトにまたがるリソースに対して、アプリケーション単位でIAMポリシーを効率的に適用したいと考えています。Resource Managerの階層構造を利用して、この要件を満たすにはどうすればよいですか？",
@@ -689,7 +2514,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 20,
+    "q_num": 70,
     "question_id": "070",
     "multi_select": 1,
     "question": "あなたの組織は、個人への IAM 権限付与を、チーム単位のアクセス管理に切り替えています。ID 管理チームは、アクセス制御に使うグループを、Cloud Identity でセキュリティグループとして明示的に指定することを求めています。従業員がチームに参加したり離れたりした際には、アクセス権も変更される必要があります。あなたは Cloud Identity API を使用してグループの作成を自動化しています。どうすればよいですか？",
@@ -725,7 +2550,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 21,
+    "q_num": 71,
     "question_id": "071",
     "multi_select": 1,
     "question": "あなたの組織では、複数のプロジェクトのアプリケーションログを、1つの Cloud Logging バケットに保存しています。サポートチームは、storefront プロジェクトのすべてのログと、バックエンドアプリケーションのエラーログだけを閲覧する必要があります。バックエンドでは、エラーを専用のログ ID backend-errors に出力し、エラー以外のエントリには別のログ ID を使用しています。サポートチームには、ログを集約しているプロジェクトへのアクセス権がまだありません。ログを重複して保存せずに、この閲覧範囲を強制する必要があります。どうすればよいですか？",
@@ -761,7 +2586,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 22,
+    "q_num": 72,
     "question_id": "072",
     "multi_select": 1,
     "question": "Compute Engine上のアプリケーションがCloud StorageなどのGoogle APIs and servicesを利用する必要があります。会社のセキュリティポリシーにより、VMには外部IPアドレスを割り当てず、インターネットへ直接アクセスさせることも禁止されています。\n安全にGoogle APIs and servicesへアクセスするには、どうすればよいでしょうか？",
@@ -797,7 +2622,7 @@
     "category_title": "ネットワーク"
   },
   {
-    "q_num": 23,
+    "q_num": 73,
     "question_id": "073",
     "multi_select": 1,
     "question": "あなたの Cloud Run アプリケーションは、接続プールを使用して Cloud SQL にアクセスしています。コードを変更した後、接続を再利用せずに、リクエストごとに新しいデータベース接続を作成している可能性に気づきました。アプリケーションは、データベースへの物理接続を開くたびに、構造化ログのエントリを1件出力しています。これらの接続作成イベントを時系列グラフで表示する必要があります。どうすればよいですか？",
@@ -833,7 +2658,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 24,
+    "q_num": 74,
     "question_id": "074",
     "multi_select": 1,
     "question": "GKE アプリケーションから、必要な権限を持つ IAM サービスアカウントを使用して、Google Cloud の監視 API を呼び出す必要があります。セキュリティポリシーでは、サービスアカウントキーの作成が禁止されています。ユーザー認証情報を共有したり、すべてのノードの ID を変更したりせずに、アプリケーションでそのサービスアカウントの権限を使用する必要があります。どうすればよいですか？",
@@ -869,7 +2694,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 25,
+    "q_num": 75,
     "question_id": "075",
     "multi_select": 2,
     "question": "機密データを含む Cloud Storage バケットを管理しています。メタデータや構成情報の読み取りを含む、すべての読み取りおよび書き込み操作を記録したいと考えています。また、ログをサードパーティのログ管理システムにエクスポートする必要があります。何を行うべきですか。",
@@ -910,7 +2735,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 26,
+    "q_num": 76,
     "question_id": "076",
     "multi_select": 1,
     "question": "あなたの管理するアプリケーションはGoogle Cloud上のマネージドインスタンスグループ(MIG)で実行されています。VMのうちの一つが期待通りに動作していないことに気づきました。MIG内の指定したVMをMIGの構成に従って再作成したいと思います。どうすれば良いでしょうか？",
@@ -946,7 +2771,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 27,
+    "q_num": 77,
     "question_id": "077",
     "multi_select": 1,
     "question": "あなたがGoogle Cloudでホストしているアプリケーションは、Cloud SQL for PostgreSQLをデータベースとして利用しています。データの増大により、Cloud SQLインスタンスのストレージ容量が不足してきたため、容量を拡張する必要があります。\nアプリケーションを停止せずにストレージ容量を増やすには、どうすればよいでしょうか。",
@@ -982,7 +2807,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 28,
+    "q_num": 78,
     "question_id": "078",
     "multi_select": 1,
     "question": "あなたはGoogle Kubernetes Engine (GKE)クラスターで複数のマイクロサービスを実行しています。そのうちの一つは、高いメモリ対CPU比を必要とするデータ分析サービスを実行しています。他のマイクロサービスで実行しているワークロードは、汎用マシンタイプ用に最適化されています。各ワークロードでリソースを効率的に使用するためには、クラスタをどのように最適化すれば良いでしょうか？",
@@ -1018,7 +2843,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 29,
+    "q_num": 79,
     "question_id": "079",
     "multi_select": 1,
     "question": "開発用プロジェクトに、高額な費用がかかるテスト VM があります。この VM は、月間予算を使い切った際には停止しても構いません。プロジェクトでは、アラート通知のみを行う Cloud Billing 予算を使用しています。実際の費用が予算額に達したことを予算の更新データが示したら、VM を自動的に停止する必要があります。チームは課金情報の反映に遅延があることを許容しており、ほかの料金は引き続き発生し得ることも理解しています。どうすればよいですか？",
@@ -1054,7 +2879,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 30,
+    "q_num": 80,
     "question_id": "080",
     "multi_select": 1,
     "question": "あなたの会社では、次のデータパイプラインを構築しています。\nCloud Firestore -> Cloud Run functions -> BigQuery -> Looker Studio\n\nCloud Firestoreに新しいデータが登録されると、Cloud Run functionsがそのデータを処理してBigQueryへ書き込み、そのBigQueryのデータをLooker Studioで可視化しています。\n現在、Looker Studioに最新データが表示されていません。\nこの問題の原因を効率的に特定するために、最初に行うべき対応はどれですか？",
@@ -1090,7 +2915,7 @@
     "category_title": "データ分析・パイプライン"
   },
   {
-    "q_num": 31,
+    "q_num": 81,
     "question_id": "081",
     "multi_select": 1,
     "question": "経理部門のアナリストは、前日の料金がどの Compute Engine VM で発生したかを、VM ごとに特定する必要があります。関連するすべてのプロジェクトは1つの Cloud Billing アカウントを使用しており、集約先となる BigQuery データセットも用意されています。収集プログラムを作成したり、データを不必要に重複させたりせずに、課金レコードを自動で取り込みたいと考えています。どうすればよいですか？",
@@ -1126,7 +2951,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 32,
+    "q_num": 82,
     "question_id": "082",
     "multi_select": 2,
     "question": "あなたの組織はGoogle Cloud Compute Engine上でデータベースを運用しています。あなたは、ゾーン障害が発生した場合でもデータベースのデータがすぐに利用できるようにしたいと考えています。次のオプションのうち、最も効率的なアプローチとなる手順を2つ選択して下さい。",
@@ -1167,7 +2992,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 33,
+    "q_num": 83,
     "question_id": "083",
     "multi_select": 1,
     "question": "映画制作会社で、予告編動画をオンプレミスのファイルサーバーに保存しています。これらの動画ファイルを、毎晩Cloud Storageへ自動的に転送したいと考えています。転送処理の運用負荷を抑えながら、定期的な増分転送を実現するには、どの方法が最も適切ですか？",
@@ -1203,7 +3028,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 34,
+    "q_num": 84,
     "question_id": "084",
     "multi_select": 1,
     "question": "あなたは、Google Cloud上のロードバランサーへ次の2つのサブドメインからアクセスできるようにCloud DNSを設定する必要があります。\n\n・login.myproject.com\n・www.myproject.com\n\nロードバランサーのIPv4アドレスを 203.0.113.10 とします。\nDNSレコードを効率的に構成するには、どの方法が適切ですか？",
@@ -1239,7 +3064,7 @@
     "category_title": "ネットワーク"
   },
   {
-    "q_num": 35,
+    "q_num": 85,
     "question_id": "085",
     "multi_select": 1,
     "question": "あなたはグローバルに展開するeコマース企業で開発者として勤務しています。現在、商品リストとユーザーレビューといったリレーショナルデータを保存する新しいアプリケーションを開発しています。データベースは、低レイテンシで、世界中のユーザーからの高い読み取りと書き込みの負荷をサポートできる必要があります。開発中および新しいリージョンでのローンチ後にスキーマの変更が必要となりますが、スキーマ変更によるダウンタイムは回避する必要があります。\n上記の要件を満たすデータベースを以下から選択して下さい。",
@@ -1275,7 +3100,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 36,
+    "q_num": 86,
     "question_id": "086",
     "multi_select": 1,
     "question": "会社ではNode.js で実装されたマイクロサービスアプリケーションをオンプレミス環境で実行しています。各マイクロサービスは Docker コンテナで実装され、CI/CD パイプラインを使用してデプロイされています。Google Cloud のサーバーレス環境へ最小限の労力で移行し、運用コストも抑えたいと考えています。\nどの手順を選択すべきでしょうか。",
@@ -1311,7 +3136,7 @@
     "category_title": "Compute & コンテナ"
   },
   {
-    "q_num": 37,
+    "q_num": 87,
     "question_id": "087",
     "multi_select": 1,
     "question": "開発チームの新しいメンバーは、プロジェクトでCompute Engineインスタンスを起動および停止できる必要があります。Googleが推奨するプラクティスに従い、このメンバーに必要な権限を効率的に付与するにはどうすれば良いでしょうか？",
@@ -1347,7 +3172,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 38,
+    "q_num": 88,
     "question_id": "088",
     "multi_select": 1,
     "question": "10.22.0.0/22 のアドレス範囲を使用する新しいVPCと既存VPCの間に、高可用性のVPN接続を構成する必要があります。\n次の要件があります。\n\n・ゾーンやVPNトンネルの障害に備えて冗長化する\n・BGPによる動的ルーティングを使用する\n・手動で静的ルートを管理する負荷を減らす\n\nどの構成が適切ですか？",
@@ -1383,7 +3208,7 @@
     "category_title": "ネットワーク"
   },
   {
-    "q_num": 39,
+    "q_num": 89,
     "question_id": "089",
     "multi_select": 2,
     "question": "各プロジェクトのチームは、メールではなく Slack で運用状況を確認しています。受信した Cloud Billing の予算データで、チームの支出がしきい値を超えたことが分かったら、そのチームのチャネルにメッセージを転送する必要があります。課金通知の遅延は許容されますが、メッセージを自動処理し、インフラの保守を最小限に抑えた連携が必要です。どうすればよいですか？(2つ選択してください)",
@@ -1424,7 +3249,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 40,
+    "q_num": 90,
     "question_id": "090",
     "multi_select": 1,
     "question": "会社では機密データをCloud Storageに保存しています。通常とは異なるユーザーによる大量のオブジェクト読み取りなど、データ流出の兆候となるアクセスパターンを検出したいと考えています。\n最も適切な方法はどれですか？",
@@ -1460,7 +3285,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 41,
+    "q_num": 91,
     "question_id": "091",
     "multi_select": 1,
     "question": "あなたは、手動で作成された複数の Google Cloud プロジェクトについて、所有者の記録を作成しています。事前のレビューで、各プロジェクトには作成時に自動付与された Owner のバインディングだけがそのまま残っており、ほかの所有者は追加されていないことが確認されています。現在のアクセス設定から、各プロジェクトを作成したユーザーを特定する必要があります。どうすればよいですか？",
@@ -1496,7 +3321,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 42,
+    "q_num": 92,
     "question_id": "092",
     "multi_select": 1,
     "question": "あなたはtest-clusterとprod-clusterという 2 つのGoogle Cloud Kubernetes (GKE)クラスターを管理しています。test-clusterはStandardクラスター、prod-clusterはAutopilotクラスターです。\n\nkubectl get nodesコマンドを実行すると、test-clusterのノードのみが表示されます。kubectl get nodes コマンドを介して prod-cluster のノードのステータスを確認するには、どのコマンドを実行する必要がありますか？",
@@ -1532,7 +3357,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 43,
+    "q_num": 93,
     "question_id": "093",
     "multi_select": 1,
     "question": "あなたの会社は、Google Cloudのコストを最小限に抑えたいと考えています。プロジェクトや部門全体でリソースの種類ごとに支出を表示するためのカスタムダッシュボードを構築する必要があります。以下から適切なソリューションを選択して下さい。",
@@ -1568,7 +3393,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 44,
+    "q_num": 94,
     "question_id": "094",
     "multi_select": 1,
     "question": "Google Cloud 上で、運用負荷を最小限に抑えながら、迅速にマネージド PostgreSQL データベースをデプロイする必要があります。最も適切な方法はどれですか？",
@@ -1604,7 +3429,7 @@
     "category_title": "ストレージ & DB"
   },
   {
-    "q_num": 45,
+    "q_num": 95,
     "question_id": "095",
     "multi_select": 1,
     "question": "あなたが管理するCompute EngineインスタンスのCPU 使用率が 3 分以上にわたって 80% を超えた場合に自動的に通知を受け取りたいと考えています。次の選択肢のうち、最も適切なものはどれでしょうか？",
@@ -1640,7 +3465,7 @@
     "category_title": "運用監視・コスト・CLI"
   },
   {
-    "q_num": 46,
+    "q_num": 96,
     "question_id": "096",
     "multi_select": 1,
     "question": "あなたは新しいユーザーをCloud Identityに追加します。ユーザーは既存の個人Googleアカウントとemailアドレスを保持しています。Googleが推奨する方法に従い、Cloud Identityへの追加時にアカウントの競合を避けるにはどうすれば良いでしょうか？以下から選択して下さい。",
@@ -1676,7 +3501,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 47,
+    "q_num": 97,
     "question_id": "097",
     "multi_select": 2,
     "question": "開発チームが使用するサービスアカウントキーについて、以下の要件を満たす必要があります。\n\n1. サービスアカウントキーが必要なすべてのサービスアカウントは、sa-keys というプロジェクト内で作成する。\n2. 新しく作成するサービスアカウントキーの有効期間は1週間（168時間）以内とする。\n3. これらのルールを、できるだけ少ない運用作業で組織全体に適用する。\n\n要件を満たすために行うべき設定を2つ選択してください。\n該当するものをすべて選んでください。",
@@ -1717,7 +3542,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 48,
+    "q_num": 98,
     "question_id": "098",
     "multi_select": 2,
     "question": "開発チームは、複数のGoogle CloudプロジェクトでCompute EngineとCloud Storageを利用します。ユーザーごとに個別のIAMバインディングを設定するのではなく、グループ単位で一貫した最小権限を付与したいと考えています。適切な方法を2つ選択してください。",
@@ -1758,7 +3583,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 49,
+    "q_num": 99,
     "question_id": "099",
     "multi_select": 1,
     "question": "あなたの会社はオンプレミスで運用しているアプリケーションをGoogle Cloudに移行しています。移行先であるLinuxインスタンスにSSHでアクセスする必要があります。最小限のコストで安全なアクセスを管理するには、どうすれば良いでしょうか？",
@@ -1794,7 +3619,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 50,
+    "q_num": 100,
     "question_id": "100",
     "multi_select": 1,
     "question": "あなたの会社では、本番環境が複数のGoogle Cloudプロジェクトに分散しています。\n次の2つを防止したいと考えています。\n• 本番プロジェクトそのものの誤削除\n• 重要なCompute Engine VMなど、削除保護に対応したリソースの誤削除\nどの方法が最も適切ですか？",
@@ -1830,7 +3655,7 @@
     "category_title": "IAM & セキュリティ・組織"
   },
   {
-    "q_num": 51,
+    "q_num": 101,
     "question_id": "101",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -1866,7 +3691,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 52,
+    "q_num": 102,
     "question_id": "102",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -1902,7 +3727,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 53,
+    "q_num": 103,
     "question_id": "103",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -1938,7 +3763,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 54,
+    "q_num": 104,
     "question_id": "104",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -1974,7 +3799,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 55,
+    "q_num": 105,
     "question_id": "105",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -2010,7 +3835,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 56,
+    "q_num": 106,
     "question_id": "106",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -2046,7 +3871,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 57,
+    "q_num": 107,
     "question_id": "107",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -2082,7 +3907,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 58,
+    "q_num": 108,
     "question_id": "108",
     "category_id": "data",
     "category_title": "データ分析・パイプライン",
@@ -2123,7 +3948,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 59,
+    "q_num": 109,
     "question_id": "109",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -2159,7 +3984,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 60,
+    "q_num": 110,
     "question_id": "110",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2195,7 +4020,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 61,
+    "q_num": 111,
     "question_id": "111",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -2231,7 +4056,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 62,
+    "q_num": 112,
     "question_id": "112",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -2267,7 +4092,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 63,
+    "q_num": 113,
     "question_id": "113",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2303,7 +4128,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 64,
+    "q_num": 114,
     "question_id": "114",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2339,7 +4164,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 65,
+    "q_num": 115,
     "question_id": "115",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -2375,7 +4200,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 66,
+    "q_num": 116,
     "question_id": "116",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -2411,7 +4236,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 67,
+    "q_num": 117,
     "question_id": "117",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -2447,7 +4272,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 68,
+    "q_num": 118,
     "question_id": "118",
     "category_id": "data",
     "category_title": "データ分析・パイプライン",
@@ -2483,7 +4308,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 69,
+    "q_num": 119,
     "question_id": "119",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2524,7 +4349,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 70,
+    "q_num": 120,
     "question_id": "120",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -2565,7 +4390,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 71,
+    "q_num": 121,
     "question_id": "121",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -2601,7 +4426,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 72,
+    "q_num": 122,
     "question_id": "122",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2642,7 +4467,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 73,
+    "q_num": 123,
     "question_id": "123",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2678,7 +4503,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 74,
+    "q_num": 124,
     "question_id": "124",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2714,7 +4539,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 75,
+    "q_num": 125,
     "question_id": "125",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -2750,7 +4575,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 76,
+    "q_num": 126,
     "question_id": "126",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -2786,7 +4611,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 77,
+    "q_num": 127,
     "question_id": "127",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -2822,7 +4647,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 78,
+    "q_num": 128,
     "question_id": "128",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -2858,7 +4683,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 79,
+    "q_num": 129,
     "question_id": "129",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -2899,7 +4724,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 80,
+    "q_num": 130,
     "question_id": "130",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -2935,7 +4760,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 81,
+    "q_num": 131,
     "question_id": "131",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -2971,7 +4796,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 82,
+    "q_num": 132,
     "question_id": "132",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3012,7 +4837,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 83,
+    "q_num": 133,
     "question_id": "133",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -3048,7 +4873,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 84,
+    "q_num": 134,
     "question_id": "134",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -3084,7 +4909,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 85,
+    "q_num": 135,
     "question_id": "135",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3120,7 +4945,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 86,
+    "q_num": 136,
     "question_id": "136",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3161,7 +4986,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 87,
+    "q_num": 137,
     "question_id": "137",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3197,7 +5022,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 88,
+    "q_num": 138,
     "question_id": "138",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3233,7 +5058,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 89,
+    "q_num": 139,
     "question_id": "139",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -3269,7 +5094,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 90,
+    "q_num": 140,
     "question_id": "140",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3305,7 +5130,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 91,
+    "q_num": 141,
     "question_id": "141",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -3341,7 +5166,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 92,
+    "q_num": 142,
     "question_id": "142",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -3377,7 +5202,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 93,
+    "q_num": 143,
     "question_id": "143",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3413,7 +5238,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 94,
+    "q_num": 144,
     "question_id": "144",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3449,7 +5274,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 95,
+    "q_num": 145,
     "question_id": "145",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -3485,7 +5310,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 96,
+    "q_num": 146,
     "question_id": "146",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3521,7 +5346,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 97,
+    "q_num": 147,
     "question_id": "147",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3557,7 +5382,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 98,
+    "q_num": 148,
     "question_id": "148",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3593,7 +5418,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 99,
+    "q_num": 149,
     "question_id": "149",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -3629,7 +5454,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 100,
+    "q_num": 150,
     "question_id": "150",
     "category_id": "data",
     "category_title": "データ分析・パイプライン",
@@ -3665,7 +5490,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 101,
+    "q_num": 151,
     "question_id": "151",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3701,7 +5526,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 102,
+    "q_num": 152,
     "question_id": "152",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3737,7 +5562,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 103,
+    "q_num": 153,
     "question_id": "153",
     "category_id": "data",
     "category_title": "データ分析・パイプライン",
@@ -3773,7 +5598,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 104,
+    "q_num": 154,
     "question_id": "154",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -3809,7 +5634,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 105,
+    "q_num": 155,
     "question_id": "155",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -3845,7 +5670,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 106,
+    "q_num": 156,
     "question_id": "156",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -3881,7 +5706,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 107,
+    "q_num": 157,
     "question_id": "157",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -3917,7 +5742,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 108,
+    "q_num": 158,
     "question_id": "158",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -3953,7 +5778,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 109,
+    "q_num": 159,
     "question_id": "159",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -3989,7 +5814,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 110,
+    "q_num": 160,
     "question_id": "160",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -4030,7 +5855,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 111,
+    "q_num": 161,
     "question_id": "161",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -4066,7 +5891,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 112,
+    "q_num": 162,
     "question_id": "162",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -4102,7 +5927,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 113,
+    "q_num": 163,
     "question_id": "163",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4138,7 +5963,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 114,
+    "q_num": 164,
     "question_id": "164",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -4174,7 +5999,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 115,
+    "q_num": 165,
     "question_id": "165",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -4210,7 +6035,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 116,
+    "q_num": 166,
     "question_id": "166",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -4246,7 +6071,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 117,
+    "q_num": 167,
     "question_id": "167",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4282,7 +6107,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 118,
+    "q_num": 168,
     "question_id": "168",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4318,7 +6143,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 119,
+    "q_num": 169,
     "question_id": "169",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4354,7 +6179,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 120,
+    "q_num": 170,
     "question_id": "170",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4390,7 +6215,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 121,
+    "q_num": 171,
     "question_id": "171",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -4426,7 +6251,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 122,
+    "q_num": 172,
     "question_id": "172",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -4462,7 +6287,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 123,
+    "q_num": 173,
     "question_id": "173",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4498,7 +6323,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 124,
+    "q_num": 174,
     "question_id": "174",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4534,7 +6359,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 125,
+    "q_num": 175,
     "question_id": "175",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4570,7 +6395,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 126,
+    "q_num": 176,
     "question_id": "176",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -4606,7 +6431,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 127,
+    "q_num": 177,
     "question_id": "177",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -4642,7 +6467,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 128,
+    "q_num": 178,
     "question_id": "178",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -4678,7 +6503,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 129,
+    "q_num": 179,
     "question_id": "179",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4714,7 +6539,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 130,
+    "q_num": 180,
     "question_id": "180",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4750,7 +6575,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 131,
+    "q_num": 181,
     "question_id": "181",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -4786,7 +6611,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 132,
+    "q_num": 182,
     "question_id": "182",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -4822,7 +6647,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 133,
+    "q_num": 183,
     "question_id": "183",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -4858,7 +6683,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 134,
+    "q_num": 184,
     "question_id": "184",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -4894,7 +6719,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 135,
+    "q_num": 185,
     "question_id": "185",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -4930,7 +6755,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 136,
+    "q_num": 186,
     "question_id": "186",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -4966,7 +6791,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 137,
+    "q_num": 187,
     "question_id": "187",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -5002,7 +6827,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 138,
+    "q_num": 188,
     "question_id": "188",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -5038,7 +6863,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 139,
+    "q_num": 189,
     "question_id": "189",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -5074,7 +6899,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 140,
+    "q_num": 190,
     "question_id": "190",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -5110,7 +6935,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 141,
+    "q_num": 191,
     "question_id": "191",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -5146,7 +6971,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 142,
+    "q_num": 192,
     "question_id": "192",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -5182,7 +7007,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 143,
+    "q_num": 193,
     "question_id": "193",
     "category_id": "compute",
     "category_title": "Compute & コンテナ",
@@ -5218,7 +7043,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 144,
+    "q_num": 194,
     "question_id": "194",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -5254,7 +7079,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 145,
+    "q_num": 195,
     "question_id": "195",
     "category_id": "ops",
     "category_title": "運用監視・コスト・CLI",
@@ -5290,7 +7115,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 146,
+    "q_num": 196,
     "question_id": "196",
     "category_id": "data",
     "category_title": "データ分析・パイプライン",
@@ -5326,7 +7151,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 147,
+    "q_num": 197,
     "question_id": "197",
     "category_id": "network",
     "category_title": "ネットワーク",
@@ -5362,7 +7187,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 148,
+    "q_num": 198,
     "question_id": "198",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
@@ -5398,7 +7223,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 149,
+    "q_num": 199,
     "question_id": "199",
     "category_id": "storage",
     "category_title": "ストレージ & DB",
@@ -5434,7 +7259,7 @@
     "section_title": "実践対策"
   },
   {
-    "q_num": 150,
+    "q_num": 200,
     "question_id": "200",
     "category_id": "security",
     "category_title": "IAM & セキュリティ・組織",
